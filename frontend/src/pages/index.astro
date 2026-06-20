@@ -1,0 +1,906 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "../styles/global.css";
+import { client, urlFor } from "../utils/sanity.js";
+
+// Fetch Projects
+const projects = await client.fetch(
+    `*[_type == "project"] | order(projectNumber asc)`,
+);
+
+// Fetch Testimonials AND expand the project reference to get the URL slug
+const testimonials = await client.fetch(`
+    *[_type == "testimonial"] | order(_createdAt desc) {
+        ...,
+        projectRef->{
+            slug
+        }
+    }
+`);
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>StudioA4</title>
+        <meta
+            name="google-site-verification"
+            content="30t-y6MKDG72H6ZYlWjdfTHhKnpLPTX3itd_-Iy454U"
+        />
+
+        <ClientRouter />
+
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Syne:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            /* Sleek style for the new Preview Work button */
+            .preview-work-btn {
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.3);
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-family: "DM Sans", sans-serif;
+                font-weight: 600;
+                padding-bottom: 2px;
+                border-bottom: 1px solid transparent;
+            }
+            .preview-work-btn:hover {
+                color: #ff4d4d;
+                border-bottom-color: #ff4d4d;
+            }
+            @keyframes dot-pulse {
+                0%, 100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.25);
+                    opacity: 0.55;
+                }
+            }
+            .pulse-dot {
+                animation: dot-pulse 1.8s infinite ease-in-out;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="nav" id="navbar">
+            <a href="/" class="nav-logo">
+                <img src="/favicon.svg" alt="Studio A4 Logo" />
+            </a>
+            <ul class="nav-links">
+                <li><a href="#work">Work</a></li>
+                <li><a href="#services">Expertise</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="#work" class="mobile-link">Work</a></li>
+                <li><a href="#services" class="mobile-link">Expertise</a></li>
+                <li><a href="#about" class="mobile-link">About</a></li>
+                <li><a href="#contact" class="mobile-link">Contact</a></li>
+            </ul>
+        </div>
+
+        <section class="hero" id="home">
+            <div class="hero-bg">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+            </div>
+            <div class="hero-content">
+                <span class="hero-tag">● Creative Studio — Est. 2026</span>
+                <h1 class="hero-headline">
+                    Visual<br />
+                    <span class="italic">Storytelling</span>
+                    <br /> Reimagined.
+                </h1>
+                <p class="hero-description">
+                    We specialize in manga production, character design, and
+                    cinematic illustrations. We create visually compelling
+                    worlds, characters, and stories that leave a lasting
+                    impression.
+                </p>
+                <div class="hero-cta">
+                    <a href="#work" class="btn btn-primary">
+                        View Our Work
+                        <span class="arrow-icon">↘</span>
+                    </a>
+                    <a href="#contact" class="btn btn-outline">
+                        Start a Project
+                        <span class="arrow-icon">→</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <div class="marquee-section">
+            <div class="marquee-track">
+                <span class="filled">Illustration</span><span>✦</span>
+                <span>Concept Art</span><span>✦</span>
+                <span class="filled">Character Design</span><span>✦</span>
+                <span>Background Art</span><span>✦</span>
+                <span class="filled">Manga</span><span>✦</span>
+                <span class="filled">Illustration</span><span>✦</span>
+                <span>Concept Art</span><span>✦</span>
+                <span class="filled">Character Design</span><span>✦</span>
+                <span>Background Art</span><span>✦</span>
+                <span class="filled">Manga</span><span>✦</span>
+            </div>
+        </div>
+
+        <section class="section" id="work">
+            <div class="section-inner">
+                <span class="section-label reveal">Selected Projects</span>
+                <h2 class="section-title reveal reveal-d1">
+                    Recent work we're<br />proud of.
+                </h2>
+                <div class="work-grid">
+                    {
+                        projects.map((project: any, index: number) => (
+                            <a
+                                href={`/project/${project.slug?.current}`}
+                                class={`work-item reveal reveal-d${(index % 4) + 1}`}
+                                style="display: block; text-decoration: none;"
+                            >
+                                <div class="work-item-inner">
+                                    {project.mainImage &&
+                                    project.mainImage.asset ? (
+                                        <img
+                                            src={urlFor(project.mainImage)
+                                                .width(800)
+                                                .auto("format")
+                                                .url()}
+                                            alt={
+                                                project.mainImage.alt ||
+                                                project.title
+                                            }
+                                            class="work-item-bg"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div
+                                            class="work-item-bg"
+                                            style="background: #111;"
+                                        />
+                                    )}
+                                    <div class="work-item-overlay">
+                                        <span class="work-item-tag">
+                                            {project.tag}
+                                        </span>
+                                        <span class="work-item-title">
+                                            {project.title}
+                                        </span>
+                                        <span class="work-item-subtitle">
+                                            {project.subtitle}
+                                        </span>
+                                    </div>
+                                    <span class="work-item-number">
+                                        {project.projectNumber}
+                                    </span>
+                                </div>
+                            </a>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="services" style="padding: 140px 0;">
+            <div
+                class="section-inner"
+                style="max-width: 1200px; margin: 0 auto;"
+            >
+                <span
+                    class="reveal"
+                    style="color: #ff4d4d; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; display: block; margin-bottom: 20px;"
+                >
+                    <span
+                        style="font-size: 1.2rem; vertical-align: middle; margin-right: 5px;"
+                        >&bull;</span
+                    > EXPERTISE
+                </span>
+
+                <h2
+                    class="reveal reveal-d1"
+                    style="font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5.5rem); line-height: 1.05; margin-bottom: 80px; letter-spacing: -0.02em;"
+                >
+                    Designing worlds<br />that feel alive.
+                </h2>
+
+                <div
+                    class="services-grid"
+                    style="display: flex; flex-wrap: wrap; justify-content: center; gap: 60px 40px;"
+                >
+                    <div
+                        class="service-text-card reveal reveal-d1"
+                        style="flex: 1 1 300px; max-width: 360px;"
+                    >
+                        <h3
+                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
+                        >
+                            <span style="color: #ff4d4d;">1.</span> 3D Art & Visuals
+                        </h3>
+                        <hr
+                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
+                        />
+                        <p
+                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
+                        >
+                            High-quality 3D renders, key visuals, and cinematic
+                            compositions for games, brands, music, and digital
+                            experiences.
+                        </p>
+                        <div
+                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
+                        >
+                            MODELING &bull; TEXTURING &bull; LIGHTING &bull;
+                            RENDERING
+                        </div>
+                    </div>
+
+                    <div
+                        class="service-text-card reveal reveal-d2"
+                        style="flex: 1 1 300px; max-width: 360px;"
+                    >
+                        <h3
+                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
+                        >
+                            <span style="color: #ff4d4d;">2.</span> 2D Art & Illustration
+                        </h3>
+                        <hr
+                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
+                        />
+                        <p
+                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
+                        >
+                            Stylized illustrations and key art with strong
+                            composition, color, and mood to tell powerful
+                            stories and build striking visuals.
+                        </p>
+                        <div
+                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
+                        >
+                            CONCEPT ART &bull; ILLUSTRATION &bull; KEY VISUALS
+                        </div>
+                    </div>
+
+                    <div
+                        class="service-text-card reveal reveal-d3"
+                        style="flex: 1 1 300px; max-width: 360px;"
+                    >
+                        <h3
+                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
+                        >
+                            <span style="color: #ff4d4d;">3.</span> Manga Panels
+                        </h3>
+                        <hr
+                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
+                        />
+                        <p
+                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
+                        >
+                            Dynamic manga panels and comic layouts crafted for
+                            storytelling, rhythm, and high visual impact.
+                        </p>
+                        <div
+                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
+                        >
+                            PANELING &bull; INKING &bull; TONES &bull;
+                            COMPOSITION
+                        </div>
+                    </div>
+
+                    <div
+                        class="service-text-card reveal reveal-d4"
+                        style="flex: 1 1 300px; max-width: 360px;"
+                    >
+                        <h3
+                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
+                        >
+                            <span style="color: #ff4d4d;">4.</span> Environment Design
+                        </h3>
+                        <hr
+                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
+                        />
+                        <p
+                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
+                        >
+                            Immersive environments that set the scene—designed
+                            with mood, detail, and storytelling in mind.
+                        </p>
+                        <div
+                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
+                        >
+                            WORLD BUILDING &bull; LAYOUT &bull; ATMOSPHERE
+                        </div>
+                    </div>
+
+                    <div
+                        class="service-text-card reveal reveal-d5"
+                        style="flex: 1 1 300px; max-width: 360px;"
+                    >
+                        <h3
+                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
+                        >
+                            <span style="color: #ff4d4d;">5.</span> Motion Design
+                            & Animation
+                        </h3>
+                        <hr
+                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
+                        />
+                        <p
+                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
+                        >
+                            Engaging motion graphics and animations that bring
+                            ideas to life and elevate your brand or story.
+                        </p>
+                        <div
+                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
+                        >
+                            ANIMATION &bull; TRANSITIONS &bull; VISUAL EFFECTS
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="reveal reveal-d3"
+                    style="display: flex; justify-content: center; margin-top: 80px;"
+                >
+                    <a
+                        href="#work"
+                        style="display: inline-flex; align-items: center; gap: 15px; padding: 14px 36px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; color: #fff; text-decoration: none; font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; transition: background 0.3s ease, border-color 0.3s ease;"
+                    >
+                        View Work <span
+                            style="color: #ff4d4d; font-size: 1.3rem; line-height: 0;"
+                            >&rarr;</span
+                        >
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="about">
+            <div class="section-inner">
+                <div class="about-grid">
+                    <div class="about-visual reveal">
+                        <div class="about-img-wrap">
+                            <img
+                                src="/assets/about-pic.jpg"
+                                alt="Studio A4 Creative Duo"
+                                class="about-portrait"
+                            />
+                        </div>
+                        <div class="about-accent-box"></div>
+                    </div>
+                    <div class="about-text">
+                        <span class="section-label reveal">About</span>
+                        <h2 class="reveal reveal-d1">
+                            Designing worlds<br />that feel alive.
+                        </h2>
+                        <p class="reveal reveal-d2">
+                            StudioA4 is an independent creative studio focused
+                            on manga, character design, and stylized visual
+                            storytelling.
+                        </p>
+                        <p class="reveal reveal-d3">
+                            We combine illustration, worldbuilding, and
+                            cinematic composition to create artwork that
+                            captures attention and leaves a lasting impression.
+                            Whether it’s a single illustration, an original
+                            character, or a full manga production, we approach
+                            every project with the same goal: creating work that
+                            feels meaningful, memorable, and alive.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section
+            class="section"
+            style="background:var(--bg-secondary); overflow:hidden; padding: 100px 0;"
+        >
+            <div
+                class="section-inner"
+                style="margin-bottom: 60px; padding: 0 60px;"
+            >
+                <span class="section-label reveal">Client Feedback</span>
+                <h2 class="section-title reveal reveal-d1" style="margin: 0;">
+                    What they say about us.
+                </h2>
+            </div>
+            <div class="reviews-marquee-container">
+                <div class="reviews-marquee-track">
+                    {
+                        testimonials.map((review: any) => (
+                            <div
+                                class="testimonial-card"
+                                style="display: flex; flex-direction: column;"
+                            >
+                                <p class="testimonial-quote">{review.quote}</p>
+
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 20px;">
+                                    <div
+                                        class="testimonial-author"
+                                        style="margin: 0;"
+                                    >
+                                        <svg
+                                            class="testimonial-avatar"
+                                            viewBox="0 0 48 48"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <>
+                                                <circle
+                                                    cx="24"
+                                                    cy="24"
+                                                    r="24"
+                                                    fill="#334155"
+                                                />
+                                                <circle
+                                                    cx="24"
+                                                    cy="18"
+                                                    r="9"
+                                                    fill="#94a3b8"
+                                                />
+                                                <ellipse
+                                                    cx="24"
+                                                    cy="40"
+                                                    rx="16"
+                                                    ry="10"
+                                                    fill="#94a3b8"
+                                                />
+                                            </>
+                                        </svg>
+                                        <div>
+                                            <h4>{review.clientName}</h4>
+                                            <span>
+                                                {review.clientTitle || "Client"}
+                                                {review.reviewDate
+                                                    ? ` • ${new Date(review.reviewDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
+                                                    : ""}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {review.projectRef?.slug?.current && (
+                                        <a
+                                            href={`/project/${review.projectRef.slug.current}`}
+                                            class="preview-work-btn"
+                                        >
+                                            Preview Work ↗
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+
+                <div class="reviews-marquee-track" aria-hidden="true">
+                    {
+                        testimonials.map((review: any) => (
+                            <div
+                                class="testimonial-card"
+                                style="display: flex; flex-direction: column;"
+                            >
+                                <p class="testimonial-quote">{review.quote}</p>
+
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 20px;">
+                                    <div
+                                        class="testimonial-author"
+                                        style="margin: 0;"
+                                    >
+                                        <svg
+                                            class="testimonial-avatar"
+                                            viewBox="0 0 48 48"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <>
+                                                <circle
+                                                    cx="24"
+                                                    cy="24"
+                                                    r="24"
+                                                    fill="#334155"
+                                                />
+                                                <circle
+                                                    cx="24"
+                                                    cy="18"
+                                                    r="9"
+                                                    fill="#94a3b8"
+                                                />
+                                                <ellipse
+                                                    cx="24"
+                                                    cy="40"
+                                                    rx="16"
+                                                    ry="10"
+                                                    fill="#94a3b8"
+                                                />
+                                            </>
+                                        </svg>
+                                        <div>
+                                            <h4>{review.clientName}</h4>
+                                            <span>
+                                                {review.clientTitle || "Client"}
+                                                {review.reviewDate
+                                                    ? ` • ${new Date(review.reviewDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
+                                                    : ""}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {review.projectRef?.slug?.current && (
+                                        <a
+                                            href={`/project/${review.projectRef.slug.current}`}
+                                            class="preview-work-btn"
+                                        >
+                                            Preview Work ↗
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <div class="section-inner">
+                <div class="contact-grid">
+                    <div class="contact-text reveal">
+                        <div
+                            style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;"
+                        >
+                            <span class="section-label" style="margin-bottom: 0;"
+                                >Get in Touch</span
+                            >
+                            <span
+                                style="width: 1px; height: 12px; background: rgba(255, 255, 255, 0.15);"
+                            ></span>
+                            <span
+                                style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #22c55e;"
+                            >
+                                <span
+                                    class="pulse-dot"
+                                    style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px rgba(34, 197, 94, 0.65); display: inline-block;"
+                                ></span>
+                                Commissions Open
+                            </span>
+                        </div>
+                        <h2 class="section-title" style="margin-bottom: 24px;">
+                            Let's build something<br />incredible.
+                        </h2>
+                        <p class="hero-description" style="margin-bottom: 0;">
+                            Currently accepting illustration, manga, and visual
+                            storytelling projects. Drop us a message and we’ll
+                            get back to you within 24–48 hours.
+                        </p>
+                    </div>
+
+                    <div class="contact-form-wrapper reveal reveal-d2">
+                        <form
+                            action="https://api.web3forms.com/submit"
+                            method="POST"
+                            class="contact-form"
+                            id="contactForm"
+                        >
+                            <input
+                                type="hidden"
+                                name="access_key"
+                                value="1bc1a301-09ae-4641-ba23-6046069f32a1"
+                            />
+                            <input
+                                type="hidden"
+                                name="subject"
+                                value="New Project Inquiry - Studio A4"
+                            />
+                            <input
+                                type="checkbox"
+                                name="botcheck"
+                                class="hidden"
+                                style="display: none;"
+                            />
+
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Your Name"
+                                    required
+                                    class="form-input"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Your Email Address"
+                                    required
+                                    pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+                                    title="Please enter a valid email address (e.g., name@domain.com)"
+                                    class="form-input"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <textarea
+                                    name="message"
+                                    placeholder="Tell us about your project..."
+                                    required
+                                    class="form-input form-textarea"></textarea>
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                style="width: 100%; justify-content: center;"
+                                >Send Message<span class="arrow-icon">→</span
+                                ></button
+                            >
+                        </form>
+
+                        <div
+                            id="formSuccess"
+                            class="form-success"
+                            style="display: none;"
+                        >
+                            <div class="success-icon">✓</div>
+                            <h3>Message Sent!</h3>
+                            <p>
+                                Thanks for reaching out. We will review your
+                                project and get back to you wit.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <img
+                        src="/favicon.svg"
+                        alt="Studio A4 Logo"
+                        style="margin-top: 12px; line-height: 1.7;"
+                    />
+                    <p>
+                        A creative studio crafting bold visual experiences for
+                        ambitious projects worldwide.
+                    </p>
+
+                    <button
+                        id="copyEmailBtn"
+                        class="social-btn"
+                        style="margin-top: 15px; cursor: pointer; border: 1px solid rgba(255, 77, 77, 0.25); background: transparent; color: #ff4d4d; border-radius: 50px; padding: 10px 20px; font-family: 'DM Sans';"
+                    >
+                        studio.a4global@gmail.com
+                    </button>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigation</h4>
+                    <a href="#home">Home</a><a href="#work">Work</a><a
+                        href="#services">Expertise</a
+                    ><a href="#about">About</a><a href="#contact">Contact</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Socials</h4>
+                    <a
+                        href="https://www.instagram.com/xyro.3d/"
+                        target="_blank"
+                        rel="noopener noreferrer">Instagram</a
+                    >
+                    <a
+                        href="https://x.com/Aman67804627885"
+                        target="_blank"
+                        rel="noopener noreferrer">X / Twitter</a
+                    >
+                    <a
+                        href="https://www.reddit.com/user/Professional-Lake843/"
+                        target="_blank"
+                        rel="noopener noreferrer">Reddit</a
+                    >
+                </div>
+                <div class="footer-links">
+                    <h4>Portfolios</h4>
+                    <a
+                        href="https://www.artstation.com/aman_xyro"
+                        target="_blank"
+                        rel="noopener noreferrer">ArtStation</a
+                    >
+                    <a
+                        href="https://www.deviantart.com/aman2189"
+                        target="_blank"
+                        rel="noopener noreferrer">DeviantArt</a
+                    >
+                    <a
+                        href="https://pin.it/1EkhjFukQ"
+                        target="_blank"
+                        rel="noopener noreferrer">Pinterest</a
+                    >
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 Studio A4. All rights reserved.</span>
+            </div>
+        </footer>
+
+        <script>
+            document.addEventListener("astro:page-load", () => {
+                // COPY EMAIL SCRIPT
+                const copyEmailBtn = document.getElementById("copyEmailBtn");
+                copyEmailBtn?.addEventListener("click", () => {
+                    navigator.clipboard.writeText("studio.a4global@gmail.com");
+                    const originalText = copyEmailBtn.innerText;
+                    copyEmailBtn.innerText = "Copied!";
+                    setTimeout(
+                        () =>
+                            (copyEmailBtn.innerText =
+                                "studio.a4global@gmail.com"),
+                        2000,
+                    );
+                });
+
+                // MOBILE MENU
+                const hamburger = document.getElementById("hamburger");
+                const mobileMenu = document.getElementById("mobileMenu");
+                const mobileLinks = document.querySelectorAll(".mobile-link");
+
+                if (hamburger && mobileMenu) {
+                    hamburger.addEventListener("click", () => {
+                        hamburger?.classList.toggle("active");
+                        mobileMenu?.classList.toggle("active");
+                        document.body.style.overflow =
+                            mobileMenu?.classList.contains("active")
+                                ? "hidden"
+                                : "";
+                    });
+                }
+
+                if (mobileLinks) {
+                    mobileLinks.forEach((link: any) => {
+                        link.addEventListener("click", () => {
+                            hamburger?.classList.remove("active");
+                            mobileMenu?.classList.remove("active");
+                            document.body.style.overflow = "";
+                        });
+                    });
+                }
+
+                // ULTRA-RESPONSIVE INTERSECTION OBSERVER
+                const revealEls = document.querySelectorAll(".reveal");
+                if (revealEls.length > 0) {
+                    const revealObserver = new IntersectionObserver(
+                        (entries: any[]) => {
+                            entries.forEach((entry: any) => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add("visible");
+                                    revealObserver.unobserve(entry.target);
+                                }
+                            });
+                        },
+                        { threshold: 0.01, rootMargin: "0px 0px -40px 0px" },
+                    );
+                    revealEls.forEach((el: any) => revealObserver.observe(el));
+                }
+
+                // PARALLAX ORB ON MOUSE MOVE
+                const orb1 = document.querySelector(
+                    ".orb-1",
+                ) as HTMLElement | null;
+                const orb2 = document.querySelector(
+                    ".orb-2",
+                ) as HTMLElement | null;
+                document.addEventListener("mousemove", (e: MouseEvent) => {
+                    const x = (e.clientX - window.innerWidth / 2) / 60;
+                    const y = (e.clientY - window.innerHeight / 2) / 60;
+                    if (orb1)
+                        orb1.style.transform = `translate(${x * 18}px, ${y * 18}px)`;
+                    if (orb2)
+                        orb2.style.transform = `translate(${-x * 14}px, ${-y * 14}px)`;
+                });
+
+                // ACTIVE NAV LINK ON SCROLL
+                const sections = document.querySelectorAll("section[id]");
+                const navLinksAll = document.querySelectorAll(".nav-links a");
+                window.addEventListener("scroll", () => {
+                    let current = "";
+                    sections.forEach((section: any) => {
+                        const sectionTop = section.offsetTop - 120;
+                        if (window.scrollY >= sectionTop)
+                            current = section.getAttribute("id");
+                    });
+                    navLinksAll.forEach((link: any) => {
+                        if (link.getAttribute("href") === "#" + current) {
+                            link.style.color = "#ff4d4d";
+                        } else {
+                            link.style.color = "#fff";
+                        }
+                    });
+                });
+
+                // CONTACT FORM BACKGROUND SUBMISSION
+                const contactForm = document.getElementById(
+                    "contactForm",
+                ) as HTMLFormElement | null;
+                const formSuccess = document.getElementById(
+                    "formSuccess",
+                ) as HTMLElement | null;
+
+                if (contactForm && formSuccess) {
+                    contactForm.addEventListener("submit", function (e: Event) {
+                        e.preventDefault();
+                        const submitBtn = contactForm.querySelector(
+                            'button[type="submit"]',
+                        ) as HTMLButtonElement | null;
+                        if (!submitBtn) return;
+
+                        const originalBtnText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = "Sending...";
+                        submitBtn.style.opacity = "0.7";
+                        submitBtn.style.cursor = "not-allowed";
+
+                        const formData = new FormData(contactForm);
+
+                        fetch("https://api.web3forms.com/submit", {
+                            method: "POST",
+                            body: formData,
+                        })
+                            .then(async (response) => {
+                                if (response.status == 200) {
+                                    contactForm.style.display = "none";
+                                    formSuccess.style.display = "block";
+                                } else {
+                                    submitBtn.innerHTML = originalBtnText;
+                                    submitBtn.style.opacity = "1";
+                                    submitBtn.style.cursor = "pointer";
+                                    alert(
+                                        "Something went wrong. Please try again.",
+                                    );
+                                }
+                            })
+                            .catch((error: any) => {
+                                console.error(error);
+                                submitBtn.innerHTML = originalBtnText;
+                                submitBtn.style.opacity = "1";
+                                submitBtn.style.cursor = "pointer";
+                                alert(
+                                    "Something went wrong. Please check your connection.",
+                                );
+                            });
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

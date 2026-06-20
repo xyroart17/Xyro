@@ -1,0 +1,42 @@
+export default {
+  name: 'testimonial',
+  title: 'Client Review',
+  type: 'document',
+  fields: [
+    {
+      name: 'quote',
+      title: 'Review Quote',
+      type: 'text',
+      description: 'The actual review from the client.',
+    },
+    {
+      name: 'clientName',
+      title: 'Client Name',
+      type: 'string',
+      description: 'e.g., VStrife',
+    },
+    {
+      name: 'clientTitle',
+      title: 'Client Role',
+      type: 'string',
+      description: 'e.g., Art Director, Indie Dev, or leave blank',
+    },
+    // NEW FIELD: Adds a clean date picker for the review
+    {
+      name: 'reviewDate',
+      title: 'Review Date',
+      type: 'date',
+      description: 'When did the client leave this review?',
+      options: {
+        dateFormat: 'MMMM YYYY', // Formats it cleanly in the studio
+      }
+    },
+    {
+      name: 'projectRef',
+      title: 'Associated Project',
+      type: 'reference',
+      to: [{ type: 'project' }],
+      description: 'Select the project this review is for to display a "Preview Work" link.',
+    },
+  ],
+}
