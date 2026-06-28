@@ -1,18 +1,25 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
+import "../styles/messageDelivery.css";
 import { client, urlFor } from "../utils/sanity.js";
+import FeaturedManga from "../components/FeaturedManga.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
 
 // Fetch Projects
 const projects = await client.fetch(
     `*[_type == "project"] | order(projectNumber asc)`,
 );
 
-// Fetch Testimonials AND expand the project reference to get the URL slug
+// Fetch Testimonials AND expand references to get the URL slugs
 const testimonials = await client.fetch(`
     *[_type == "testimonial"] | order(_createdAt desc) {
         ...,
         projectRef->{
+            slug
+        },
+        mangaRef->{
             slug
         }
     }
@@ -74,7 +81,8 @@ const testimonials = await client.fetch(`
                 border-bottom-color: #ff4d4d;
             }
             @keyframes dot-pulse {
-                0%, 100% {
+                0%,
+                100% {
                     transform: scale(1);
                     opacity: 1;
                 }
@@ -86,32 +94,18 @@ const testimonials = await client.fetch(`
             .pulse-dot {
                 animation: dot-pulse 1.8s infinite ease-in-out;
             }
+            .project-hidden {
+                display: none !important;
+            }
+            .btn.disabled-coming {
+                opacity: 0.4;
+                cursor: default !important;
+                pointer-events: none;
+            }
         </style>
     </head>
     <body>
-        <nav class="nav" id="navbar">
-            <a href="/" class="nav-logo">
-                <img src="/favicon.svg" alt="Studio A4 Logo" />
-            </a>
-            <ul class="nav-links">
-                <li><a href="#work">Work</a></li>
-                <li><a href="#services">Expertise</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
-        </nav>
-
-        <div class="mobile-menu" id="mobileMenu">
-            <ul>
-                <li><a href="#work" class="mobile-link">Work</a></li>
-                <li><a href="#services" class="mobile-link">Expertise</a></li>
-                <li><a href="#about" class="mobile-link">About</a></li>
-                <li><a href="#contact" class="mobile-link">Contact</a></li>
-            </ul>
-        </div>
+        <Navbar isHomepage={true} />
 
         <section class="hero" id="home">
             <div class="hero-bg">
@@ -133,7 +127,7 @@ const testimonials = await client.fetch(`
                 </p>
                 <div class="hero-cta">
                     <a href="#work" class="btn btn-primary">
-                        View Our Work
+                        Work
                         <span class="arrow-icon">↘</span>
                     </a>
                     <a href="#contact" class="btn btn-outline">
@@ -159,6 +153,8 @@ const testimonials = await client.fetch(`
             </div>
         </div>
 
+        <FeaturedManga />
+
         <section class="section" id="work">
             <div class="section-inner">
                 <span class="section-label reveal">Selected Projects</span>
@@ -170,7 +166,7 @@ const testimonials = await client.fetch(`
                         projects.map((project: any, index: number) => (
                             <a
                                 href={`/project/${project.slug?.current}`}
-                                class={`work-item reveal reveal-d${(index % 4) + 1}`}
+                                class={`work-item reveal reveal-d${(index % 4) + 1} ${index >= 2 ? "project-hidden" : ""}`}
                                 style="display: block; text-decoration: none;"
                             >
                                 <div class="work-item-inner">
@@ -212,6 +208,30 @@ const testimonials = await client.fetch(`
                             </a>
                         ))
                     }
+                </div>
+
+                <div
+                    class="load-more-container"
+                    style="display: flex; justify-content: center; margin-top: 50px;"
+                >
+                    <button
+                        id="loadMoreBtn"
+                        class={`btn btn-outline ${projects.length <= 2 ? "disabled-coming" : ""}`}
+                        style="min-width: 180px;"
+                        disabled={projects.length <= 2}
+                    >
+                        {projects.length <= 2 ? "Coming More" : "Load More"}
+                        {
+                            projects.length > 2 && (
+                                <span
+                                    class="arrow-icon"
+                                    style="margin-left: 8px; display: inline-block; transition: transform var(--transition-fast);"
+                                >
+                                    ↓
+                                </span>
+                            )
+                        }
+                    </button>
                 </div>
             </div>
         </section>
@@ -428,6 +448,7 @@ const testimonials = await client.fetch(`
         </section>
 
         <section
+            id="testimonials"
             class="section"
             style="background:var(--bg-secondary); overflow:hidden; padding: 100px 0;"
         >
@@ -493,14 +514,21 @@ const testimonials = await client.fetch(`
                                         </div>
                                     </div>
 
-                                    {review.projectRef?.slug?.current && (
+                                    {review.projectRef?.slug?.current ? (
                                         <a
                                             href={`/project/${review.projectRef.slug.current}`}
                                             class="preview-work-btn"
                                         >
                                             Preview Work ↗
                                         </a>
-                                    )}
+                                    ) : review.mangaRef?.slug?.current ? (
+                                        <a
+                                            href={`/manga/${review.mangaRef.slug.current}`}
+                                            class="preview-work-btn"
+                                        >
+                                            Preview Work ↗
+                                        </a>
+                                    ) : null}
                                 </div>
                             </div>
                         ))
@@ -559,14 +587,21 @@ const testimonials = await client.fetch(`
                                         </div>
                                     </div>
 
-                                    {review.projectRef?.slug?.current && (
+                                    {review.projectRef?.slug?.current ? (
                                         <a
                                             href={`/project/${review.projectRef.slug.current}`}
                                             class="preview-work-btn"
                                         >
                                             Preview Work ↗
                                         </a>
-                                    )}
+                                    ) : review.mangaRef?.slug?.current ? (
+                                        <a
+                                            href={`/manga/${review.mangaRef.slug.current}`}
+                                            class="preview-work-btn"
+                                        >
+                                            Preview Work ↗
+                                        </a>
+                                    ) : null}
                                 </div>
                             </div>
                         ))
@@ -582,8 +617,9 @@ const testimonials = await client.fetch(`
                         <div
                             style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;"
                         >
-                            <span class="section-label" style="margin-bottom: 0;"
-                                >Get in Touch</span
+                            <span
+                                class="section-label"
+                                style="margin-bottom: 0;">Get in Touch</span
                             >
                             <span
                                 style="width: 1px; height: 12px; background: rgba(255, 255, 255, 0.15);"
@@ -678,7 +714,8 @@ const testimonials = await client.fetch(`
                             <h3>Message Sent!</h3>
                             <p>
                                 Thanks for reaching out. We will review your
-                                project and get back to you wit.
+                                project and get back to you. Want to chat now?
+                                Feel free to contact us on Discord.
                             </p>
                         </div>
                     </div>
@@ -686,118 +723,46 @@ const testimonials = await client.fetch(`
             </div>
         </section>
 
-        <footer class="footer">
-            <div class="footer-inner">
-                <div class="footer-brand">
-                    <img
-                        src="/favicon.svg"
-                        alt="Studio A4 Logo"
-                        style="margin-top: 12px; line-height: 1.7;"
-                    />
-                    <p>
-                        A creative studio crafting bold visual experiences for
-                        ambitious projects worldwide.
-                    </p>
+        <Footer isHomepage={true} />
 
-                    <button
-                        id="copyEmailBtn"
-                        class="social-btn"
-                        style="margin-top: 15px; cursor: pointer; border: 1px solid rgba(255, 77, 77, 0.25); background: transparent; color: #ff4d4d; border-radius: 50px; padding: 10px 20px; font-family: 'DM Sans';"
-                    >
-                        studio.a4global@gmail.com
-                    </button>
-                </div>
-                <div class="footer-links">
-                    <h4>Navigation</h4>
-                    <a href="#home">Home</a><a href="#work">Work</a><a
-                        href="#services">Expertise</a
-                    ><a href="#about">About</a><a href="#contact">Contact</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Socials</h4>
-                    <a
-                        href="https://www.instagram.com/xyro.3d/"
-                        target="_blank"
-                        rel="noopener noreferrer">Instagram</a
-                    >
-                    <a
-                        href="https://x.com/Aman67804627885"
-                        target="_blank"
-                        rel="noopener noreferrer">X / Twitter</a
-                    >
-                    <a
-                        href="https://www.reddit.com/user/Professional-Lake843/"
-                        target="_blank"
-                        rel="noopener noreferrer">Reddit</a
-                    >
-                </div>
-                <div class="footer-links">
-                    <h4>Portfolios</h4>
-                    <a
-                        href="https://www.artstation.com/aman_xyro"
-                        target="_blank"
-                        rel="noopener noreferrer">ArtStation</a
-                    >
-                    <a
-                        href="https://www.deviantart.com/aman2189"
-                        target="_blank"
-                        rel="noopener noreferrer">DeviantArt</a
-                    >
-                    <a
-                        href="https://pin.it/1EkhjFukQ"
-                        target="_blank"
-                        rel="noopener noreferrer">Pinterest</a
-                    >
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <span>© 2026 Studio A4. All rights reserved.</span>
-            </div>
-        </footer>
+        <!-- FLOATING CTA -->
+        <a
+            href="#contact"
+            id="floatingCTA"
+            class="floating-cta"
+            aria-label="Start a Project"
+        >
+            <span class="floating-cta-icon">✦</span> Start a Project
+        </a>
+
+        <script src="../scripts/navigation.js"></script>
+        <script src="../scripts/messageDelivery.js"></script>
 
         <script>
             document.addEventListener("astro:page-load", () => {
-                // COPY EMAIL SCRIPT
-                const copyEmailBtn = document.getElementById("copyEmailBtn");
-                copyEmailBtn?.addEventListener("click", () => {
-                    navigator.clipboard.writeText("studio.a4global@gmail.com");
-                    const originalText = copyEmailBtn.innerText;
-                    copyEmailBtn.innerText = "Copied!";
-                    setTimeout(
-                        () =>
-                            (copyEmailBtn.innerText =
-                                "studio.a4global@gmail.com"),
-                        2000,
-                    );
-                });
-
-                // MOBILE MENU
-                const hamburger = document.getElementById("hamburger");
-                const mobileMenu = document.getElementById("mobileMenu");
-                const mobileLinks = document.querySelectorAll(".mobile-link");
-
-                if (hamburger && mobileMenu) {
-                    hamburger.addEventListener("click", () => {
-                        hamburger?.classList.toggle("active");
-                        mobileMenu?.classList.toggle("active");
-                        document.body.style.overflow =
-                            mobileMenu?.classList.contains("active")
-                                ? "hidden"
-                                : "";
-                    });
-                }
-
-                if (mobileLinks) {
-                    mobileLinks.forEach((link: any) => {
-                        link.addEventListener("click", () => {
-                            hamburger?.classList.remove("active");
-                            mobileMenu?.classList.remove("active");
-                            document.body.style.overflow = "";
+                // LOAD MORE PROJECTS SCRIPT
+                const loadMoreBtn = document.getElementById("loadMoreBtn");
+                if (loadMoreBtn) {
+                    loadMoreBtn.addEventListener("click", () => {
+                        const hiddenProjects = Array.from(
+                            document.querySelectorAll(
+                                ".work-item.project-hidden",
+                            ),
+                        );
+                        const toShow = hiddenProjects.slice(0, 2);
+                        toShow.forEach((el) => {
+                            el.classList.remove("project-hidden");
+                            el.classList.add("visible");
                         });
+                        if (hiddenProjects.length <= 2) {
+                            loadMoreBtn.classList.add("disabled-coming");
+                            loadMoreBtn.setAttribute("disabled", "true");
+                            loadMoreBtn.innerHTML = "Coming More";
+                        }
                     });
                 }
 
-                // ULTRA-RESPONSIVE INTERSECTION OBSERVER
+                // ULTRA-RESPONSIVE INTERSECTION OBSERVER FOR CONTENT REVEALS
                 const revealEls = document.querySelectorAll(".reveal");
                 if (revealEls.length > 0) {
                     const revealObserver = new IntersectionObserver(
@@ -830,72 +795,62 @@ const testimonials = await client.fetch(`
                         orb2.style.transform = `translate(${-x * 14}px, ${-y * 14}px)`;
                 });
 
-                // ACTIVE NAV LINK ON SCROLL
-                const sections = document.querySelectorAll("section[id]");
-                const navLinksAll = document.querySelectorAll(".nav-links a");
-                window.addEventListener("scroll", () => {
-                    let current = "";
-                    sections.forEach((section: any) => {
-                        const sectionTop = section.offsetTop - 120;
-                        if (window.scrollY >= sectionTop)
-                            current = section.getAttribute("id");
-                    });
-                    navLinksAll.forEach((link: any) => {
-                        if (link.getAttribute("href") === "#" + current) {
-                            link.style.color = "#ff4d4d";
-                        } else {
-                            link.style.color = "#fff";
-                        }
-                    });
-                });
-
-                // CONTACT FORM BACKGROUND SUBMISSION
+                // CONTACT FORM BACKGROUND SUBMISSION WITH LIFECYCLE EVENTS
                 const contactForm = document.getElementById(
                     "contactForm",
                 ) as HTMLFormElement | null;
-                const formSuccess = document.getElementById(
-                    "formSuccess",
-                ) as HTMLElement | null;
 
-                if (contactForm && formSuccess) {
+                if (contactForm) {
                     contactForm.addEventListener("submit", function (e: Event) {
                         e.preventDefault();
-                        const submitBtn = contactForm.querySelector(
-                            'button[type="submit"]',
-                        ) as HTMLButtonElement | null;
-                        if (!submitBtn) return;
-
-                        const originalBtnText = submitBtn.innerHTML;
-                        submitBtn.innerHTML = "Sending...";
-                        submitBtn.style.opacity = "0.7";
-                        submitBtn.style.cursor = "not-allowed";
 
                         const formData = new FormData(contactForm);
 
+                        // 1. Dispatch start event to lock UI and show button loading animation
+                        contactForm.dispatchEvent(
+                            new CustomEvent("form-submit-start"),
+                        );
+
+                        // 2. Perform backend fetch submission
                         fetch("https://api.web3forms.com/submit", {
                             method: "POST",
                             body: formData,
                         })
                             .then(async (response) => {
-                                if (response.status == 200) {
-                                    contactForm.style.display = "none";
-                                    formSuccess.style.display = "block";
+                                const data = await response
+                                    .json()
+                                    .catch(() => ({}));
+                                console.log(
+                                    "Web3Forms response:",
+                                    response.status,
+                                    data,
+                                );
+                                if (response.ok || data.success) {
+                                    // 3. Success event initiates origami folding & plane flight
+                                    contactForm.dispatchEvent(
+                                        new CustomEvent("form-submit-success"),
+                                    );
                                 } else {
-                                    submitBtn.innerHTML = originalBtnText;
-                                    submitBtn.style.opacity = "1";
-                                    submitBtn.style.cursor = "pointer";
-                                    alert(
-                                        "Something went wrong. Please try again.",
+                                    // 4. Failure event restores UI and displays error card
+                                    contactForm.dispatchEvent(
+                                        new CustomEvent("form-submit-error", {
+                                            detail: {
+                                                error:
+                                                    data.message ||
+                                                    "Submission server returned an error.",
+                                            },
+                                        }),
                                     );
                                 }
                             })
                             .catch((error: any) => {
                                 console.error(error);
-                                submitBtn.innerHTML = originalBtnText;
-                                submitBtn.style.opacity = "1";
-                                submitBtn.style.cursor = "pointer";
-                                alert(
-                                    "Something went wrong. Please check your connection.",
+                                contactForm.dispatchEvent(
+                                    new CustomEvent("form-submit-error", {
+                                        detail: {
+                                            error: "Please verify your network connection.",
+                                        },
+                                    }),
                                 );
                             });
                     });

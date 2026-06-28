@@ -1,0 +1,18 @@
+---
+/**
+ * LegalSection — Reusable wrapper for each legal content section.
+ * Props: id (anchor), title (h2 heading)
+ */
+interface Props {
+    id: string;
+    title: string;
+}
+
+const { id, title } = Astro.props;
+---
+
+<section id={id} class="legal-section legal-reveal" aria-labelledby={`${id}-heading`}>
+    <h2 id={`${id}-heading`}>{title}</h2>
+    <p class="legal-section-updated">Last updated: June 2026</p>
+    <slot />
+</section>

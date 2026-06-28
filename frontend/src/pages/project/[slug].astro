@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import '../../styles/global.css';
 import { client, urlFor } from '../../utils/sanity.js';
+import Navbar from '../../components/Navbar.astro';
 
 export async function getStaticPaths() {
     // We fetch ALL projects ordered by projectNumber so we can calculate Next/Prev
@@ -81,6 +82,28 @@ const validWipImages = project.wipImages?.filter((img: any) => img && img.asset 
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* Highlight Work nav item when on project pages */
+        .nav-links a[href$="#work"] {
+            color: var(--accent) !important;
+        }
+        .nav-links a[href$="#work"]::after {
+            width: 100% !important;
+        }
+
+        /* Transparent navbar on project pages */
+        .nav {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border-bottom-color: transparent !important;
+        }
+        .nav.scrolled {
+            background: rgba(13, 13, 13, 0.85) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-bottom-color: var(--border-subtle) !important;
+        }
+
         .project-hero { position: relative; width: 100%; height: 70vh; min-height: 500px; overflow: hidden; display: flex; align-items: flex-end; padding: 80px 60px; background: var(--bg-primary); }
         .project-hero-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; z-index: 0; }
         .project-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(13,13,13,0.8) 0%, rgba(13,13,13,0.1) 20%, rgba(13,13,13,0.4) 60%, #0d0d0d 100%); z-index: 1; pointer-events: none; }
@@ -173,11 +196,7 @@ const validWipImages = project.wipImages?.filter((img: any) => img && img.asset 
     </style>
 </head>
 <body>
-    <nav class="nav" style="background: transparent; border: none; backdrop-filter: none; -webkit-backdrop-filter: none;">
-        <a href="/" class="nav-logo">
-            <img src="/favicon.svg" alt="Studio A4 Logo" style="height: 40px; width: auto; display: block;" />
-        </a>
-    </nav>
+    <Navbar />
 
     <header class="project-hero">
         {project.shortVideoUrl ? (
@@ -299,6 +318,33 @@ const validWipImages = project.wipImages?.filter((img: any) => img && img.asset 
                 entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
             }, { threshold: 0.05 });
             revealEls.forEach(el => observer.observe(el));
+
+            // NAVBAR SCROLL — transparent at top, opaque on scroll
+            const navbar = document.getElementById("navbar");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    navbar?.classList.add("scrolled");
+                } else {
+                    navbar?.classList.remove("scrolled");
+                }
+            });
+
+            // MOBILE MENU TOGGLE
+            const hamburger = document.getElementById("hamburger");
+            const mobileMenu = document.getElementById("mobileMenu");
+            const mobileLinks = document.querySelectorAll(".mobile-link");
+
+            hamburger?.addEventListener("click", () => {
+                hamburger.classList.toggle("active");
+                mobileMenu?.classList.toggle("active");
+            });
+
+            mobileLinks.forEach((link) => {
+                link.addEventListener("click", () => {
+                    hamburger?.classList.remove("active");
+                    mobileMenu?.classList.remove("active");
+                });
+            });
         });
     </script>
 </body>

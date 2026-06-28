@@ -1,0 +1,313 @@
+/* ==========================================================================
+   PREMIUM MESSAGE DELIVERY EXPERIENCE — STYLE SHEET
+   Hardware-accelerated 3D folds, Bézier curves flight, and Mailbox glows.
+   ========================================================================== */
+
+/* INTERACTION LOCK */
+body.interaction-locked {
+    overflow: hidden !important;
+    touch-action: none !important;
+}
+body.interaction-locked a,
+body.interaction-locked button,
+body.interaction-locked input,
+body.interaction-locked textarea {
+    pointer-events: none !important;
+}
+
+/* BUTTON LOADING & DEPRESS STATES */
+.btn-submit-depressed {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+.btn-submit-loading {
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+}
+.btn-submit-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        transparent
+    );
+    animation: button-shimmer 1.5s infinite linear;
+}
+@keyframes button-shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* MAILBOX ICON IN NAVBAR */
+.nav-mailbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-left: 12px;
+    color: var(--text-muted);
+    vertical-align: middle;
+    /* Initially invisible, scaling down */
+    opacity: 0;
+    transform: scale(0.7);
+    pointer-events: none;
+    transition: color 0.3s ease, filter 0.3s ease, opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-mailbox.visible-mailbox {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+.nav-mailbox.active-glow {
+    color: var(--accent) !important;
+    filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+.nav-mailbox.active-glow .mailbox-checkmark {
+    opacity: 1 !important;
+}
+.nav-mailbox-mobile.active-glow .mailbox-checkmark {
+    opacity: 1 !important;
+}
+.mailbox-svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+}
+.mailbox-door {
+    transform-origin: bottom center;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.nav-mailbox.open-door .mailbox-door {
+    transform: rotateX(100deg) translateY(1px);
+}
+.nav-mailbox.bounce-box .mailbox-svg {
+    animation: mailbox-bounce 0.5s cubic-bezier(0.25, 0.8, 0.25, 1.25);
+}
+@keyframes mailbox-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15) translateY(-2px); }
+}
+
+/* ORIGAMI FOLDING PAPER CLONE */
+.origami-clone-container {
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    perspective: 1200px;
+    transition: opacity 0.4s ease;
+}
+.origami-paper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-sizing: border-box;
+    /* Soft initial shadow */
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+    border-radius: var(--radius-md);
+}
+
+/* Cloned form container inside origami container */
+.origami-cloned-content {
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-style: preserve-3d;
+}
+
+/* 3D Folding Steps (Collapsing the cloned form inwards with spring-like physics) */
+.origami-paper.fold-step-1 {
+    transform: scale(0.7) rotateX(30deg) skewX(-14deg) skewY(14deg) translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+.origami-paper.fold-step-2 {
+    transform: scale(0.4) rotateX(55deg) rotateY(-35deg) skewX(14deg) skewY(-14deg) translateY(-30px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+.origami-paper.fold-step-3 {
+    transform: scale(0.18) rotateX(80deg) rotateY(-75deg) skewX(0) skewY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Lift-off state (Tilts up and hovers vertically before flight) */
+.origami-paper.lift-off {
+    transform: scale(0.18) translateY(-40px) rotateX(70deg) rotateY(-80deg) rotateZ(-15deg);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Plane shape container */
+.origami-plane-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 50px;
+    height: 50px;
+    transform-style: preserve-3d;
+}
+.origami-paper.morph-plane {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+.origami-paper.morph-plane .origami-cloned-content {
+    opacity: 0;
+    transform: scale(0);
+}
+.origami-paper.morph-plane .origami-plane-wrapper {
+    transform: translate(-50%, -50%) scale(1.8); /* Slightly enlarged plane for launch visibility */
+}
+
+/* Detailed paper plane SVG */
+.paper-plane-svg {
+    width: 48px;
+    height: 16px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+    transform: rotate(-10deg);
+}
+
+/* FLIGHT PATH ANIMATION (Split X/Y Translations for Parabolic Arc) */
+.origami-clone-container.flying {
+    animation: fly-horizontal var(--fly-duration) cubic-bezier(0.55, 0, 0.7, 1) forwards;
+}
+.origami-clone-container.flying .origami-paper {
+    animation: fly-vertical var(--fly-duration) cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+.origami-clone-container.flying .paper-plane-svg {
+    animation: fly-rotate var(--fly-duration) linear forwards, fly-blur var(--fly-duration) ease-in-out forwards;
+}
+
+@keyframes fly-blur {
+    0% { filter: blur(0px) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25)); }
+    25% { filter: blur(1.5px) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28)); }
+    75% { filter: blur(1.5px) drop-shadow(0 0 10px rgba(255, 255, 255, 0.15)); }
+    100% { filter: blur(0px) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25)); }
+}
+
+@keyframes fly-horizontal {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(var(--target-x)); }
+}
+@keyframes fly-vertical {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(calc(var(--target-y) * 0.45)) scale(0.9); }
+    70% { transform: translateY(calc(var(--target-y) * 0.82)) scale(0.5); }
+    100% { transform: translateY(var(--target-y)) scale(0.12); }
+}
+@keyframes fly-rotate {
+    0% { transform: rotate(-10deg); }
+    20% { transform: rotate(-35deg); }
+    50% { transform: rotate(-15deg); }
+    85% { transform: rotate(10deg); }
+    100% { transform: rotate(25deg); }
+}
+
+/* ERROR STATE ALERT CARD */
+.form-error-card {
+    padding: 24px;
+    background: rgba(255, 77, 77, 0.04);
+    border: 1px solid rgba(255, 77, 77, 0.2);
+    border-radius: var(--radius-md);
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(255, 77, 77, 0.08);
+}
+.form-error-card h4 {
+    font-family: var(--font-display);
+    color: var(--accent);
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+.form-error-card p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+.form-error-card .btn-retry {
+    padding: 8px 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+.form-error-card .btn-retry:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 77, 77, 0.25);
+}
+
+/* Mobile mailbox target (hidden on desktop) */
+.nav-mailbox-mobile {
+    display: none;
+}
+@media (max-width: 768px) {
+    .nav-mailbox-mobile {
+        display: inline-flex;
+        margin-right: 15px;
+        margin-left: 0;
+        /* Initially invisible, scaling down */
+        opacity: 0;
+        transform: scale(0.7);
+        pointer-events: none;
+        transition: color 0.3s ease, filter 0.3s ease, opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-mailbox-mobile.visible-mailbox {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+    }
+}
+
+/* Discord copy trigger inside success card */
+.discord-success-btn {
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px dashed rgba(255, 77, 77, 0.4);
+    transition: var(--transition-fast);
+    display: inline-block;
+}
+.discord-success-btn:hover {
+    color: var(--accent-hover);
+    border-bottom-color: var(--accent-hover);
+}
+
+/* Jet-stream motion trail */
+.paper-plane-trail {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 0px;
+    height: 2.2px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.42));
+    transform-origin: right center;
+    transform: translateY(-50%) rotate(0deg);
+    opacity: 0;
+    pointer-events: none;
+}
+.origami-clone-container.flying .paper-plane-trail {
+    opacity: 1;
+    animation: trail-stretch var(--fly-duration) ease-out forwards;
+}
+@keyframes trail-stretch {
+    0% { width: 0px; opacity: 0; }
+    15% { width: 45px; opacity: 1; }
+    85% { width: 75px; opacity: 0.7; }
+    100% { width: 0px; opacity: 0; }
+}

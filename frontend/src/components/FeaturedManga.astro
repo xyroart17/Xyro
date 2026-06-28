@@ -1,0 +1,128 @@
+---
+import { client, urlFor } from "../utils/sanity.js";
+import "../styles/featuredManga.css";
+
+// Fetch only featured manga sorted by order
+const mangaList = await client.fetch(`
+    *[_type == "manga" && featured == true] | order(order asc) {
+        title,
+        slug,
+        subtitle,
+        coverImage,
+        genre,
+        status,
+        tag,
+        "pages": pages[].asset->url,
+        "pageCount": count(pages)
+    }
+`);
+---
+
+{mangaList && mangaList.length > 0 && (
+    <section class="featured-manga-section reveal" id="work">
+        <div class="section-inner">
+            <span class="section-label">Featured Manga</span>
+            <h2 class="section-title">
+                Original stories.<br />Crafted frame by frame.
+            </h2>
+            <div class="manga-grid">
+                {mangaList.map((manga: any, index: number) => (
+                    <a
+                        href={`/manga/${manga.slug?.current}`}
+                        class={`manga-card reveal reveal-d${(index % 3) + 1} ${index >= 2 ? 'manga-hidden' : ''}`}
+                        data-slug={manga.slug?.current}
+                        style="text-decoration: none; display: block;"
+                    >
+                        <div class="manga-card-inner">
+                            {manga.coverImage && manga.coverImage.asset ? (
+                                <img
+                                    src={urlFor(manga.coverImage)
+                                        .width(800)
+                                        .auto("format")
+                                        .url()}
+                                    alt={manga.coverImage.alt || manga.title}
+                                    class="manga-card-bg"
+                                    loading="lazy"
+                                />
+                            ) : (
+                                <div class="manga-card-bg" style="background:#111;" />
+                            )}
+                            
+                            <div class="manga-card-overlay">
+                                <span class="manga-card-tag">{manga.tag || manga.genre || "Manga"}</span>
+                                <h3 class="manga-card-title">{manga.title}</h3>
+                                <p class="manga-card-subtitle">{manga.subtitle}</p>
+                                <div class="manga-card-metadata">
+                                    <span>{manga.pageCount || 0} {manga.pageCount === 1 ? "Page" : "Pages"}</span>
+                                    <span class="meta-dot">•</span>
+                                    <span>{manga.status || "Ongoing"}</span>
+                                    <span class="meta-dot">•</span>
+                                    <span>{manga.pageCount <= 30 ? "Oneshot" : "Chapter"}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                ))}
+                
+                {mangaList.length === 1 && (
+                    <div class="manga-card coming-soon-card reveal reveal-d2">
+                        <div class="coming-soon-content">
+                            <span class="manga-genre">Upcoming</span>
+                            <h3 class="manga-title">More Manga</h3>
+                            <p class="manga-subtitle">New original stories are currently in development. Stay tuned!</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {mangaList.length >= 2 && (
+                <div class="manga-load-more-container" style="display: flex; justify-content: center; margin-top: 50px;">
+                    <button 
+                        id="mangaLoadMoreBtn" 
+                        class={`btn btn-outline ${mangaList.length === 2 ? 'disabled-coming' : ''}`} 
+                        style="min-width: 180px;"
+                        disabled={mangaList.length === 2}
+                    >
+                        {mangaList.length === 2 ? 'Coming More' : 'Load More'}
+                        {mangaList.length > 2 && (
+                            <span class="arrow-icon" style="margin-left: 8px; display: inline-block; transition: transform var(--transition-fast);">↓</span>
+                        )}
+                    </button>
+                </div>
+            )}
+        </div>
+    </section>
+)}
+
+<!-- Overlay reader removed in favor of dedicated page routing -->
+
+<script>
+    import { initMangaEngine } from "../scripts/mangaEngine.js";
+
+    function setupManga() {
+        initMangaEngine();
+
+        // MANGA LOAD MORE SCRIPT
+        const mangaLoadMoreBtn = document.getElementById("mangaLoadMoreBtn");
+        if (mangaLoadMoreBtn) {
+            mangaLoadMoreBtn.addEventListener("click", () => {
+                const hiddenManga = Array.from(
+                    document.querySelectorAll(".manga-card.manga-hidden")
+                );
+                const toShow = hiddenManga.slice(0, 2);
+                toShow.forEach((el) => {
+                    el.classList.remove("manga-hidden");
+                    el.classList.add("visible");
+                });
+                if (hiddenManga.length <= 2) {
+                    mangaLoadMoreBtn.classList.add("disabled-coming");
+                    mangaLoadMoreBtn.setAttribute("disabled", "true");
+                    mangaLoadMoreBtn.innerHTML = "Coming More";
+                }
+            });
+        }
+    }
+
+    // Support Astro SPA transition navigation
+    document.addEventListener("astro:page-load", setupManga);
+</script>

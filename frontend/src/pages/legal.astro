@@ -1,0 +1,945 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "../styles/global.css";
+import "../styles/legal.css";
+import LegalNavigation from "../components/LegalNavigation.astro";
+import LegalSection from "../components/LegalSection.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Legal Center — StudioA4</title>
+        <meta
+            name="description"
+            content="Privacy Policy, Terms of Service, and Commission Guide for StudioA4. Everything you need to know before working with us."
+        />
+        <link rel="canonical" href="https://studioa4.com/legal" />
+        <meta property="og:title" content="Legal Center — StudioA4" />
+        <meta
+            property="og:description"
+            content="Privacy Policy, Terms of Service, and Commission Guide for StudioA4."
+        />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+
+        <ClientRouter />
+
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Syne:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <Navbar />
+
+        <!-- LEGAL PAGE -->
+        <main class="legal-page">
+            <!-- HEADER -->
+            <header class="legal-header">
+                <a href="/#contact" id="legalBackLink" class="legal-back-link">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M19 12H5"></path>
+                        <path d="M12 19l-7-7 7-7"></path>
+                    </svg>
+                    Back to Studio
+                </a>
+                <h1 class="legal-header-title">Legal Center</h1>
+                <p class="legal-header-subtitle">
+                    Everything you need to know before working with StudioA4.
+                </p>
+                <nav class="legal-quick-nav" aria-label="Jump to section">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#commissions">Commission Guide</a>
+                </nav>
+            </header>
+
+            <!-- MOBILE STICKY NAV (rendered from component, shown only on mobile) -->
+            <div
+                class="legal-mobile-nav"
+                role="navigation"
+                aria-label="Legal page sections"
+            >
+                <div class="legal-mobile-nav-inner">
+                    <a href="#privacy">Privacy</a>
+                    <a href="#terms">Terms</a>
+                    <a href="#commissions">Commission Guide</a>
+                </div>
+            </div>
+
+            <!-- CONTENT LAYOUT -->
+            <div class="legal-layout">
+                <!-- Sidebar (desktop only) -->
+                <LegalNavigation />
+
+                <!-- Main Content -->
+                <div class="legal-content">
+                    <!-- ============================================== -->
+                    <!-- PRIVACY POLICY                                 -->
+                    <!-- ============================================== -->
+                    <LegalSection id="privacy" title="Privacy Policy">
+                        <p>
+                            StudioA4 ("we," "us," or "our") operates the
+                            StudioA4 website and provides creative services
+                            including manga production, character design, 3D
+                            art, and visual development. This Privacy Policy
+                            explains how we collect, use, and protect your
+                            information when you interact with our website or
+                            services.
+                        </p>
+
+                        <h3>Information We Collect</h3>
+                        <p>
+                            We may collect the following types of information
+                            when you use our website or contact us:
+                        </p>
+                        <ul>
+                            <li>
+                                <strong>Contact form submissions</strong> — Your name,
+                                email address, and message content when you use our
+                                contact or commission inquiry form.
+                            </li>
+                            <li>
+                                <strong>Email communication</strong> — Information
+                                you share through direct email correspondence with
+                                us at studio.a4global@gmail.com.
+                            </li>
+                            <li>
+                                <strong>Commission inquiries</strong> — Project descriptions,
+                                reference materials, creative briefs, and any files
+                                you upload or share during the commission process.
+                            </li>
+                            <li>
+                                <strong>Project information</strong> — Details about
+                                your project including scope, timelines, and feedback
+                                shared during our collaboration.
+                            </li>
+                        </ul>
+
+                        <h3>How We Use Your Information</h3>
+                        <p>We use the information we collect to:</p>
+                        <ul>
+                            <li>
+                                Respond to your inquiries and commission
+                                requests.
+                            </li>
+                            <li>
+                                Provide, manage, and deliver creative services
+                                you have requested.
+                            </li>
+                            <li>
+                                Communicate project updates, quotes, and
+                                delivery milestones.
+                            </li>
+                            <li>
+                                Improve our website and the quality of our
+                                services.
+                            </li>
+                        </ul>
+                        <p>
+                            We do not sell, rent, or share your personal
+                            information with third parties for marketing
+                            purposes.
+                        </p>
+
+                        <h3>How Data Is Stored</h3>
+                        <p>
+                            StudioA4 is a small independent creative studio. We
+                            do not maintain large-scale personal databases.
+                            Information you provide is stored securely using the
+                            following infrastructure:
+                        </p>
+                        <ul>
+                            <li>
+                                Contact form submissions are delivered directly
+                                to our email inbox.
+                            </li>
+                            <li>
+                                Project files and communication are stored in
+                                secure, password-protected cloud services.
+                            </li>
+                            <li>
+                                Our website content is managed through Sanity
+                                CMS, which stores only publicly displayed
+                                portfolio content — not your personal data.
+                            </li>
+                        </ul>
+
+                        <h3>Third-Party Services</h3>
+                        <p>
+                            Our website relies on the following third-party
+                            services:
+                        </p>
+                        <ul>
+                            <li>
+                                <strong>Cloudflare</strong> — Provides CDN, DNS, and
+                                security services. Cloudflare may process request
+                                metadata (IP address, browser information) for performance
+                                and security purposes. See <a
+                                    href="https://www.cloudflare.com/privacypolicy/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    >Cloudflare's Privacy Policy</a
+                                >.
+                            </li>
+                            <li>
+                                <strong>Sanity CMS</strong> — Our content management
+                                system for portfolio content. Sanity does not store
+                                visitor data. See <a
+                                    href="https://www.sanity.io/legal/privacy"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    >Sanity's Privacy Policy</a
+                                >.
+                            </li>
+                            <li>
+                                <strong>Website hosting</strong> — Our site is hosted
+                                on modern web infrastructure with HTTPS encryption
+                                on all pages.
+                            </li>
+                        </ul>
+
+                        <h3>Cookies</h3>
+                        <p>
+                            Our website uses minimal cookies. We do not use
+                            advertising or tracking cookies. Essential cookies
+                            may be set by our hosting provider or CDN
+                            (Cloudflare) for security and performance purposes.
+                            These are necessary for the website to function and
+                            cannot be disabled.
+                        </p>
+
+                        <h3>Security</h3>
+                        <p>
+                            We take reasonable measures to protect your
+                            information from unauthorized access, disclosure, or
+                            destruction. All pages on our website are served
+                            over HTTPS. Project files shared during commissions
+                            are stored in secure, access-controlled environments
+                            and are deleted upon project completion unless
+                            otherwise agreed upon.
+                        </p>
+
+                        <h3>Your Rights</h3>
+                        <p>You have the right to:</p>
+                        <ul>
+                            <li>
+                                Request access to any personal information we
+                                hold about you.
+                            </li>
+                            <li>
+                                Request correction of inaccurate information.
+                            </li>
+                            <li>
+                                Request deletion of your personal data from our
+                                records.
+                            </li>
+                            <li>
+                                Withdraw consent for future communications at
+                                any time.
+                            </li>
+                        </ul>
+                        <p>
+                            To exercise any of these rights, please contact us
+                            at
+                            <a href="mailto:studio.a4global@gmail.com"
+                                >studio.a4global@gmail.com</a
+                            >. We will respond to all data requests within 30
+                            days.
+                        </p>
+
+                        <h3>Changes to This Policy</h3>
+                        <p>
+                            We may update this Privacy Policy from time to time.
+                            Changes will be reflected on this page with an
+                            updated "Last updated" date. We encourage you to
+                            review this page periodically.
+                        </p>
+
+                        <h3>Contact</h3>
+                        <p>
+                            If you have questions about this Privacy Policy or
+                            your data, please reach out:
+                        </p>
+                        <a
+                            href="mailto:studio.a4global@gmail.com"
+                            class="legal-contact-email"
+                        >
+                            ✉ studio.a4global@gmail.com
+                        </a>
+                    </LegalSection>
+
+                    <!-- ============================================== -->
+                    <!-- TERMS OF SERVICE                                -->
+                    <!-- ============================================== -->
+                    <LegalSection id="terms" title="Terms of Service">
+                        <p>
+                            These Terms of Service ("Terms") govern your use of
+                            the StudioA4 website and any creative services
+                            provided by StudioA4. By accessing our website or
+                            engaging our services, you agree to these Terms.
+                        </p>
+
+                        <h3>Scope of Services</h3>
+                        <p>
+                            StudioA4 is an independent creative studio offering
+                            services including, but not limited to: manga
+                            production, character design, 3D art and modeling,
+                            visual development, concept art, illustration, and
+                            motion design. The specific scope of any project is
+                            defined through individual commission agreements
+                            between StudioA4 and the client.
+                        </p>
+
+                        <h3>Commission Process</h3>
+                        <p>
+                            All projects begin with a commission inquiry
+                            submitted through our contact form, email, or
+                            approved communication channels. Upon receiving your
+                            inquiry:
+                        </p>
+                        <ul>
+                            <li>
+                                <strong>Quote</strong> — We will review your project
+                                details and provide a custom quote including scope,
+                                timeline estimate, and pricing.
+                            </li>
+                            <li>
+                                <strong>Acceptance</strong> — A project is considered
+                                accepted only after both parties agree on the scope,
+                                pricing, and timeline in writing (email confirmation
+                                is sufficient).
+                            </li>
+                            <li>
+                                <strong>Timeline estimates</strong> — All timelines
+                                are estimates and may vary based on project complexity,
+                                revision cycles, and current workload. We will communicate
+                                any significant delays promptly.
+                            </li>
+                        </ul>
+
+                        <h3>Client Responsibilities</h3>
+                        <p>
+                            To ensure smooth project delivery, clients are
+                            expected to:
+                        </p>
+                        <ul>
+                            <li>
+                                Provide clear, detailed creative briefs and
+                                reference materials at the start of the project.
+                            </li>
+                            <li>
+                                Respond to communications and approval requests
+                                in a timely manner.
+                            </li>
+                            <li>
+                                Provide all necessary assets, information, and
+                                feedback required for the project.
+                            </li>
+                            <li>
+                                Review and approve deliverables within the
+                                agreed revision cycle.
+                            </li>
+                        </ul>
+                        <p>
+                            Delays caused by late client responses may impact
+                            the project timeline and are not the responsibility
+                            of StudioA4.
+                        </p>
+
+                        <h3>Intellectual Property</h3>
+                        <p>
+                            Unless otherwise agreed upon in writing, the
+                            following intellectual property terms apply:
+                        </p>
+                        <ul>
+                            <li>
+                                Upon full payment, the client receives usage
+                                rights to the final delivered artwork for the
+                                agreed-upon purpose.
+                            </li>
+                            <li>
+                                StudioA4 retains the right to display completed
+                                work in our portfolio, website, and social media
+                                unless a non-disclosure agreement (NDA) is in
+                                place.
+                            </li>
+                            <li>
+                                Source files (e.g., PSD, Blender, project files)
+                                are not included by default and may be available
+                                for an additional fee if agreed upon before
+                                project start.
+                            </li>
+                            <li>
+                                Unauthorized reproduction, resale, or
+                                redistribution of artwork without permission is
+                                prohibited.
+                            </li>
+                        </ul>
+
+                        <h3>Payment</h3>
+                        <p>
+                            Payment terms are agreed upon before project
+                            commencement. Standard terms include:
+                        </p>
+                        <ul>
+                            <li>
+                                A deposit (typically 30–50%) is required before
+                                work begins on most projects.
+                            </li>
+                            <li>
+                                The remaining balance is due upon delivery of
+                                the final artwork.
+                            </li>
+                            <li>
+                                Payment methods and currency will be agreed upon
+                                during the quote process.
+                            </li>
+                            <li>
+                                All prices quoted are exclusive of any
+                                applicable taxes unless stated otherwise.
+                            </li>
+                        </ul>
+
+                        <h3>Revisions</h3>
+                        <p>
+                            Each project includes a reasonable number of
+                            revisions as outlined in the project agreement
+                            (typically 2–3 rounds). Additional revisions beyond
+                            the agreed scope may incur extra charges, which will
+                            be communicated before any additional work begins.
+                        </p>
+                        <p>
+                            Major scope changes requested after production has
+                            begun (e.g., complete redesign, significant concept
+                            changes) may be treated as a new project or require
+                            an adjusted quote.
+                        </p>
+
+                        <h3>Cancellation & Refunds</h3>
+                        <ul>
+                            <li>
+                                <strong>Client cancellation</strong> — If you cancel
+                                a project after work has begun, you are responsible
+                                for payment for all work completed up to the cancellation
+                                date. Deposits are non-refundable once production
+                                has started.
+                            </li>
+                            <li>
+                                <strong>Studio cancellation</strong> — In the unlikely
+                                event that StudioA4 cancels a project, we will refund
+                                any payments for undelivered work in full.
+                            </li>
+                            <li>
+                                <strong>Refund eligibility</strong> — Refunds are
+                                evaluated on a case-by-case basis. Completed and delivered
+                                work is not eligible for refund.
+                            </li>
+                        </ul>
+
+                        <h3>Delivery</h3>
+                        <p>
+                            Final deliverables are provided in standard digital
+                            formats (PNG, JPEG, PDF, or other formats agreed
+                            upon). Files are delivered via email, cloud storage
+                            link, or other agreed-upon methods. It is the
+                            client's responsibility to download and securely
+                            store delivered files. StudioA4 retains backup
+                            copies for a reasonable period but is not
+                            responsible for long-term archival storage.
+                        </p>
+
+                        <h3>Limitation of Liability</h3>
+                        <p>
+                            StudioA4 provides creative services on an "as
+                            agreed" basis. We are not liable for any indirect,
+                            incidental, or consequential damages arising from
+                            the use of our services or deliverables. Our total
+                            liability for any claim related to a project shall
+                            not exceed the total amount paid by the client for
+                            that specific project.
+                        </p>
+
+                        <h3>Governing Law</h3>
+                        <p>
+                            These Terms are governed by applicable laws. Any
+                            disputes arising from these Terms or our services
+                            will be resolved through good-faith negotiation
+                            between both parties. If a resolution cannot be
+                            reached, disputes will be subject to the
+                            jurisdiction of the courts in the applicable legal
+                            jurisdiction.
+                        </p>
+
+                        <h3>Changes to These Terms</h3>
+                        <p>
+                            We reserve the right to update these Terms at any
+                            time. Changes take effect upon posting to this page.
+                            Continued use of our website or services after
+                            changes constitutes acceptance of the revised Terms.
+                        </p>
+
+                        <h3>Contact</h3>
+                        <p>
+                            For questions about these Terms of Service, please
+                            contact us:
+                        </p>
+                        <a
+                            href="mailto:studio.a4global@gmail.com"
+                            class="legal-contact-email"
+                        >
+                            ✉ studio.a4global@gmail.com
+                        </a>
+                    </LegalSection>
+
+                    <!-- ============================================== -->
+                    <!-- COMMISSION GUIDE                                -->
+                    <!-- ============================================== -->
+                    <LegalSection id="commissions" title="Commission Guide">
+                        <p>
+                            Working with StudioA4 is straightforward. Whether
+                            you need character designs, manga pages, 3D renders,
+                            or concept art — here's exactly how the process
+                            works from start to finish.
+                        </p>
+
+                        <h3>How It Works</h3>
+                        <div class="legal-steps">
+                            <div class="legal-step">
+                                <div class="legal-step-number">01</div>
+                                <div class="legal-step-content">
+                                    <h4>Tell us your idea</h4>
+                                    <p>
+                                        Reach out through our contact form,
+                                        email, or Discord with a description of
+                                        your project. The more detail you
+                                        provide, the faster we can get started.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-step">
+                                <div class="legal-step-number">02</div>
+                                <div class="legal-step-content">
+                                    <h4>Receive a quote</h4>
+                                    <p>
+                                        We'll review your request and send you a
+                                        detailed quote with pricing, timeline
+                                        estimate, and scope breakdown — usually
+                                        within 24–48 hours.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-step">
+                                <div class="legal-step-number">03</div>
+                                <div class="legal-step-content">
+                                    <h4>Approve the concept</h4>
+                                    <p>
+                                        Once we agree on terms, we'll begin with
+                                        initial concepts or sketches for your
+                                        approval before moving to full
+                                        production.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-step">
+                                <div class="legal-step-number">04</div>
+                                <div class="legal-step-content">
+                                    <h4>Production begins</h4>
+                                    <p>
+                                        After concept approval, we dive into
+                                        full production. You'll receive progress
+                                        updates at key milestones.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-step">
+                                <div class="legal-step-number">05</div>
+                                <div class="legal-step-content">
+                                    <h4>Review & revisions</h4>
+                                    <p>
+                                        You'll review the work and provide
+                                        feedback. Each project includes 2–3
+                                        revision rounds to make sure everything
+                                        is exactly right.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-step">
+                                <div class="legal-step-number">06</div>
+                                <div class="legal-step-content">
+                                    <h4>Final delivery</h4>
+                                    <p>
+                                        Once approved, we deliver the final
+                                        files in your preferred format. Payment
+                                        for the remaining balance is due at this
+                                        stage.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>What to Expect</h3>
+                        <div class="legal-info-grid">
+                            <div class="legal-info-card">
+                                <h4>Response Time</h4>
+                                <p>
+                                    We typically respond to new inquiries within
+                                    24–48 hours. During busy periods, it may
+                                    take slightly longer — but we always reply.
+                                </p>
+                            </div>
+                            <div class="legal-info-card">
+                                <h4>Project Timeline</h4>
+                                <p>
+                                    Delivery time depends on project complexity.
+                                    Simple character designs may take 1–2 weeks,
+                                    while larger projects like manga chapters
+                                    may take several weeks.
+                                </p>
+                            </div>
+                            <div class="legal-info-card">
+                                <h4>Revisions</h4>
+                                <p>
+                                    Each project includes 2–3 rounds of
+                                    revisions. Major scope changes after
+                                    production starts may require an updated
+                                    quote.
+                                </p>
+                            </div>
+                            <div class="legal-info-card">
+                                <h4>Delivery Format</h4>
+                                <p>
+                                    Final files are delivered in high-resolution
+                                    digital formats (PNG, JPEG, PDF). Source
+                                    files are available upon request for an
+                                    additional fee.
+                                </p>
+                            </div>
+                        </div>
+
+                        <h3>Communication Channels</h3>
+                        <p>
+                            You can reach StudioA4 through any of the following:
+                        </p>
+                        <ul>
+                            <li>
+                                <strong>Email</strong> — <a
+                                    href="mailto:studio.a4global@gmail.com"
+                                    >studio.a4global@gmail.com</a
+                                > (preferred for formal inquiries)
+                            </li>
+                            <li>
+                                <strong>Discord</strong> — xyro.3d (great for quick
+                                questions and project updates)
+                            </li>
+                            <li>
+                                <strong>Instagram</strong> — <a
+                                    href="https://www.instagram.com/xyro.3d/"
+                                    target="_blank"
+                                    rel="noopener noreferrer">xyro.3d</a
+                                > (DMs welcome for initial inquiries)
+                            </li>
+                        </ul>
+                        <p>
+                            For active projects, we'll agree on a primary
+                            communication channel that works best for both
+                            sides.
+                        </p>
+
+                        <h3>What You'll Receive</h3>
+                        <ul>
+                            <li>
+                                High-resolution final artwork in agreed-upon
+                                formats.
+                            </li>
+                            <li>
+                                Progress updates at key milestones throughout
+                                the project.
+                            </li>
+                            <li>
+                                Clear communication about timelines, revisions,
+                                and any changes.
+                            </li>
+                            <li>
+                                A professional, collaborative experience from
+                                start to finish.
+                            </li>
+                        </ul>
+
+                        <h3>How to Prepare</h3>
+                        <p>
+                            Before reaching out, it helps to have the following
+                            ready:
+                        </p>
+                        <ul>
+                            <li>
+                                A clear description of what you need (character
+                                design, manga pages, illustration, etc.).
+                            </li>
+                            <li>
+                                Reference images or mood boards for the style or
+                                look you're going for.
+                            </li>
+                            <li>
+                                Any specific requirements (dimensions, format,
+                                deadline).
+                            </li>
+                            <li>Your budget range, if you have one in mind.</li>
+                        </ul>
+                        <p>
+                            Don't worry if you don't have everything figured out
+                            — we're happy to help shape the idea with you.
+                        </p>
+
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="legal-faq">
+                            <div class="legal-faq-item">
+                                <button
+                                    class="legal-faq-question"
+                                    aria-expanded="false"
+                                >
+                                    <span>How much does a commission cost?</span
+                                    >
+                                    <svg
+                                        class="legal-faq-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="5" x2="12" y2="19"
+                                        ></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"
+                                        ></line>
+                                    </svg>
+                                </button>
+                                <div class="legal-faq-answer">
+                                    <p>
+                                        Pricing varies depending on the type of
+                                        project, complexity, and scope. We
+                                        provide custom quotes for every inquiry
+                                        — just reach out with your idea and
+                                        we'll give you a clear breakdown.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-faq-item">
+                                <button
+                                    class="legal-faq-question"
+                                    aria-expanded="false"
+                                >
+                                    <span>Do you take rush orders?</span>
+                                    <svg
+                                        class="legal-faq-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="5" x2="12" y2="19"
+                                        ></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"
+                                        ></line>
+                                    </svg>
+                                </button>
+                                <div class="legal-faq-answer">
+                                    <p>
+                                        In some cases, yes. Rush orders are
+                                        subject to availability and may incur an
+                                        additional fee. Let us know your
+                                        deadline when you reach out and we'll do
+                                        our best to accommodate.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-faq-item">
+                                <button
+                                    class="legal-faq-question"
+                                    aria-expanded="false"
+                                >
+                                    <span
+                                        >Can I use the artwork commercially?</span
+                                    >
+                                    <svg
+                                        class="legal-faq-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="5" x2="12" y2="19"
+                                        ></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"
+                                        ></line>
+                                    </svg>
+                                </button>
+                                <div class="legal-faq-answer">
+                                    <p>
+                                        Commercial usage rights can be included
+                                        in your commission. Just let us know how
+                                        you plan to use the artwork when you
+                                        reach out, and we'll include the
+                                        appropriate licensing in your quote.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-faq-item">
+                                <button
+                                    class="legal-faq-question"
+                                    aria-expanded="false"
+                                >
+                                    <span
+                                        >What payment methods do you accept?</span
+                                    >
+                                    <svg
+                                        class="legal-faq-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="5" x2="12" y2="19"
+                                        ></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"
+                                        ></line>
+                                    </svg>
+                                </button>
+                                <div class="legal-faq-answer">
+                                    <p>
+                                        We accept various payment methods
+                                        including bank transfer and digital
+                                        payment platforms. Specific options will
+                                        be shared during the quoting process
+                                        based on your location.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-faq-item">
+                                <button
+                                    class="legal-faq-question"
+                                    aria-expanded="false"
+                                >
+                                    <span
+                                        >What if I'm not satisfied with the
+                                        result?</span
+                                    >
+                                    <svg
+                                        class="legal-faq-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="5" x2="12" y2="19"
+                                        ></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"
+                                        ></line>
+                                    </svg>
+                                </button>
+                                <div class="legal-faq-answer">
+                                    <p>
+                                        Client satisfaction is our priority.
+                                        Every project includes revision rounds
+                                        to ensure the result matches your
+                                        vision. We work closely with you
+                                        throughout the process to avoid
+                                        surprises.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="legal-faq-item">
+                                <button
+                                    class="legal-faq-question"
+                                    aria-expanded="false"
+                                >
+                                    <span>Do you work with NDAs?</span>
+                                    <svg
+                                        class="legal-faq-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <line x1="12" y1="5" x2="12" y2="19"
+                                        ></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"
+                                        ></line>
+                                    </svg>
+                                </button>
+                                <div class="legal-faq-answer">
+                                    <p>
+                                        Absolutely. If your project requires
+                                        confidentiality, we're happy to sign an
+                                        NDA before any details are shared. Just
+                                        let us know when you reach out.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>Ready to Start?</h3>
+                        <p>
+                            Have a project in mind? We'd love to hear about it.
+                            Reach out and let's create something amazing
+                            together.
+                        </p>
+                        <a
+                            href="mailto:studio.a4global@gmail.com"
+                            class="legal-contact-email"
+                        >
+                            ✉ Get in Touch
+                        </a>
+                    </LegalSection>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER (matches index page) -->
+        <Footer />
+        <script src="../scripts/legalNavigation.js"></script>
+    </body>
+</html>

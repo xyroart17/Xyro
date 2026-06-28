@@ -38,5 +38,12 @@ export default {
       to: [{ type: 'project' }],
       description: 'Select the project this review is for to display a "Preview Work" link.',
     },
+    {
+      name: 'mangaRef',
+      title: 'Associated Manga',
+      type: 'reference',
+      to: [{ type: 'manga' }],
+      description: 'Select the manga this review is for to display a "Preview Work" link.',
+    },
   ],
 }

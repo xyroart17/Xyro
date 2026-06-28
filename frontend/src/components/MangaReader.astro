@@ -1,0 +1,192 @@
+---
+import type { Manga } from "../utils/manga";
+import "../styles/mangaReader.css";
+
+interface Props {
+  manga: Manga;
+  nextManga?: any;
+  isOnlyManga?: boolean;
+}
+
+const { manga, nextManga, isOnlyManga } = Astro.props;
+---
+
+<div class="manga-reader-page" id="mangaReaderData" data-page-count={manga.pageCount}>
+    <!-- Sticky Top Navigation -->
+    <header class="reader-header">
+        <a href="/#work" class="reader-back">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back to Work
+        </a>
+        
+        <h1 class="reader-title">{manga.title}</h1>
+        
+        <div class="reader-header-right">
+            <a href="/#contact" class="nav-commission-btn" aria-label="Commissions" style="margin-right: 15px;">
+                <span class="commission-icon-wrap" style="margin: 0; width: 24px; height: 24px;">
+                    <svg class="commission-star-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="38" fill="#0d0d0f" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
+                        <path class="commission-motion-arc" d="M 28 35 A 25 25 0 0 1 72 35" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 8" fill="none" />
+                        <path class="commission-motion-arc" d="M 72 65 A 25 25 0 0 1 28 65" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 8" fill="none" />
+                        <path class="commission-orbit" d="M 52 14 C 78 10, 96 32, 90 60 C 85 78, 62 88, 42 86 C 26 84, 14 74, 18 62" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" fill="none" />
+                        <path class="commission-star" d="M 50 20 Q 45 45 25 50 Q 45 55 50 80 Q 55 55 75 50 Q 55 45 50 20 Z" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round" />
+                    </svg>
+                </span>
+            </a>
+            <span class="reader-header-counter">1 / {manga.pageCount}</span>
+            <button class="reader-settings-btn" aria-label="Reading settings">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Settings dropdown -->
+        <div class="settings-dropdown">
+            <h4>Reader Spacing</h4>
+            <div class="settings-option">
+                <label for="spacingSelect">Page Gap</label>
+                <select id="spacingSelect">
+                    <option value="none" selected>No Gap</option>
+                    <option value="sm">Small</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Reading Area Stack -->
+    <main class="reader-content gap-none">
+        {manga.pages.map((url, index) => (
+            <div 
+                class="manga-page-wrapper" 
+                data-page-number={index + 1}
+                data-src={url}
+            >
+                <!-- Subtle Skeleton Loader -->
+                <div class="page-loader-skeleton"></div>
+                <!-- Lazy image loaded via JS -->
+                <img 
+                    alt={`Page ${index + 1} of ${manga.pageCount} - ${manga.title}`}
+                    class="manga-page-img"
+                />
+            </div>
+        ))}
+
+        <div class="manga-end-section">
+            {nextManga ? (
+                <div class="end-action-box">
+                    <span class="end-label">You've finished reading</span>
+                    <h3 class="end-title">{manga.title}</h3>
+                    
+                    {manga.socialLinks && manga.socialLinks.length > 0 && (
+                        <div class="manga-social-links">
+                            {manga.socialLinks.map((link: any) => (
+                                <a href={link.url} target="_blank" rel="noopener noreferrer" class="manga-social-btn">
+                                    View on {link.platform} ↗
+                                </a>
+                            ))}
+                        </div>
+                    )}
+                    
+                    <div class="end-button-row">
+                        {manga.wip && manga.wip.length > 0 && (
+                            <button id="toggleWipBtn" class="btn btn-outline end-btn">
+                                Show WIP
+                            </button>
+                        )}
+                        <a href={`/manga/${nextManga.slug.current}`} class="btn btn-primary end-btn">
+                            Read Next Manga: {nextManga.title} →
+                        </a>
+                    </div>
+                </div>
+            ) : (
+                <div class="end-action-box final-manga">
+                    <span class="end-label">The End</span>
+                    <h3 class="end-title">{manga.title}</h3>
+                    
+                    {manga.socialLinks && manga.socialLinks.length > 0 && (
+                        <div class="manga-social-links">
+                            {manga.socialLinks.map((link: any) => (
+                                <a href={link.url} target="_blank" rel="noopener noreferrer" class="manga-social-btn">
+                                    View on {link.platform} ↗
+                                </a>
+                            ))}
+                        </div>
+                    )}
+                    
+                    <div class="end-button-row">
+                        {manga.wip && manga.wip.length > 0 && (
+                            <button id="toggleWipBtn" class="btn btn-outline end-btn">
+                                Show WIP
+                            </button>
+                        )}
+                        <a href="/#selected-projects" class="btn btn-outline end-btn">
+                            Go to Recent Work
+                        </a>
+                    </div>
+                </div>
+            )}
+
+            {manga.wip && manga.wip.length > 0 && (
+                <div id="wipSection" class="wip-collapse-section">
+                    <h4 class="wip-heading">Work in Progress</h4>
+                    <div class="wip-masonry-manga">
+                        {manga.wip.map((wipUrl, idx) => (
+                            <div class="wip-img-frame">
+                                <img src={wipUrl} alt={`WIP Image ${idx + 1} - ${manga.title}`} loading="lazy" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+
+        <footer class="manga-cta-footer" style="text-align: center; padding: 100px 20px 60px; border-top: 1px dashed rgba(255, 255, 255, 0.08); width: 100%; max-width: 800px; margin: 60px auto 0; background: transparent !important;">
+            <h2 style="font-family: 'Syne', sans-serif; font-size: 2.2rem; margin-bottom: 30px; color: #fff; letter-spacing: -0.01em;">Ready to start your project?</h2>
+            <a href="/#contact" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 36px; background: #ff4d4d; color: #fff; border-radius: 50px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; transition: background 0.3s ease; border: 1px solid transparent;">
+                Work With Us &rarr;
+            </a>
+        </footer>
+    </main>
+
+    <!-- Floating Bottom Navigation -->
+    <nav class="reader-controls">
+        <button class="reader-control-btn disabled" id="readerBtnPrev" disabled aria-label="Previous page">
+            <svg viewBox="0 0 24 24">
+                <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        <span class="reader-controls-counter">1 / {manga.pageCount}</span>
+        <button class="reader-control-btn" id="readerBtnNext" aria-label="Next page">
+            <svg viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </nav>
+</div>
+
+<script>
+    import { initMangaReader } from "../scripts/mangaReader.js";
+
+    function startReader() {
+        const dataEl = document.getElementById("mangaReaderData");
+        if (dataEl) {
+            // Apply body styling class
+            document.body.classList.add("manga-reader-active");
+
+            const pageCount = parseInt(dataEl.dataset.pageCount || "1", 10);
+            initMangaReader(pageCount);
+        }
+    }
+
+    // Cleanup class on page transitions
+    function cleanupReader() {
+        document.body.classList.remove("manga-reader-active");
+    }
+
+    document.addEventListener("astro:page-load", startReader);
+    document.addEventListener("astro:after-swap", cleanupReader);
+</script>

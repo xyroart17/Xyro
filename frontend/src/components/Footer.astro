@@ -1,0 +1,138 @@
+---
+import { navItems, getHref } from "../utils/navigation.ts";
+
+interface Props {
+    isHomepage?: boolean;
+}
+
+const { isHomepage = false } = Astro.props;
+---
+
+<footer class="footer" id="footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <img
+                src="/favicon.svg"
+                alt="Studio A4 Logo"
+                style="margin-top: 12px; line-height: 1.7;"
+            />
+            <p>
+                A creative studio crafting bold visual experiences for ambitious
+                projects worldwide.
+            </p>
+
+            <p class="footer-contact-label">✉ Contact Studio</p>
+            <button
+                id="copyEmailBtn"
+                class="social-btn"
+                style="cursor: pointer; border: 1px solid rgba(255, 77, 77, 0.25); background: transparent; color: #ff4d4d; border-radius: 50px; padding: 10px 20px; font-family: 'DM Sans';"
+            >
+                studio.a4global@gmail.com
+            </button>
+            <p class="footer-response-hint">
+                Usually replies within 24–48 hours.
+            </p>
+        </div>
+        <div class="footer-links">
+            <h4>Navigation</h4>
+            {
+                navItems.map((item) => (
+                    <a href={getHref(item, isHomepage)}>{item.label}</a>
+                ))
+            }
+        </div>
+        <div class="footer-links">
+            <h4>Socials</h4>
+            <a
+                href="https://www.instagram.com/xyro.3d/"
+                target="_blank"
+                rel="noopener noreferrer">Instagram</a
+            >
+            <a
+                href="https://x.com/Aman67804627885"
+                target="_blank"
+                rel="noopener noreferrer">X / Twitter</a
+            >
+            <a
+                href="https://www.reddit.com/user/Professional-Lake843/"
+                target="_blank"
+                rel="noopener noreferrer">Reddit</a
+            >
+            <button id="discordCopyBtn" class="footer-discord-btn">
+                Discord
+            </button>
+        </div>
+        <div class="footer-links">
+            <h4>Portfolios</h4>
+            <a
+                href="https://www.artstation.com/aman_xyro"
+                target="_blank"
+                rel="noopener noreferrer">ArtStation</a
+            >
+            <a
+                href="https://www.deviantart.com/aman2189"
+                target="_blank"
+                rel="noopener noreferrer">DeviantArt</a
+            >
+            <a
+                href="https://pin.it/1EkhjFukQ"
+                target="_blank"
+                rel="noopener noreferrer">Pinterest</a
+            >
+        </div>
+        <div class="footer-links">
+            <h4>Legal</h4>
+            <a href="/legal#privacy">Privacy Policy</a>
+            <a href="/legal#terms">Terms of Service</a>
+            <a href="/legal#commissions">Commission Guide</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2026 Studio A4.</span>
+        <span>All rights reserved.</span>
+        <div class="footer-legal-shortcuts">
+            <a href="/legal#privacy">Privacy</a>
+            <span class="footer-legal-dot">•</span>
+            <a href="/legal#terms">Terms</a>
+            <span class="footer-legal-dot">•</span>
+            <a href="/legal#commissions">Commission Guide</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        // COPY EMAIL SCRIPT
+        const copyEmailBtn = document.getElementById("copyEmailBtn");
+        copyEmailBtn?.addEventListener("click", () => {
+            navigator.clipboard.writeText("studio.a4global@gmail.com");
+            const originalText = copyEmailBtn.innerText;
+            copyEmailBtn.innerText = "Copied!";
+            setTimeout(() => {
+                if (copyEmailBtn)
+                    copyEmailBtn.innerText = "studio.a4global@gmail.com";
+            }, 2000);
+        });
+
+        // COPY DISCORD SCRIPT
+        const discordCopyBtn = document.getElementById("discordCopyBtn");
+        discordCopyBtn?.addEventListener("click", () => {
+            navigator.clipboard
+                .writeText("xyro.3d")
+                .then(() => {
+                    if (discordCopyBtn) {
+                        discordCopyBtn.innerText = "xyro.3d (Copied!)";
+                        discordCopyBtn.style.color = "#ff4d4d";
+                        setTimeout(() => {
+                            discordCopyBtn.innerText = "Discord";
+                            discordCopyBtn.style.color = "";
+                        }, 3000);
+                    }
+                })
+                .catch((err) => {
+                    console.error("Could not copy Discord username: ", err);
+                    if (discordCopyBtn) discordCopyBtn.innerText = "xyro.3d";
+                });
+        });
+    });
+</script>

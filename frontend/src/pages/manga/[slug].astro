@@ -1,0 +1,69 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../../styles/global.css';
+import MangaReader from '../../components/MangaReader.astro';
+
+export async function getStaticPaths() {
+    const { client } = await import('../../utils/sanity.js');
+    const mangaList = await client.fetch(`*[_type == "manga" && featured == true] | order(order asc) {
+        title,
+        slug,
+        subtitle,
+        coverImage,
+        genre,
+        status,
+        tag,
+        socialLinks,
+        "pages": pages[].asset->url,
+        "pageCount": count(pages),
+        "wip": wip[].asset->url
+    }`);
+
+    const isOnlyManga = mangaList.length === 1;
+
+    return mangaList.map((manga: any, index: number) => {
+        const nextManga = index < mangaList.length - 1 ? {
+            title: mangaList[index + 1].title,
+            slug: mangaList[index + 1].slug
+        } : null;
+        return {
+            params: { slug: manga.slug.current },
+            props: { manga, nextManga, isOnlyManga }
+        };
+    });
+}
+
+interface Props {
+    manga: any;
+    nextManga: any;
+    isOnlyManga: boolean;
+}
+
+const { manga, nextManga, isOnlyManga } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{manga.title} — Studio A4</title>
+
+    <ClientRouter />
+
+    {/* --- SEO & OPEN GRAPH METADATA --- */}
+    <meta name="description" content={manga.subtitle || `Read ${manga.title} manga online at Studio A4.`} />
+    <meta property="og:title" content={`${manga.title} — Studio A4`} />
+    <meta property="og:description" content={manga.subtitle || `Read ${manga.title} manga online at Studio A4.`} />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <MangaReader manga={manga} nextManga={nextManga} isOnlyManga={isOnlyManga} />
+</body>
+</html>
