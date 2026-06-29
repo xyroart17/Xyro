@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
@@ -17,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
             );
         }
 
-        const resendApiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+        const resendApiKey = env.RESEND_API_KEY || import.meta.env.RESEND_API_KEY || (typeof process !== "undefined" ? process.env.RESEND_API_KEY : undefined);
 
         if (!resendApiKey) {
             console.error("Missing RESEND_API_KEY in environment variables.");
