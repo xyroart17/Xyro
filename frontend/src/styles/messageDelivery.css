@@ -48,38 +48,7 @@ body.interaction-locked textarea {
     box-shadow: 0 4px 15px rgba(255, 77, 77, 0.15) !important;
     transform: scale(0.98);
     background: var(--accent-hover) !important;
-}
-
-/* MAILBOX BASE STYLING (GSAP drives lid open/close and glow/bounce) */
-.nav-mailbox {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    margin-left: 12px;
-    color: var(--text-muted);
-    vertical-align: middle;
-    opacity: 0;
-    transform: scale(0.7);
-    pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.nav-mailbox.visible-mailbox {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
-}
-.mailbox-svg {
-    width: 20px;
-    height: 20px;
-    transform-style: preserve-3d;
-}
-.mailbox-door {
-    transform-origin: bottom center;
-}
-
-/* ORIGAMI CLONE CONTAINER (GSAP manages flight and scale/depth) */
+}/* ORIGAMI CLONE CONTAINER (GSAP manages flight and scale/depth) */
 .origami-clone-container {
     position: fixed;
     z-index: 10000;
@@ -127,29 +96,6 @@ body.interaction-locked textarea {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 77, 77, 0.25);
 }
-
-/* Mobile mailbox target (hidden on desktop) */
-.nav-mailbox-mobile {
-    display: none;
-}
-@media (max-width: 768px) {
-    .nav-mailbox-mobile {
-        display: inline-flex;
-        margin-right: 15px;
-        margin-left: 0;
-        opacity: 0;
-        transform: scale(0.7);
-        pointer-events: none;
-        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .nav-mailbox-mobile.visible-mailbox {
-        opacity: 1;
-        transform: scale(1);
-        pointer-events: auto;
-        margin-left: auto;
-    }
-}
-
 /* Discord copy button inside success card */
 .discord-success-btn {
     color: var(--accent);

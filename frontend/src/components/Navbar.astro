@@ -25,16 +25,6 @@ const { isHomepage = false } = Astro.props;
                                 {item.label}
                                 <span class="cta-arrow">→</span>
                             </a>
-                            <div class="nav-mailbox" id="navMailbox" aria-hidden="true" title="Mailbox">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="mailbox-svg">
-                                    <line x1="12" y1="18" x2="12" y2="22"></line>
-                                    <path d="M5 18h14V10a7 7 0 0 0-14 0v8z"></path>
-                                    <path d="M5 18h14v-2H5v2z" class="mailbox-door"></path>
-                                    <path d="M19 13h2v-4h-2" class="mailbox-flag"></path>
-                                    <!-- Success checkmark -->
-                                    <path d="M9 11l2 2 4-4" class="mailbox-checkmark" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0; transition: opacity 0.3s ease;"></path>
-                                </svg>
-                            </div>
                         </li>
                     );
                 }
@@ -49,17 +39,6 @@ const { isHomepage = false } = Astro.props;
         }
     </ul>
     
-    <!-- Mobile mailbox target next to hamburger (hidden on desktop) -->
-    <div class="nav-mailbox nav-mailbox-mobile" id="navMailboxMobile" aria-hidden="true" title="Mailbox">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="mailbox-svg">
-            <line x1="12" y1="18" x2="12" y2="22"></line>
-            <path d="M5 18h14V10a7 7 0 0 0-14 0v8z"></path>
-            <path d="M5 18h14v-2H5v2z" class="mailbox-door"></path>
-            <path d="M19 13h2v-4h-2" class="mailbox-flag"></path>
-            <!-- Success checkmark -->
-            <path d="M9 11l2 2 4-4" class="mailbox-checkmark" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0; transition: opacity 0.3s ease;"></path>
-        </svg>
-    </div>
     <button class="nav-hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
     </button>
