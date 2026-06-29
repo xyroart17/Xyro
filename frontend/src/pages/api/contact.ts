@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
             );
         }
 
-        const resendApiKey = env.RESEND_API_KEY || import.meta.env.RESEND_API_KEY || (typeof process !== "undefined" ? process.env.RESEND_API_KEY : undefined);
+        const resendApiKey = env.RESEND_API_KEY;
 
         if (!resendApiKey) {
             console.error("Missing RESEND_API_KEY in environment variables.");
