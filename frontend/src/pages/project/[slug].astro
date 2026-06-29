@@ -64,19 +64,25 @@ const validWipImages = project.wipImages?.filter((img: any) => img && img.asset 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{project.title} — Studio A4</title>
+    <title>{project.title} — Xyro</title>
 
     <ClientRouter />
 
     {/* --- NEW: SEO & OPEN GRAPH METADATA --- */}
-    <meta name="description" content={project.description ? project.description.substring(0, 150) + '...' : 'A creative project by Studio A4.'} />
-    <meta property="og:title" content={`${project.title} — Studio A4`} />
-    <meta property="og:description" content={project.description ? project.description.substring(0, 150) + '...' : 'A creative project by Studio A4.'} />
+    <meta name="description" content={project.description ? project.description.substring(0, 150) + '...' : 'A creative project by Xyro.'} />
+    <meta property="og:title" content={`${project.title} — Xyro`} />
+    <meta property="og:description" content={project.description ? project.description.substring(0, 150) + '...' : 'A creative project by Xyro.'} />
     <meta property="og:type" content="article" />
     {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
+    <link rel="shortcut icon" href="/favicon.ico?v=1">
+    <link rel="manifest" href="/site.webmanifest?v=1">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">

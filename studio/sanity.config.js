@@ -5,7 +5,7 @@ import {schemaTypes} from './schemaTypes'
 
 export default defineConfig({
   name: 'default',
-  title: 'Studio-A4',
+  title: 'Xyro',
 
   projectId: 'pfnvy1zn',
   dataset: 'production',

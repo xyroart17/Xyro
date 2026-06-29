@@ -1,5 +1,5 @@
 /**
- * StudioA4 Vertical Manga Reader Client Engine
+ * Xyro Vertical Manga Reader Client Engine
  * Implements high-performance intersection-based lazy loading, prefetching,
  * real-time page counter, auto-hiding top/bottom bars, and navigation shortcuts.
  */

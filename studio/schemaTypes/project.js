@@ -23,7 +23,7 @@ export default {
       name: 'subtitle', 
       title: 'Client / Category', 
       type: 'string',
-      description: 'e.g., Commission Work, Personal Project, Studio A4'
+      description: 'e.g., Commission Work, Personal Project, Xyro'
     },
     { name: 'projectNumber', title: 'Project Number', type: 'string', description: 'e.g., 01, 02, 03' },
     

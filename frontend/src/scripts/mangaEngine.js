@@ -1,5 +1,5 @@
 /**
- * StudioA4 Featured Manga Redirection Engine
+ * Xyro Featured Manga Redirection Engine
  * Redirects the user to the dedicated manga reader page on card click.
  */
 

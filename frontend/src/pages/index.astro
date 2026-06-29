@@ -31,7 +31,7 @@ const testimonials = await client.fetch(`
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>StudioA4</title>
+        <title>Xyro</title>
         <meta
             name="google-site-verification"
             content="30t-y6MKDG72H6ZYlWjdfTHhKnpLPTX3itd_-Iy454U"
@@ -42,21 +42,33 @@ const testimonials = await client.fetch(`
         <link
             rel="apple-touch-icon"
             sizes="180x180"
-            href="/apple-touch-icon.png"
+            href="/apple-touch-icon.png?v=1"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="48x48"
+            href="/favicon-48x48.png?v=1"
         />
         <link
             rel="icon"
             type="image/png"
             sizes="32x32"
-            href="/favicon-32x32.png"
+            href="/favicon-32x32.png?v=1"
         />
         <link
             rel="icon"
             type="image/png"
             sizes="16x16"
-            href="/favicon-16x16.png"
+            href="/favicon-16x16.png?v=1"
         />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="/favicon.svg?v=1"
+        />
+        <link rel="shortcut icon" href="/favicon.ico?v=1" />
+        <link rel="manifest" href="/site.webmanifest?v=1" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -113,15 +125,15 @@ const testimonials = await client.fetch(`
                 <div class="orb orb-2"></div>
             </div>
             <div class="hero-content">
-                <span class="hero-tag">● Creative Studio — Est. 2026</span>
+                <span class="hero-tag">● Independent Artist — Est. 2026</span>
                 <h1 class="hero-headline">
                     Visual<br />
                     <span class="italic">Storytelling</span>
                     <br /> Reimagined.
                 </h1>
                 <p class="hero-description">
-                    We specialize in manga production, character design, and
-                    cinematic illustrations. We create visually compelling
+                    I specialize in manga production, character design, and
+                    cinematic illustrations. I create visually compelling
                     worlds, characters, and stories that leave a lasting
                     impression.
                 </p>
@@ -159,7 +171,7 @@ const testimonials = await client.fetch(`
             <div class="section-inner">
                 <span class="section-label reveal">Selected Projects</span>
                 <h2 class="section-title reveal reveal-d1">
-                    Recent work we're<br />proud of.
+                    Recent work I'm<br />proud of.
                 </h2>
                 <div class="work-grid">
                     {
@@ -417,7 +429,7 @@ const testimonials = await client.fetch(`
                         <div class="about-img-wrap">
                             <img
                                 src="/assets/about-pic.jpg"
-                                alt="Studio A4 Creative Duo"
+                                alt="Xyro"
                                 class="about-portrait"
                             />
                         </div>
@@ -429,16 +441,16 @@ const testimonials = await client.fetch(`
                             Designing worlds<br />that feel alive.
                         </h2>
                         <p class="reveal reveal-d2">
-                            StudioA4 is an independent creative studio focused
+                            Xyro is my independent creative outlet focused
                             on manga, character design, and stylized visual
                             storytelling.
                         </p>
                         <p class="reveal reveal-d3">
-                            We combine illustration, worldbuilding, and
+                            I combine illustration, worldbuilding, and
                             cinematic composition to create artwork that
                             captures attention and leaves a lasting impression.
                             Whether it’s a single illustration, an original
-                            character, or a full manga production, we approach
+                            character, or a full manga production, I approach
                             every project with the same goal: creating work that
                             feels meaningful, memorable, and alive.
                         </p>
@@ -458,7 +470,7 @@ const testimonials = await client.fetch(`
             >
                 <span class="section-label reveal">Client Feedback</span>
                 <h2 class="section-title reveal reveal-d1" style="margin: 0;">
-                    What they say about us.
+                    What they say about me.
                 </h2>
             </div>
             <div class="reviews-marquee-container">
@@ -640,34 +652,18 @@ const testimonials = await client.fetch(`
                         </h2>
                         <p class="hero-description" style="margin-bottom: 0;">
                             Currently accepting illustration, manga, and visual
-                            storytelling projects. Drop us a message and we’ll
+                            storytelling projects. Drop me a message and I’ll
                             get back to you within 24–48 hours.
                         </p>
                     </div>
 
                     <div class="contact-form-wrapper reveal reveal-d2">
                         <form
-                            action="https://api.web3forms.com/submit"
+                            action="/api/contact"
                             method="POST"
                             class="contact-form"
                             id="contactForm"
                         >
-                            <input
-                                type="hidden"
-                                name="access_key"
-                                value="1bc1a301-09ae-4641-ba23-6046069f32a1"
-                            />
-                            <input
-                                type="hidden"
-                                name="subject"
-                                value="New Project Inquiry - Studio A4"
-                            />
-                            <input
-                                type="checkbox"
-                                name="botcheck"
-                                class="hidden"
-                                style="display: none;"
-                            />
 
                             <div class="form-group">
                                 <input
@@ -692,7 +688,7 @@ const testimonials = await client.fetch(`
                             <div class="form-group">
                                 <textarea
                                     name="message"
-                                    placeholder="Tell us about your project..."
+                                    placeholder="Tell me about your project..."
                                     required
                                     class="form-input form-textarea"></textarea>
                             </div>
@@ -712,12 +708,8 @@ const testimonials = await client.fetch(`
                             style="display: none;"
                         >
                             <div class="success-icon">✓</div>
-                            <h3>Message Sent!</h3>
-                            <p>
-                                Thanks for reaching out. We will review your
-                                project and get back to you. Want to chat now?
-                                Feel free to contact us on Discord.
-                            </p>
+                            <h3>Message Sent</h3>
+                            <p>I’ll get back to you within 24–48 hours.</p>
                         </div>
                     </div>
                 </div>
@@ -818,7 +810,7 @@ const testimonials = await client.fetch(`
                         );
 
                         // 3. Perform backend fetch submission in the background
-                        fetch("https://api.web3forms.com/submit", {
+                        fetch("/api/contact", {
                             method: "POST",
                             body: formData,
                         })
@@ -827,17 +819,17 @@ const testimonials = await client.fetch(`
                                     .json()
                                     .catch(() => ({}));
                                 console.log(
-                                    "Web3Forms background response:",
+                                    "Resend background response:",
                                     response.status,
                                     data,
                                 );
-                                if (!response.ok && !data.success) {
+                                if (!response.ok || !data.success) {
                                     // If background submission fails, dispatch error to revert
                                     contactForm.dispatchEvent(
                                         new CustomEvent("form-submit-error", {
                                             detail: {
                                                 error:
-                                                    data.message ||
+                                                    data.error ||
                                                     "Submission server returned an error.",
                                             },
                                         }),
@@ -845,7 +837,7 @@ const testimonials = await client.fetch(`
                                 }
                             })
                             .catch((error: any) => {
-                                console.error("Web3Forms error:", error);
+                                console.error("Resend error:", error);
                                 contactForm.dispatchEvent(
                                     new CustomEvent("form-submit-error", {
                                         detail: {

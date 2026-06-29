@@ -86,7 +86,7 @@ body {
 
 /* --- LOGO SIZE FIXES (Scaled Up For Dynamic Visual Impact) --- */
 .nav-logo img { 
-    height: 52px !important; 
+    height: 28px !important; 
     width: auto !important; 
     display: block !important; 
     transition: transform var(--transition-fast);
@@ -95,7 +95,7 @@ body {
     transform: scale(1.03);
 }
 .footer-brand img { 
-    height: 68px !important; 
+    height: 38px !important; 
     width: auto !important; 
     display: block !important; 
 }

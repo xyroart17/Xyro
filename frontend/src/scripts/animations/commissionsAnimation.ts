@@ -38,6 +38,7 @@ export function addCommissionsInteractions(
         x: "-=12", // translates forward leftward into the text
         y: "+=4",
         scale: 0,
+        opacity: 0,
         transformOrigin: "0% 50%", // nose-centered scale-to-zero collapse
         duration: 0.30,
         ease: "power2.out"

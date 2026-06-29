@@ -1,5 +1,5 @@
 /**
- * Centralized navigation script for the StudioA4 homepage.
+ * Centralized navigation script for the Xyro homepage.
  * Handles IntersectionObserver active state tracking, smooth scrolling,
  * and the floating CTA visibility toggles.
  */
