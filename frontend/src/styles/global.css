@@ -62,8 +62,8 @@ body {
     z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 40px 0 60px;
+    justify-content: flex-start;
+    padding: 0 64px;
     transition: var(--transition-smooth);
     background: rgba(13, 13, 13, 0.8);
     backdrop-filter: blur(12px);
@@ -100,7 +100,22 @@ body {
     display: block !important; 
 }
 
-.nav-links { display: flex; gap: 48px; list-style: none; align-items: center; transform: translate3d(5px, -2px, 0); }
+.nav-links {
+    display: flex;
+    gap: 48px;
+    list-style: none;
+    align-items: center;
+    transform: translate3d(5px, -2px, 0);
+    margin-left: auto;
+}
+.nav-cta-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.nav-cta-wrapper .nav-mailbox {
+    margin-left: 0 !important;
+}
 .nav-links a {
     text-decoration: none;
     color: #fff;
@@ -517,8 +532,8 @@ body {
    CONSOLIDATED RESPONSIVE OVERRIDES
    ========================================================================== */
 @media (max-width: 1024px) {
-    .nav { padding: 0 30px; }
-    .nav-links { gap: 30px; }
+    .nav { padding: 0 48px; }
+    .nav-links { gap: 32px; }
     .section { padding: 80px 30px; }
     .hero { padding: 0 30px; }
     .work-grid, .services-grid { grid-template-columns: 1fr 1fr; }
@@ -553,8 +568,9 @@ body {
     .btn { padding: 14px 26px; font-size: 0.9rem; }
 
     .nav-links { display: none !important; }
-    .nav-hamburger { display: flex !important; }
-    .nav { padding: 0 20px; }
+    .nav-hamburger { display: flex !important; margin-left: auto; }
+    .nav-mailbox-mobile.visible-mailbox + .nav-hamburger { margin-left: 0; }
+    .nav { padding: 0 24px; }
 }
 
 @media (max-width: 480px) {

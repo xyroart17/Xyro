@@ -736,7 +736,7 @@ const testimonials = await client.fetch(`
         </a>
 
         <script src="../scripts/navigation.js"></script>
-        <script src="../scripts/messageDelivery.js"></script>
+        <script src="../scripts/animations/MessagePlane.ts"></script>
 
         <script>
             document.addEventListener("astro:page-load", () => {
@@ -806,12 +806,17 @@ const testimonials = await client.fetch(`
 
                         const formData = new FormData(contactForm);
 
-                        // 1. Dispatch start event to lock UI and show button loading animation
+                        // 1. Dispatch start event to lock UI
                         contactForm.dispatchEvent(
                             new CustomEvent("form-submit-start"),
                         );
 
-                        // 2. Perform backend fetch submission
+                        // 2. Dispatch success event immediately (optimistic UI flow)
+                        contactForm.dispatchEvent(
+                            new CustomEvent("form-submit-success"),
+                        );
+
+                        // 3. Perform backend fetch submission in the background
                         fetch("https://api.web3forms.com/submit", {
                             method: "POST",
                             body: formData,
@@ -821,17 +826,12 @@ const testimonials = await client.fetch(`
                                     .json()
                                     .catch(() => ({}));
                                 console.log(
-                                    "Web3Forms response:",
+                                    "Web3Forms background response:",
                                     response.status,
                                     data,
                                 );
-                                if (response.ok || data.success) {
-                                    // 3. Success event initiates origami folding & plane flight
-                                    contactForm.dispatchEvent(
-                                        new CustomEvent("form-submit-success"),
-                                    );
-                                } else {
-                                    // 4. Failure event restores UI and displays error card
+                                if (!response.ok && !data.success) {
+                                    // If background submission fails, dispatch error to revert
                                     contactForm.dispatchEvent(
                                         new CustomEvent("form-submit-error", {
                                             detail: {
@@ -844,7 +844,7 @@ const testimonials = await client.fetch(`
                                 }
                             })
                             .catch((error: any) => {
-                                console.error(error);
+                                console.error("Web3Forms error:", error);
                                 contactForm.dispatchEvent(
                                     new CustomEvent("form-submit-error", {
                                         detail: {

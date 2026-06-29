@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <!-- StudioA4 Custom Premium Envelope Template -->
+    <g id="studioa4-envelope-template">
+        <!-- White paper base rect -->
+        <rect class="env-bg" width="64" height="46" rx="4" ry="4" fill="#ffffff" stroke="rgba(0,0,0,0.15)" stroke-width="1" />
+        <!-- Top flap fold -->
+        <polygon class="env-flap" points="0,0 64,0 32,20" fill="none" stroke="#d4d4d4" stroke-width="1.2" />
+        <!-- Side/body folds -->
+        <path class="env-body" d="M 0,46 L 32,24 L 64,46" fill="none" stroke="#d4d4d4" stroke-width="1.2" />
+    </g>
+
+    <!-- StudioA4 Custom Premium Paper Airplane Template -->
+    <g id="studioa4-plane-template">
+        <!-- Left Wing / Main Body -->
+        <polygon points="72.008,0 274.113,140.173 274.113,301.804 390.796,221.102 601.682,367.302 1131.53,0.223" fill="#ffffff" stroke="#d4d4d4" stroke-width="1.5" />
+        <!-- Underbody Fold -->
+        <polygon points="1131.53,0.223 274.113,140.173 274.113,301.804 390.796,221.102" fill="#e0e0e0" stroke="#d4d4d4" stroke-width="1.5" />
+    </g>
+</svg>

@@ -14,30 +14,39 @@ const { isHomepage = false } = Astro.props;
     </a>
     <ul class="nav-links">
         {
-            navItems.map((item) => (
-                <li>
-                    <a
-                        href={getHref(item, isHomepage)}
-                        class={item.isCTA ? "nav-cta-btn" : ""}
-                    >
-                        {item.label}
-                        {item.isCTA && <span class="cta-arrow">→</span>}
-                    </a>
-                </li>
-            ))
+            navItems.map((item) => {
+                if (item.isCTA) {
+                    return (
+                        <li class="nav-cta-wrapper">
+                            <a
+                                href={getHref(item, isHomepage)}
+                                class="nav-cta-btn"
+                            >
+                                {item.label}
+                                <span class="cta-arrow">→</span>
+                            </a>
+                            <div class="nav-mailbox" id="navMailbox" aria-hidden="true" title="Mailbox">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="mailbox-svg">
+                                    <line x1="12" y1="18" x2="12" y2="22"></line>
+                                    <path d="M5 18h14V10a7 7 0 0 0-14 0v8z"></path>
+                                    <path d="M5 18h14v-2H5v2z" class="mailbox-door"></path>
+                                    <path d="M19 13h2v-4h-2" class="mailbox-flag"></path>
+                                    <!-- Success checkmark -->
+                                    <path d="M9 11l2 2 4-4" class="mailbox-checkmark" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0; transition: opacity 0.3s ease;"></path>
+                                </svg>
+                            </div>
+                        </li>
+                    );
+                }
+                return (
+                    <li>
+                        <a href={getHref(item, isHomepage)}>
+                            {item.label}
+                        </a>
+                    </li>
+                );
+            })
         }
-        <li class="mailbox-nav-item">
-            <div class="nav-mailbox" id="navMailbox" aria-hidden="true" title="Mailbox">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="mailbox-svg">
-                    <line x1="12" y1="18" x2="12" y2="22"></line>
-                    <path d="M5 18h14V10a7 7 0 0 0-14 0v8z"></path>
-                    <path d="M5 18h14v-2H5v2z" class="mailbox-door"></path>
-                    <path d="M19 13h2v-4h-2" class="mailbox-flag"></path>
-                    <!-- Success checkmark -->
-                    <path d="M9 11l2 2 4-4" class="mailbox-checkmark" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0; transition: opacity 0.3s ease;"></path>
-                </svg>
-            </div>
-        </li>
     </ul>
     
     <!-- Mobile mailbox target next to hamburger (hidden on desktop) -->
