@@ -5,6 +5,8 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
   site: "https://xyro.art",
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    prerenderEnvironment: 'node'
+  }),
   integrations: [sitemap()],
 });
