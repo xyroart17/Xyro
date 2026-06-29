@@ -6,9 +6,10 @@ import cloudflare from '@astrojs/cloudflare';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://xyro.art',
-  output: 'static',
+  output: 'server',
   adapter: cloudflare({
-    inspectorPort: false
+    inspectorPort: false,
+    prerenderEnvironment: 'node'
   }),
   integrations: [sitemap()]
 });
