@@ -478,6 +478,14 @@ body {
     display: block !important;
 }
 .footer-bottom span { color: var(--text-muted); font-size: 0.85rem; }
+.footer-copyright-disclaimer {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 8px auto 0;
+    opacity: 0.85;
+}
 
 /* Footer Contact CTA */
 .footer-contact-label {
