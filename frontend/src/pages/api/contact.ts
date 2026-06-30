@@ -31,6 +31,36 @@ export const POST: APIRoute = async ({ request }) => {
             );
         }
 
+        // 1. Standard Email Format Validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            return new Response(
+                JSON.stringify({ success: false, error: "Please enter a valid email address." }),
+                { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+        }
+
+        // 2. Common Domain Typo Detection (e.g. gmail.co, gamil.com)
+        const emailDomain = email.split("@")[1]?.toLowerCase();
+        const typos: Record<string, string> = {
+            "gmail.co": "gmail.com",
+            "gmail.con": "gmail.com",
+            "gmail.cm": "gmail.com",
+            "gamil.com": "gmail.com",
+            "gmaill.com": "gmail.com",
+            "yaho.com": "yahoo.com",
+            "hotmale.com": "hotmail.com"
+        };
+        if (emailDomain && typos[emailDomain]) {
+            return new Response(
+                JSON.stringify({ 
+                    success: false, 
+                    error: `Did you mean @${typos[emailDomain]}? Please check your spelling.` 
+                }),
+                { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+        }
+
         const safeName = escapeHtml(name);
         const safeEmail = escapeHtml(email);
         const safeMessage = escapeHtml(message);
