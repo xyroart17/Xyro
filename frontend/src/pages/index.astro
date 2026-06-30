@@ -32,7 +32,7 @@ const testimonials = await client.fetch(`
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Xyro — 3D & 2D Art, Manga and Stylized Storytelling</title>
+        <title>Xyro — 3D & 2D Art,Anime and Manga</title>
         <meta
             name="description"
             content="Creative portfolio of Xyro (xyroart), featuring original 2D & 3D art, manga, comics, character design (OC), and Blender projects. Open for commissions."
@@ -79,11 +79,7 @@ const testimonials = await client.fetch(`
             sizes="16x16"
             href="/favicon-16x16.png?v=1"
         />
-        <link
-            rel="icon"
-            type="image/svg+xml"
-            href="/favicon.svg?v=1"
-        />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
         <link rel="manifest" href="/site.webmanifest?v=1" />
 
@@ -462,18 +458,18 @@ const testimonials = await client.fetch(`
                             Designing worlds<br />that feel alive.
                         </h2>
                         <p class="reveal reveal-d2">
-                            Xyro is my independent creative outlet focused
-                            on manga, character design, and stylized visual
+                            Xyro is my independent creative outlet focused on
+                            manga, character design, and stylized visual
                             storytelling.
                         </p>
                         <p class="reveal reveal-d3">
-                            I combine illustration, worldbuilding, and
-                            cinematic composition to create artwork that
-                            captures attention and leaves a lasting impression.
-                            Whether it’s a single illustration, an original
-                            character, or a full manga production, I approach
-                            every project with the same goal: creating work that
-                            feels meaningful, memorable, and alive.
+                            I combine illustration, worldbuilding, and cinematic
+                            composition to create artwork that captures
+                            attention and leaves a lasting impression. Whether
+                            it’s a single illustration, an original character,
+                            or a full manga production, I approach every project
+                            with the same goal: creating work that feels
+                            meaningful, memorable, and alive.
                         </p>
                     </div>
                 </div>
@@ -685,7 +681,6 @@ const testimonials = await client.fetch(`
                             class="contact-form"
                             id="contactForm"
                         >
-
                             <div class="form-group">
                                 <input
                                     type="text"
@@ -813,9 +808,16 @@ const testimonials = await client.fetch(`
                 };
                 document.addEventListener("mousemove", handleMousemove);
 
-                document.addEventListener("astro:before-swap", () => {
-                    document.removeEventListener("mousemove", handleMousemove);
-                }, { once: true });
+                document.addEventListener(
+                    "astro:before-swap",
+                    () => {
+                        document.removeEventListener(
+                            "mousemove",
+                            handleMousemove,
+                        );
+                    },
+                    { once: true },
+                );
 
                 // CONTACT FORM BACKGROUND SUBMISSION WITH LIFECYCLE EVENTS
                 const contactForm = document.getElementById(
