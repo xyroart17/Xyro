@@ -14,6 +14,16 @@ export function initAnimationController() {
 
     if (!formWrapper) return;
 
+    // Clear error card on any input change
+    contactForm.querySelectorAll("input, textarea").forEach(input => {
+        input.addEventListener("input", () => {
+            const errorCard = document.getElementById("formErrorCard");
+            if (errorCard) {
+                errorCard.style.display = "none";
+            }
+        });
+    });
+
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let activeTimeline: any = null;
@@ -23,6 +33,12 @@ export function initAnimationController() {
     // 1. Form submit has started
     contactForm.addEventListener("form-submit-start", () => {
         backendErrorMessage = "";
+
+        // Hide any existing error card immediately
+        const errorCard = document.getElementById("formErrorCard");
+        if (errorCard) {
+            errorCard.style.display = "none";
+        }
 
         // Immediately lock scrolling and interaction
         document.body.classList.add("interaction-locked");
