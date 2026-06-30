@@ -1,3 +1,5 @@
+import AltTextInput from '../components/AltTextInput'
+
 export default {
   name: 'manga',
   title: 'Manga',
@@ -43,6 +45,7 @@ export default {
           name: 'alt',
           type: 'string',
           title: 'Alt Text (For SEO)',
+          components: { input: AltTextInput },
           validation: (Rule) => Rule.required(),
         },
       ],
@@ -63,6 +66,7 @@ export default {
               name: 'alt',
               type: 'string',
               title: 'Alt Text (For SEO)',
+              components: { input: AltTextInput },
               initialValue: 'Manga Page',
             },
           ],
@@ -86,6 +90,7 @@ export default {
               name: 'alt',
               type: 'string',
               title: 'Alt Text',
+              components: { input: AltTextInput },
               initialValue: 'WIP Image',
             },
           ],

@@ -24,29 +24,32 @@ export function initMangaReader(pageCount) {
     // Spacing select toggles
     const spacingSelect = document.getElementById("spacingSelect");
     const readerContent = document.querySelector(".reader-content");
+    const handleSpacingChange = (e) => {
+        const val = e.target.value;
+        readerContent.className = `reader-content gap-${val}`;
+    };
     if (spacingSelect && readerContent) {
-        spacingSelect.addEventListener("change", (e) => {
-            const val = e.target.value;
-            readerContent.className = `reader-content gap-${val}`;
-        });
+        spacingSelect.addEventListener("change", handleSpacingChange);
     }
 
     // Settings Dropdown Panel toggle
     const settingsBtn = document.querySelector(".reader-settings-btn");
     const dropdown = document.querySelector(".settings-dropdown");
+    const handleSettingsClick = (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("active");
+    };
+    const handleDocumentClick = () => {
+        dropdown.classList.remove("active");
+    };
+    const handleDropdownClick = (e) => {
+        e.stopPropagation();
+    };
+
     if (settingsBtn && dropdown) {
-        settingsBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle("active");
-        });
-
-        document.addEventListener("click", () => {
-            dropdown.classList.remove("active");
-        });
-
-        dropdown.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
+        settingsBtn.addEventListener("click", handleSettingsClick);
+        document.addEventListener("click", handleDocumentClick);
+        dropdown.addEventListener("click", handleDropdownClick);
     }
 
     // --- LAZY LOADING & PREFETCHING OBSERVER ---
@@ -141,7 +144,7 @@ export function initMangaReader(pageCount) {
     }
 
     // --- AUTO-HIDE TOP & BOTTOM NAVIGATION BAR ON SCROLL ---
-    window.addEventListener("scroll", () => {
+    const handleScroll = () => {
         const currentScrollY = window.scrollY;
 
         // Sticky Header Auto-hide
@@ -162,7 +165,8 @@ export function initMangaReader(pageCount) {
                 controls.classList.remove("hidden");
             }, 250);
         }
-    }, { passive: true });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // --- NAVIGATION CONTROLS CLICK SCROLLS ---
     function scrollToPage(pageNum) {
@@ -172,16 +176,19 @@ export function initMangaReader(pageCount) {
         }
     }
 
-    prevBtn?.addEventListener("click", () => {
+    const handlePrevClick = () => {
         if (currentPage > 1) scrollToPage(currentPage - 1);
-    });
+    };
 
-    nextBtn?.addEventListener("click", () => {
+    const handleNextClick = () => {
         if (currentPage < pageCount) scrollToPage(currentPage + 1);
-    });
+    };
+
+    prevBtn?.addEventListener("click", handlePrevClick);
+    nextBtn?.addEventListener("click", handleNextClick);
 
     // --- KEYBOARD SHORTCUTS ---
-    window.addEventListener("keydown", (e) => {
+    const handleKeydown = (e) => {
         const viewportHeight = window.innerHeight;
         
         switch (e.key) {
@@ -220,25 +227,48 @@ export function initMangaReader(pageCount) {
             default:
                 break;
         }
-    });
+    };
+    window.addEventListener("keydown", handleKeydown);
 
     // --- WORK IN PROGRESS COLLAPSE TOGGLE ---
     const toggleWipBtn = document.getElementById("toggleWipBtn");
     const wipSection = document.getElementById("wipSection");
+    const handleWipToggle = () => {
+        const isExpanded = wipSection.classList.contains("expanded");
+        if (isExpanded) {
+            wipSection.classList.remove("expanded");
+            toggleWipBtn.innerHTML = "Show WIP";
+            toggleWipBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else {
+            wipSection.classList.add("expanded");
+            toggleWipBtn.innerHTML = "Hide WIP";
+            setTimeout(() => {
+                wipSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 150);
+        }
+    };
     if (toggleWipBtn && wipSection) {
-        toggleWipBtn.addEventListener("click", () => {
-            const isExpanded = wipSection.classList.contains("expanded");
-            if (isExpanded) {
-                wipSection.classList.remove("expanded");
-                toggleWipBtn.innerHTML = "Show WIP";
-                toggleWipBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            } else {
-                wipSection.classList.add("expanded");
-                toggleWipBtn.innerHTML = "Hide WIP";
-                setTimeout(() => {
-                    wipSection.scrollIntoView({ behavior: "smooth", block: "start" });
-                }, 150);
-            }
-        });
+        toggleWipBtn.addEventListener("click", handleWipToggle);
     }
+
+    return () => {
+        if (spacingSelect && readerContent) {
+            spacingSelect.removeEventListener("change", handleSpacingChange);
+        }
+        if (settingsBtn && dropdown) {
+            settingsBtn.removeEventListener("click", handleSettingsClick);
+            document.removeEventListener("click", handleDocumentClick);
+            dropdown.removeEventListener("click", handleDropdownClick);
+        }
+        window.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("keydown", handleKeydown);
+        prevBtn?.removeEventListener("click", handlePrevClick);
+        nextBtn?.removeEventListener("click", handleNextClick);
+        if (toggleWipBtn && wipSection) {
+            toggleWipBtn.removeEventListener("click", handleWipToggle);
+        }
+        loadObserver.disconnect();
+        viewObserver.disconnect();
+        clearTimeout(isScrollingTimeout);
+    };
 }

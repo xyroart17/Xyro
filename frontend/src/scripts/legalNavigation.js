@@ -99,13 +99,18 @@ document.addEventListener("astro:page-load", () => {
 
     // --- NAVBAR SCROLL (transparent → opaque) ---
     const navbar = document.getElementById("navbar");
-    window.addEventListener("scroll", () => {
+    const handleScroll = () => {
         if (window.scrollY > 50) {
             navbar?.classList.add("scrolled");
         } else {
             navbar?.classList.remove("scrolled");
         }
-    });
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    document.addEventListener("astro:before-swap", () => {
+        window.removeEventListener("scroll", handleScroll);
+    }, { once: true });
 
     // --- MOBILE MENU TOGGLE ---
     const hamburger = document.getElementById("hamburger");

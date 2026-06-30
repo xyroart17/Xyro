@@ -171,22 +171,32 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
 <script>
     import { initMangaReader } from "../scripts/mangaReader.js";
 
+    let readerCleanup: any = null;
+
     function startReader() {
+        if (readerCleanup) {
+            readerCleanup();
+            readerCleanup = null;
+        }
         const dataEl = document.getElementById("mangaReaderData");
         if (dataEl) {
             // Apply body styling class
             document.body.classList.add("manga-reader-active");
 
             const pageCount = parseInt(dataEl.dataset.pageCount || "1", 10);
-            initMangaReader(pageCount);
+            readerCleanup = initMangaReader(pageCount);
         }
     }
 
     // Cleanup class on page transitions
     function cleanupReader() {
         document.body.classList.remove("manga-reader-active");
+        if (readerCleanup) {
+            readerCleanup();
+            readerCleanup = null;
+        }
     }
 
     document.addEventListener("astro:page-load", startReader);
-    document.addEventListener("astro:after-swap", cleanupReader);
+    document.addEventListener("astro:before-swap", cleanupReader);
 </script>

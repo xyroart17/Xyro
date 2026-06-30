@@ -6,8 +6,8 @@ import { client, urlFor } from '../../utils/sanity.js';
 import Navbar from '../../components/Navbar.astro';
 
 export async function getStaticPaths() {
-    // We fetch ALL projects ordered by projectNumber so we can calculate Next/Prev
-    const projects = await client.fetch(`*[_type == "project" && defined(slug.current)] | order(projectNumber asc) {
+    // We fetch ALL projects ordered by display order first, then projectNumber so we can calculate Next/Prev
+    const projects = await client.fetch(`*[_type == "project" && defined(slug.current)] | order(order asc, projectNumber asc) {
         ...,
         "shortVideoUrl": shortVideo.asset->url
     }`);
@@ -86,6 +86,7 @@ const validWipImages = project.wipImages?.filter((img: any) => img && img.asset 
     <link rel="manifest" href="/site.webmanifest?v=1">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -328,13 +329,18 @@ const validWipImages = project.wipImages?.filter((img: any) => img && img.asset 
 
             // NAVBAR SCROLL — transparent at top, opaque on scroll
             const navbar = document.getElementById("navbar");
-            window.addEventListener("scroll", () => {
+            const handleScroll = () => {
                 if (window.scrollY > 50) {
                     navbar?.classList.add("scrolled");
                 } else {
                     navbar?.classList.remove("scrolled");
                 }
-            });
+            };
+            window.addEventListener("scroll", handleScroll);
+
+            document.addEventListener("astro:before-swap", () => {
+                window.removeEventListener("scroll", handleScroll);
+            }, { once: true });
 
             // MOBILE MENU TOGGLE
             const hamburger = document.getElementById("hamburger");

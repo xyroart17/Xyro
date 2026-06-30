@@ -39,7 +39,7 @@ const { isHomepage = false } = Astro.props;
         }
     </ul>
     
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
     </button>
 </nav>
@@ -72,7 +72,9 @@ const { isHomepage = false } = Astro.props;
             hamburger.addEventListener("click", () => {
                 hamburger.classList.toggle("active");
                 mobileMenu.classList.toggle("active");
-                document.body.style.overflow = mobileMenu.classList.contains("active") ? "hidden" : "";
+                const isOpen = hamburger.classList.contains("active");
+                hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+                document.body.style.overflow = isOpen ? "hidden" : "";
             });
         }
 
@@ -80,6 +82,7 @@ const { isHomepage = false } = Astro.props;
             mobileLinks.forEach((link) => {
                 link.addEventListener("click", () => {
                     hamburger?.classList.remove("active");
+                    hamburger?.setAttribute("aria-expanded", "false");
                     mobileMenu?.classList.remove("active");
                     document.body.style.overflow = "";
                 });

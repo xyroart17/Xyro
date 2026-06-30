@@ -3,6 +3,19 @@ import { env } from "cloudflare:workers";
 
 export const prerender = false;
 
+function escapeHtml(str: string): string {
+    return str.replace(/[&<>"']/g, (match) => {
+        switch (match) {
+            case "&": return "&amp;";
+            case "<": return "&lt;";
+            case ">": return "&gt;";
+            case '"': return "&quot;";
+            case "'": return "&#39;";
+            default: return match;
+        }
+    });
+}
+
 export const POST: APIRoute = async ({ request }) => {
     try {
         const formData = await request.formData();
@@ -17,6 +30,10 @@ export const POST: APIRoute = async ({ request }) => {
                 { status: 400, headers: { "Content-Type": "application/json" } }
             );
         }
+
+        const safeName = escapeHtml(name);
+        const safeEmail = escapeHtml(email);
+        const safeMessage = escapeHtml(message);
 
         const resendApiKey = env.RESEND_API_KEY;
 
@@ -43,10 +60,10 @@ export const POST: APIRoute = async ({ request }) => {
                 html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
                         <h2 style="color: #ff4d4d; border-bottom: 2px solid #eee; padding-bottom: 10px;">New Project Inquiry — Xyro</h2>
-                        <p style="margin: 15px 0;"><strong>Client Name:</strong> ${name}</p>
-                        <p style="margin: 15px 0;"><strong>Client Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                        <p style="margin: 15px 0;"><strong>Client Name:</strong> ${safeName}</p>
+                        <p style="margin: 15px 0;"><strong>Client Email:</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
                         <p style="margin: 15px 0;"><strong>Message:</strong></p>
-                        <div style="background: #f9f9f9; padding: 15px; border-radius: 6px; white-space: pre-wrap; font-size: 1rem; line-height: 1.5; color: #333;">${message}</div>
+                        <div style="background: #f9f9f9; padding: 15px; border-radius: 6px; white-space: pre-wrap; font-size: 1rem; line-height: 1.5; color: #333;">${safeMessage}</div>
                         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
                         <p style="font-size: 0.8rem; color: #999; margin: 0;">Submitted at: ${new Date().toUTCString()}</p>
                     </div>

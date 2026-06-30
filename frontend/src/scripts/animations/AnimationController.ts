@@ -163,6 +163,16 @@ export function initAnimationController() {
 
         formWrapper!.style.opacity = "1";
 
+        // Revert form visibility in case the success transition already ran or started
+        contactForm!.style.display = "block";
+        contactForm!.style.opacity = "";
+        formSuccess!.style.display = "none";
+        formSuccess!.classList.remove("animate-success");
+
+        // Restore submit button visibility and interaction
+        submitBtn!.style.opacity = "";
+        submitBtn!.style.pointerEvents = "";
+
         showErrorFeedback(backendErrorMessage);
     }
 
@@ -175,9 +185,14 @@ export function initAnimationController() {
             contactForm!.parentNode!.insertBefore(errorCard, contactForm!.nextSibling);
         }
 
+        let formattedMsg = message.trim();
+        if (formattedMsg && !/[.!?]$/.test(formattedMsg)) {
+            formattedMsg += ".";
+        }
+
         errorCard.innerHTML = `
             <h4>Delivery Failed</h4>
-            <p>${message} Please try again in a moment.</p>
+            <p>${formattedMsg} Please try again in a moment.</p>
             <button type="button" class="btn-retry" id="btnFormRetry">Retry</button>
         `;
         errorCard.style.display = "block";

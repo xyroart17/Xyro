@@ -95,7 +95,7 @@ document.addEventListener("astro:page-load", () => {
     }
 
     // --- 3. CENTRALIZED SMOOTH SCROLLING INTERCEPTOR ---
-    document.addEventListener("click", (e) => {
+    const handleSmoothScrollClick = (e) => {
         const link = e.target.closest("a");
         if (!link) return;
 
@@ -120,5 +120,10 @@ document.addEventListener("astro:page-load", () => {
                 history.pushState(null, "", hash);
             }
         }
-    });
+    };
+    document.addEventListener("click", handleSmoothScrollClick);
+
+    document.addEventListener("astro:before-swap", () => {
+        document.removeEventListener("click", handleSmoothScrollClick);
+    }, { once: true });
 });

@@ -1,3 +1,5 @@
+import AltTextInput from '../components/AltTextInput'
+
 export default {
   name: 'project',
   title: 'Portfolio Project',
@@ -11,7 +13,12 @@ export default {
       title: 'Thumbnail', 
       type: 'image', 
       options: { hotspot: true },
-      fields: [{ name: 'alt', type: 'string', title: 'Alt text (For SEO)' }] 
+      fields: [{ 
+        name: 'alt', 
+        type: 'string', 
+        title: 'Alt text (For SEO)',
+        components: { input: AltTextInput }
+      }] 
     },
     { 
       name: 'tag', 
@@ -26,6 +33,13 @@ export default {
       description: 'e.g., Commission Work, Personal Project, Xyro'
     },
     { name: 'projectNumber', title: 'Project Number', type: 'string', description: 'e.g., 01, 02, 03' },
+    {
+      name: 'order',
+      title: 'Display Order',
+      type: 'number',
+      description: 'Determines the sorting order of projects on the homepage (ascending).',
+      initialValue: 0,
+    },
     
     // DEEP DIVE (The project page)
     { name: 'description', title: 'Story / Process Text', type: 'text' },
@@ -38,7 +52,12 @@ export default {
       of: [{ 
         type: 'image', 
         options: { hotspot: true },
-        fields: [{ name: 'alt', type: 'string', title: 'Alt text (For SEO)' }]
+        fields: [{ 
+          name: 'alt', 
+          type: 'string', 
+          title: 'Alt text (For SEO)',
+          components: { input: AltTextInput }
+        }]
       }] 
     },
     { 
@@ -48,7 +67,12 @@ export default {
       of: [{ 
         type: 'image', 
         options: { hotspot: true },
-        fields: [{ name: 'alt', type: 'string', title: 'Alt text (For SEO)' }]
+        fields: [{ 
+          name: 'alt', 
+          type: 'string', 
+          title: 'Alt text (For SEO)',
+          components: { input: AltTextInput }
+        }]
       }] 
     },
     
