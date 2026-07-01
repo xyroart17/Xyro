@@ -9,9 +9,7 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 
 // Fetch Projects
-const projects = await client.fetch(
-    `*[_type == "project"] | order(order asc)`,
-);
+const projects = await client.fetch(`*[_type == "project"] | order(order asc)`);
 
 // Fetch Testimonials AND expand references to get the URL slugs
 const testimonials = await client.fetch(`
@@ -32,7 +30,9 @@ const testimonials = await client.fetch(`
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Xyro | Professional 3D & 2D Artist, Manga & Character Design</title>
+        <title>
+            Xyro | Professional 3D & 2D Artist, Manga & Character Design
+        </title>
         <meta
             name="description"
             content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions."
@@ -42,14 +42,17 @@ const testimonials = await client.fetch(`
             content="xyro, xyroart, xyro.art, 3D art, 2D art, illustration, manga artist, comic artist, original character, OC, Blender, digital artist, commissions"
         />
         <link rel="canonical" href="https://xyroart.pages.dev/" />
-        
+
         {/* --- BRANDING METADATA --- */}
         <meta name="theme-color" content="#0d0d0d" />
         <meta name="apple-mobile-web-app-title" content="Xyro" />
         <meta name="application-name" content="Xyro" />
 
         {/* --- OPEN GRAPH & SOCIAL MEDIA --- */}
-        <meta property="og:title" content="Xyro | Professional 3D & 2D Artist, Manga & Character Design" />
+        <meta
+            property="og:title"
+            content="Xyro | Professional 3D & 2D Artist, Manga & Character Design"
+        />
         <meta
             property="og:description"
             content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions."
@@ -57,13 +60,25 @@ const testimonials = await client.fetch(`
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://xyroart.pages.dev/" />
         <meta property="og:site_name" content="Xyro" />
-        <meta property="og:image" content="https://xyroart.pages.dev/assets/about-pic.jpg" />
+        <meta
+            property="og:image"
+            content="https://xyroart.pages.dev/assets/about-pic.jpg"
+        />
 
         {/* --- TWITTER CARDS --- */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Xyro | Professional 3D & 2D Artist, Manga & Character Design" />
-        <meta name="twitter:description" content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions." />
-        <meta name="twitter:image" content="https://xyroart.pages.dev/assets/about-pic.jpg" />
+        <meta
+            name="twitter:title"
+            content="Xyro | Professional 3D & 2D Artist, Manga & Character Design"
+        />
+        <meta
+            name="twitter:description"
+            content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions."
+        />
+        <meta
+            name="twitter:image"
+            content="https://xyroart.pages.dev/assets/about-pic.jpg"
+        />
 
         <meta
             name="google-site-verification"
@@ -73,10 +88,29 @@ const testimonials = await client.fetch(`
         <ClientRouter />
 
         {/* --- FAVICONS & MANIFEST (Google Guideline Stable URLs) --- */}
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="48x48"
+            href="/favicon-48x48.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+        />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
@@ -94,7 +128,7 @@ const testimonials = await client.fetch(`
                         "url": "https://xyroart.pages.dev/",
                         "image": "https://xyroart.pages.dev/assets/about-pic.jpg",
                         "sameAs": [
-                            "https://www.instagram.com/xyro.3d/",
+                            "https://www.instagram.com/xyro_.art/",
                             "https://x.com/Aman67804627885",
                             "https://www.reddit.com/user/Professional-Lake843/",
                             "https://www.artstation.com/aman_xyro",
@@ -102,7 +136,13 @@ const testimonials = await client.fetch(`
                             "https://pin.it/1EkhjFukQ"
                         ],
                         "jobTitle": "Independent Artist",
-                        "knowsAbout": ["3D Art", "2D Illustration", "Manga", "Character Design", "Blender"],
+                        "knowsAbout": [
+                            "3D Art",
+                            "2D Illustration",
+                            "Manga",
+                            "Character Design",
+                            "Blender"
+                        ],
                         "description": "An independent artist crafting bold manga, character designs, and cinematic visuals."
                     },
                     {

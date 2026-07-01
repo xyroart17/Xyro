@@ -44,7 +44,7 @@ const { isHomepage = false } = Astro.props;
         <div class="footer-links">
             <h4>Socials</h4>
             <a
-                href="https://www.instagram.com/xyro.3d/"
+                href="https://www.instagram.com/xyro_.art/"
                 target="_blank"
                 rel="noopener noreferrer">Instagram</a
             >
@@ -120,10 +120,10 @@ const { isHomepage = false } = Astro.props;
         const discordCopyBtn = document.getElementById("discordCopyBtn");
         discordCopyBtn?.addEventListener("click", () => {
             navigator.clipboard
-                .writeText("xyro.3d")
+                .writeText("xyro.art")
                 .then(() => {
                     if (discordCopyBtn) {
-                        discordCopyBtn.innerText = "xyro.3d (Copied!)";
+                        discordCopyBtn.innerText = "xyro.art (Copied!)";
                         discordCopyBtn.style.color = "#ff4d4d";
                         setTimeout(() => {
                             discordCopyBtn.innerText = "Discord";
@@ -133,7 +133,7 @@ const { isHomepage = false } = Astro.props;
                 })
                 .catch((err) => {
                     console.error("Could not copy Discord username: ", err);
-                    if (discordCopyBtn) discordCopyBtn.innerText = "xyro.3d";
+                    if (discordCopyBtn) discordCopyBtn.innerText = "xyro.art";
                 });
         });
     });

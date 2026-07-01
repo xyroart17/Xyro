@@ -113,8 +113,8 @@ export function initAnimationController() {
         const discordSuccessBtn = document.getElementById("discordSuccessBtn");
         if (discordSuccessBtn) {
             discordSuccessBtn.addEventListener("click", () => {
-                navigator.clipboard.writeText("xyro.3d").then(() => {
-                    discordSuccessBtn.textContent = "xyro.3d (Copied!)";
+                navigator.clipboard.writeText("xyro.art").then(() => {
+                    discordSuccessBtn.textContent = "xyro.art (Copied!)";
                     discordSuccessBtn.style.color = "#22c55e";
                     setTimeout(() => {
                         discordSuccessBtn.textContent = "Discord";
@@ -122,7 +122,7 @@ export function initAnimationController() {
                     }, 2500);
                 }).catch(err => {
                     console.error("Could not copy Discord username: ", err);
-                    discordSuccessBtn.textContent = "xyro.3d";
+                    discordSuccessBtn.textContent = "xyro.art";
                 });
             });
         }
@@ -132,13 +132,13 @@ export function initAnimationController() {
             formSuccess!.style.transition = "opacity 0.5s ease, transform 0.5s ease";
             formSuccess!.style.opacity = "0";
             formSuccess!.style.transform = "translateY(-10px)";
-            
+
             setTimeout(() => {
                 formSuccess!.style.display = "none";
                 formSuccess!.classList.remove("animate-success");
                 formSuccess!.style.opacity = "";
                 formSuccess!.style.transform = "";
-                
+
                 contactForm!.reset();
                 contactForm!.style.display = "block";
                 contactForm!.style.opacity = "0";
