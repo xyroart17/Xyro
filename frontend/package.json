@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && cp -r dist/server/chunks dist/client/ && cp dist/server/virtual_astro_middleware.mjs dist/client/ && cp dist/server/entry.mjs dist/client/_worker.js",
+    "build": "astro build && cp -r dist/server/chunks dist/client/ && cp dist/server/virtual_astro_middleware.mjs dist/client/ && cp dist/server/entry.mjs dist/client/_worker.js && node scripts/postbuild.js",
     "preview": "astro preview",
     "astro": "astro"
   },

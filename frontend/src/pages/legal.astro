@@ -19,47 +19,80 @@ import Footer from "../components/Footer.astro";
             name="description"
             content="Privacy Policy, Terms of Service, Commission Guide, and Copyright Notice for Xyro. Everything you need to know before working with me."
         />
-        <link rel="canonical" href="https://xyro.art/legal" />
+        <link rel="canonical" href="https://xyro.art/legal/" />
+
+        {/* --- BRANDING METADATA --- */}
+        <meta name="theme-color" content="#0d0d0d" />
+        <meta name="apple-mobile-web-app-title" content="Xyro" />
+        <meta name="application-name" content="Xyro" />
+
+        {/* --- OPEN GRAPH & SOCIAL MEDIA --- */}
         <meta property="og:title" content="Legal Center — Xyro" />
         <meta
             property="og:description"
-            content="Privacy Policy, Terms of Service, Commission Guide, and Copyright Notice for Xyro."
+            content="Privacy Policy, Terms of Service, Commission Guide, and Copyright Notice for Xyro. Everything you need to know before working with me."
         />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://xyro.art/legal/" />
+        <meta property="og:site_name" content="Xyro" />
+        <meta property="og:image" content="https://xyro.art/assets/about-pic.jpg" />
+
+        {/* --- TWITTER CARDS --- */}
         <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Legal Center — Xyro" />
+        <meta name="twitter:description" content="Privacy Policy, Terms of Service, Commission Guide, and Copyright Notice for Xyro." />
+        <meta name="twitter:image" content="https://xyro.art/assets/about-pic.jpg" />
 
         <ClientRouter />
 
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png?v=1"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="48x48"
-            href="/favicon-48x48.png?v=1"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png?v=1"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png?v=1"
-        />
-        <link
-            rel="icon"
-            type="image/svg+xml"
-            href="/favicon.svg?v=1"
-        />
-        <link rel="shortcut icon" href="/favicon.ico?v=1" />
-        <link rel="manifest" href="/site.webmanifest?v=1" />
+        {/* --- FAVICONS & MANIFEST (Google Guideline Stable URLs) --- */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
+
+        {/* --- STRUCTURED DATA (JSON-LD) --- */}
+        <script type="application/ld+json" is:inline>
+            {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@type": "WebPage",
+                        "@id": "https://xyro.art/legal/#webpage",
+                        "url": "https://xyro.art/legal/",
+                        "name": "Legal Center — Xyro",
+                        "description": "Privacy Policy, Terms of Service, Commission Guide, and Copyright Notice for Xyro.",
+                        "isPartOf": {
+                            "@type": "WebSite",
+                            "@id": "https://xyro.art/#website",
+                            "url": "https://xyro.art/",
+                            "name": "Xyro Portfolio"
+                        }
+                    },
+                    {
+                        "@type": "BreadcrumbList",
+                        "@id": "https://xyro.art/legal/#breadcrumb",
+                        "itemListElement": [
+                            {
+                                "@type": "ListItem",
+                                "position": 1,
+                                "name": "Home",
+                                "item": "https://xyro.art/"
+                            },
+                            {
+                                "@type": "ListItem",
+                                "position": 2,
+                                "name": "Legal Center",
+                                "item": "https://xyro.art/legal/"
+                            }
+                        ]
+                    }
+                ]
+            }
+        </script>
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

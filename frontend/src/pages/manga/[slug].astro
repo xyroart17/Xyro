@@ -3,6 +3,7 @@ export const prerender = true;
 import { ClientRouter } from 'astro:transitions';
 import '../../styles/global.css';
 import MangaReader from '../../components/MangaReader.astro';
+import { urlFor } from '../../utils/sanity.js';
 
 export async function getStaticPaths() {
     const { client } = await import('../../utils/sanity.js');
@@ -41,6 +42,61 @@ interface Props {
 }
 
 const { manga, nextManga, isOnlyManga } = Astro.props;
+
+/* Resolve OG and Twitter image URLs dynamically from Sanity coverImage */
+const ogImageUrl = manga.coverImage && manga.coverImage.asset 
+    ? urlFor(manga.coverImage).width(1200).height(630).auto('format').url() 
+    : 'https://xyro.art/assets/about-pic.jpg';
+
+/* Build JSON-LD Structured Data Schema */
+const schemaData = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "ComicStory",
+            "@id": `https://xyro.art/manga/${manga.slug.current}/#comic`,
+            "name": manga.title,
+            "headline": manga.title,
+            "description": manga.subtitle || `Read ${manga.title} online at Xyro.`,
+            "image": ogImageUrl,
+            "genre": manga.genre || 'Manga',
+            "creator": {
+                "@type": "Person",
+                "@id": "https://xyro.art/#person",
+                "name": "Xyro",
+                "url": "https://xyro.art/"
+            },
+            "publisher": {
+                "@type": "Person",
+                "@id": "https://xyro.art/#person"
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": `https://xyro.art/manga/${manga.slug.current}/#breadcrumb`,
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://xyro.art/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Manga",
+                    "item": "https://xyro.art/#work"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": manga.title,
+                    "item": `https://xyro.art/manga/${manga.slug.current}/`
+                }
+            ]
+        }
+    ]
+};
 ---
 
 <!DOCTYPE html>
@@ -49,6 +105,12 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{manga.title} — Xyro</title>
+    <link rel="canonical" href={`https://xyro.art/manga/${manga.slug.current}/`} />
+
+    {/* --- BRANDING METADATA --- */}
+    <meta name="theme-color" content="#0d0d0d" />
+    <meta name="apple-mobile-web-app-title" content="Xyro" />
+    <meta name="application-name" content="Xyro" />
 
     <ClientRouter />
 
@@ -57,15 +119,27 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
     <meta property="og:title" content={`${manga.title} — Xyro`} />
     <meta property="og:description" content={manga.subtitle || `Read ${manga.title} online at Xyro.`} />
     <meta property="og:type" content="article" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:url" content={`https://xyro.art/manga/${manga.slug.current}/`} />
+    <meta property="og:site_name" content="Xyro" />
+    <meta property="og:image" content={ogImageUrl} />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1">
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=1">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
-    <link rel="shortcut icon" href="/favicon.ico?v=1">
-    <link rel="manifest" href="/site.webmanifest?v=1">
+    {/* --- TWITTER CARDS --- */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${manga.title} — Xyro`} />
+    <meta name="twitter:description" content={manga.subtitle || `Read ${manga.title} online at Xyro.`} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {/* --- FAVICONS & MANIFEST (Google Guideline Stable URLs) --- */}
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    {/* --- STRUCTURED DATA (JSON-LD) --- */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(schemaData)} />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -33,6 +33,50 @@ export default function AltTextInput(props) {
     'Comic / Manga Art'
   ]
 
+  const [customTags, setCustomTags] = React.useState([])
+
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem('sanity-seo-custom-tags')
+      if (stored) {
+        setCustomTags(JSON.parse(stored))
+      }
+    } catch (e) {
+      console.error('Failed to load custom tags from localStorage', e)
+    }
+  }, [])
+
+  const handleAddCustomTag = () => {
+    const newTag = window.prompt('Enter new SEO keyword/phrase:')
+    if (newTag && newTag.trim()) {
+      const trimmed = newTag.trim()
+      if (tags.includes(trimmed) || customTags.includes(trimmed)) {
+        alert('This keyword already exists!')
+        return
+      }
+      const updated = [...customTags, trimmed]
+      setCustomTags(updated)
+      try {
+        localStorage.setItem('sanity-seo-custom-tags', JSON.stringify(updated))
+      } catch (e) {
+        console.error('Failed to save custom tags to localStorage', e)
+      }
+    }
+  }
+
+  const handleRemoveCustomTag = (e, tagToRemove) => {
+    e.stopPropagation() // Prevent appending when clicking delete
+    if (window.confirm(`Are you sure you want to delete "${tagToRemove}"?`)) {
+      const updated = customTags.filter(t => t !== tagToRemove)
+      setCustomTags(updated)
+      try {
+        localStorage.setItem('sanity-seo-custom-tags', JSON.stringify(updated))
+      } catch (e) {
+        console.error('Failed to save custom tags to localStorage', e)
+      }
+    }
+  }
+
   const handleSuggestionClick = (suggestion) => {
     onChange(set(suggestion))
   }
@@ -125,6 +169,81 @@ export default function AltTextInput(props) {
                 + {tagVal}
               </button>
             ))}
+
+            {customTags.map((tagVal, idx) => (
+              <span
+                key={`custom-${idx}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(255, 77, 77, 0.08)',
+                  color: '#ff4d4d',
+                  border: '1px solid rgba(255, 77, 77, 0.25)',
+                  padding: '4px 10px',
+                  borderRadius: '12px',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => handleTagClick(tagVal)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 77, 77, 0.15)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 77, 77, 0.08)'
+                }}
+              >
+                + {tagVal}
+                <button
+                  type="button"
+                  onClick={(e) => handleRemoveCustomTag(e, tagVal)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'rgba(255, 77, 77, 0.6)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    padding: '0 2px',
+                    marginLeft: '4px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold'
+                  }}
+                  title="Remove this tag"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+
+            <button
+              type="button"
+              onClick={handleAddCustomTag}
+              style={{
+                background: 'rgba(0, 255, 127, 0.1)',
+                color: '#00ff7f',
+                border: '1px dashed rgba(0, 255, 127, 0.4)',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                fontSize: '11px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 255, 127, 0.18)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 255, 127, 0.1)'
+              }}
+            >
+              ➕ Add Custom Tag
+            </button>
           </div>
         </div>
       </div>

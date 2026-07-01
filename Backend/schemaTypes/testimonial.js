@@ -1,7 +1,10 @@
+import { HeartIcon } from '@sanity/icons'
+
 export default {
   name: 'testimonial',
   title: 'Client Review',
   type: 'document',
+  icon: HeartIcon,
   fields: [
     {
       name: 'quote',
@@ -46,4 +49,20 @@ export default {
       description: 'Select the manga this review is for to display a "Preview Work" link.',
     },
   ],
+  preview: {
+    select: {
+      title: 'clientName',
+      subtitle: 'quote',
+      projectTitle: 'projectRef.title',
+      mangaTitle: 'mangaRef.title',
+    },
+    prepare(selection) {
+      const { title, subtitle, projectTitle, mangaTitle } = selection
+      const ref = projectTitle || mangaTitle || 'General Feedback'
+      return {
+        title: title || 'Anonymous Client',
+        subtitle: `${ref} — "${subtitle || ''}"`,
+      }
+    }
+  }
 }

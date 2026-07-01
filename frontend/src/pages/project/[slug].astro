@@ -1,13 +1,14 @@
 ---
 export const prerender = true;
-import { ClientRouter } from 'astro:transitions';
-import '../../styles/global.css';
-import { client, urlFor } from '../../utils/sanity.js';
-import Navbar from '../../components/Navbar.astro';
+import { ClientRouter } from "astro:transitions";
+import "../../styles/global.css";
+import { client, urlFor } from "../../utils/sanity.js";
+import Navbar from "../../components/Navbar.astro";
 
 export async function getStaticPaths() {
-    // We fetch ALL projects ordered by display order first, then projectNumber so we can calculate Next/Prev
-    const projects = await client.fetch(`*[_type == "project" && defined(slug.current)] | order(order asc, projectNumber asc) {
+    // We fetch ALL projects ordered by display order first so we can calculate Next/Prev
+    const projects =
+        await client.fetch(`*[_type == "project" && defined(slug.current)] | order(order asc) {
         ...,
         "shortVideoUrl": shortVideo.asset->url
     }`);
@@ -15,11 +16,12 @@ export async function getStaticPaths() {
     return projects.map((project: any, index: number) => {
         // Calculate the previous and next projects in the array
         const prevProject = index > 0 ? projects[index - 1] : null;
-        const nextProject = index < projects.length - 1 ? projects[index + 1] : null;
+        const nextProject =
+            index < projects.length - 1 ? projects[index + 1] : null;
 
         return {
             params: { slug: project.slug.current },
-            props: { project, prevProject, nextProject }, 
+            props: { project, prevProject, nextProject },
         };
     });
 }
@@ -36,329 +38,717 @@ interface ProjectProps {
     wipImages?: any[];
     finalImages?: any[];
     socialLinks?: Array<{ platform: string; url: string }>;
-    projectNumber?: string;
+    slug: { current: string };
 }
 
-const { project, prevProject, nextProject } = Astro.props as { project: ProjectProps, prevProject: any, nextProject: any };
+const { project, prevProject, nextProject } = Astro.props as {
+    project: ProjectProps;
+    prevProject: any;
+    nextProject: any;
+};
 
 function getYouTubeId(url: string | undefined) {
-    if(!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    if (!url) return null;
+    const regExp =
+        /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return match && match[2].length === 11 ? match[2] : null;
 }
 const ytId = getYouTubeId(project.videoUrl);
 
 /* SAFETY FIX 1: Check if mainImage.asset actually exists before making URL, format to WebP */
-const posterUrl = project.mainImage && project.mainImage.asset ? urlFor(project.mainImage).width(1920).auto('format').url() : '';
+const posterUrl =
+    project.mainImage && project.mainImage.asset
+        ? urlFor(project.mainImage).width(1920).auto("format").url()
+        : "";
 
 /* Open Graph specific image URL (smaller for social sharing), format to WebP */
-const ogImageUrl = project.mainImage && project.mainImage.asset ? urlFor(project.mainImage).width(1200).height(630).auto('format').url() : '';
+const ogImageUrl =
+    project.mainImage && project.mainImage.asset
+        ? urlFor(project.mainImage).width(1200).height(630).auto("format").url()
+        : "";
 
 /* SAFETY FIX 2: Pre-filter the arrays so ghost headers don't render */
-const validFinalImages = project.finalImages?.filter((img: any) => img && img.asset && img.asset._ref) || [];
-const validWipImages = project.wipImages?.filter((img: any) => img && img.asset && img.asset._ref) || [];
+const validFinalImages =
+    project.finalImages?.filter(
+        (img: any) => img && img.asset && img.asset._ref,
+    ) || [];
+const validWipImages =
+    project.wipImages?.filter(
+        (img: any) => img && img.asset && img.asset._ref,
+    ) || [];
+
+/* Build JSON-LD Structured Data Schema */
+const schemaData = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "VisualArtwork",
+            "@id": `https://xyro.art/project/${project.slug.current}/#artwork`,
+            name: project.title,
+            headline: project.title,
+            description: project.description
+                ? project.description.substring(0, 200) + "..."
+                : "A creative project by Xyro.",
+            image: ogImageUrl || "https://xyro.art/assets/about-pic.jpg",
+            creator: {
+                "@type": "Person",
+                "@id": "https://xyro.art/#person",
+                name: "Xyro",
+                url: "https://xyro.art/",
+            },
+            publisher: {
+                "@type": "Person",
+                "@id": "https://xyro.art/#person",
+            },
+            artMedium: "Digital",
+            genre: project.tag || "3D & 2D Art",
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": `https://xyro.art/project/${project.slug.current}/#breadcrumb`,
+            itemListElement: [
+                {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Home",
+                    item: "https://xyro.art/",
+                },
+                {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Projects",
+                    item: "https://xyro.art/#work",
+                },
+                {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: project.title,
+                    item: `https://xyro.art/project/${project.slug.current}/`,
+                },
+            ],
+        },
+    ],
+};
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{project.title} — Xyro</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{project.title} — Xyro</title>
+        <link
+            rel="canonical"
+            href={`https://xyro.art/project/${project.slug.current}/`}
+        />
 
-    <ClientRouter />
+        {/* --- BRANDING METADATA --- */}
+        <meta name="theme-color" content="#0d0d0d" />
+        <meta name="apple-mobile-web-app-title" content="Xyro" />
+        <meta name="application-name" content="Xyro" />
 
-    {/* --- NEW: SEO & OPEN GRAPH METADATA --- */}
-    <meta name="description" content={project.description ? project.description.substring(0, 150) + '...' : 'A creative project by Xyro.'} />
-    <meta property="og:title" content={`${project.title} — Xyro`} />
-    <meta property="og:description" content={project.description ? project.description.substring(0, 150) + '...' : 'A creative project by Xyro.'} />
-    <meta property="og:type" content="article" />
-    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-    <meta name="twitter:card" content="summary_large_image" />
+        <ClientRouter />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1">
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=1">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1">
-    <link rel="shortcut icon" href="/favicon.ico?v=1">
-    <link rel="manifest" href="/site.webmanifest?v=1">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Highlight Work nav item when on project pages */
-        .nav-links a[href$="#work"] {
-            color: var(--accent) !important;
-        }
-        .nav-links a[href$="#work"]::after {
-            width: 100% !important;
-        }
+        {/* --- SEO & OPEN GRAPH METADATA --- */}
+        <meta
+            name="description"
+            content={project.description
+                ? project.description.substring(0, 150) + "..."
+                : "A creative project by Xyro."}
+        />
+        <meta property="og:title" content={`${project.title} — Xyro`} />
+        <meta
+            property="og:description"
+            content={project.description
+                ? project.description.substring(0, 150) + "..."
+                : "A creative project by Xyro."}
+        />
+        <meta property="og:type" content="article" />
+        <meta
+            property="og:url"
+            content={`https://xyro.art/project/${project.slug.current}/`}
+        />
+        <meta property="og:site_name" content="Xyro" />
+        {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
 
-        /* Transparent navbar on project pages */
-        .nav {
-            background: transparent !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            border-bottom-color: transparent !important;
-        }
-        .nav.scrolled {
-            background: rgba(13, 13, 13, 0.85) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border-bottom-color: var(--border-subtle) !important;
-        }
+        {/* --- TWITTER CARDS --- */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${project.title} — Xyro`} />
+        <meta
+            name="twitter:description"
+            content={project.description
+                ? project.description.substring(0, 150) + "..."
+                : "A creative project by Xyro."}
+        />
+        {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
 
-        .project-hero { position: relative; width: 100%; height: 70vh; min-height: 500px; overflow: hidden; display: flex; align-items: flex-end; padding: 80px 60px; background: var(--bg-primary); }
-        .project-hero-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; z-index: 0; }
-        .project-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(13,13,13,0.8) 0%, rgba(13,13,13,0.1) 20%, rgba(13,13,13,0.4) 60%, #0d0d0d 100%); z-index: 1; pointer-events: none; }
-        .project-hero-content { position: relative; z-index: 2; max-width: 900px; width: 100%; }
-        
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #fff;
-            text-decoration: none;
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 600;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 10px 20px;
-            border-radius: 50px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .back-btn:hover { background: rgba(255, 255, 255, 0.18); transform: translateX(-5px); }
-        
-        .project-details { padding: 100px 60px; max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 80px; }
-        .project-meta h3 { font-family: 'Syne', sans-serif; color: rgba(255,255,255,0.4); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px; }
-        .project-meta p { color: #fff; font-size: 1.15rem; margin-bottom: 35px; font-weight: 500; font-family: 'DM Sans', sans-serif; }
-        .project-description { font-size: 1.15rem; line-height: 1.8; color: rgba(255,255,255,0.85); white-space: pre-wrap; margin-bottom: 40px; font-family: 'DM Sans', sans-serif; }
-        
-        .social-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
-        .social-btn {
-            padding: 10px 22px;
-            background: rgba(255, 77, 77, 0.06);
-            border: 1px solid rgba(255, 77, 77, 0.25);
-            color: #ff4d4d;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 0.88rem;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .social-btn:hover { background: #ff4d4d; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 77, 77, 0.2); }
+        {/* --- FAVICONS & MANIFEST (Google Guideline Stable URLs) --- */}
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="48x48"
+            href="/favicon-48x48.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+        />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
 
-        .cinematic-embed-wrapper { 
-            margin-top: 45px; 
-            width: 100%; 
-            aspect-ratio: 16 / 9; 
-            border-radius: 16px; 
-            overflow: hidden; 
-            background: #090909;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-        .cinematic-embed-wrapper iframe { width: 100%; height: 100%; border: 0; }
+        {/* --- STRUCTURED DATA (JSON-LD) --- */}
+        <script
+            type="application/ld+json"
+            is:inline
+            set:html={JSON.stringify(schemaData)}
+        />
 
-        /* --- FINAL & WIP LAYOUTS --- */
-        .gallery-container { padding: 0 60px 120px; max-width: 1400px; margin: 0 auto; }
-        .gallery-heading { color: #fff; margin-bottom: 40px; font-family: 'Syne', sans-serif; font-size: 2.2rem; }
-        
-        .final-grid { display: flex; flex-direction: column; gap: 40px; }
-        .gallery-img-large { width: 100%; border-radius: 16px; display: block; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.4s ease; }
-        .gallery-img-large:hover { transform: scale(1.01); }
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap"
+            rel="stylesheet"
+        />
 
-        .wip-masonry { column-count: 2; column-gap: 30px; }
-        .gallery-img-half { width: 100%; margin-bottom: 30px; border-radius: 16px; display: block; break-inside: avoid; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.4s ease; }
-        .gallery-img-half:hover { transform: scale(1.01); }
+        <style>
+            /* Highlight Work nav item when on project pages */
+            .nav-links a[href$="#work"] {
+                color: var(--accent) !important;
+            }
+            .nav-links a[href$="#work"]::after {
+                width: 100% !important;
+            }
 
-        /* --- PROJECT NAVIGATION STYLES --- */
-        .project-navigation { display: flex; justify-content: space-between; max-width: 1400px; margin: 0 auto; padding: 0 60px 80px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 80px; }
-        .nav-card { flex: 1; text-decoration: none; display: flex; flex-direction: column; transition: transform 0.3s ease; }
-        .nav-card:hover { transform: translateY(-5px); }
-        .nav-card.prev { text-align: left; padding-right: 20px; border-right: 1px solid rgba(255,255,255,0.05); }
-        .nav-card.next { text-align: right; padding-left: 20px; }
-        .nav-label { color: rgba(255,255,255,0.4); font-family: 'Syne', sans-serif; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 10px; }
-        .nav-title { color: #fff; font-family: 'DM Sans', sans-serif; font-size: 1.5rem; font-weight: 600; margin: 0; }
-        .nav-title span { color: #ff4d4d; transition: margin 0.3s ease; }
-        .nav-card.prev:hover .nav-title span { margin-right: 8px; }
-        .nav-card.next:hover .nav-title span { margin-left: 8px; }
+            /* Transparent navbar on project pages */
+            .nav {
+                background: transparent !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                border-bottom-color: transparent !important;
+            }
+            .nav.scrolled {
+                background: rgba(13, 13, 13, 0.85) !important;
+                backdrop-filter: blur(12px) !important;
+                -webkit-backdrop-filter: blur(12px) !important;
+                border-bottom-color: var(--border-subtle) !important;
+            }
 
-        @media (max-width: 768px) {
-            .project-hero { padding: 40px 20px; height: 50vh; }
-            .project-details { grid-template-columns: 1fr; padding: 60px 20px; gap: 40px; }
-            .gallery-container { padding: 0 20px 80px; }
-            .wip-masonry { column-count: 1; }
-            .project-navigation { flex-direction: column; gap: 40px; padding: 60px 20px; }
-            .nav-card.prev { border-right: none; padding-right: 0; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 40px; }
-            .nav-card.next { padding-left: 0; text-align: left; }
-        }
-    </style>
-</head>
-<body>
-    <Navbar />
+            .project-hero {
+                position: relative;
+                width: 100%;
+                height: 70vh;
+                min-height: 500px;
+                overflow: hidden;
+                display: flex;
+                align-items: flex-end;
+                padding: 80px 60px;
+                background: var(--bg-primary);
+            }
+            .project-hero-media {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: top center;
+                z-index: 0;
+            }
+            .project-hero::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(13, 13, 13, 0.8) 0%,
+                    rgba(13, 13, 13, 0.1) 20%,
+                    rgba(13, 13, 13, 0.4) 60%,
+                    #0d0d0d 100%
+                );
+                z-index: 1;
+                pointer-events: none;
+            }
+            .project-hero-content {
+                position: relative;
+                z-index: 2;
+                max-width: 900px;
+                width: 100%;
+            }
 
-    <header class="project-hero">
-        {project.shortVideoUrl ? (
-            <video 
-                src={project.shortVideoUrl} 
-                poster={posterUrl}
-                class="project-hero-media" 
-                autoplay muted loop playsinline 
-            ></video>
-        ) : project.mainImage && project.mainImage.asset ? (
-            <img src={posterUrl} alt={project.mainImage.alt || project.title} class="project-hero-media" />
-        ) : null}
-        
-        <div class="project-hero-content reveal">
-            <a href="/#work" class="back-btn">← Back to Portfolio</a>
-            <h1 style="font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 5.5vw, 5.5rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 800; color: #fff; margin: 0;">{project.title}</h1>
-        </div>
-    </header>
+            .back-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: #fff;
+                text-decoration: none;
+                font-family: "DM Sans", sans-serif;
+                font-weight: 600;
+                margin-bottom: 30px;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.08);
+                padding: 10px 20px;
+                border-radius: 50px;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .back-btn:hover {
+                background: rgba(255, 255, 255, 0.18);
+                transform: translateX(-5px);
+            }
 
-    <section class="project-details">
-        <div class="project-meta reveal reveal-d1">
-            <h3>Role / Service</h3> 
-            <p>{project.tag || "N/A"}</p>
-            
-            <h3>Category</h3> 
-            <p>{project.subtitle || "N/A"}</p>
-        </div>
-        <div class="project-info reveal reveal-d2">
-            <div class="project-description">{project.description || "In-depth case study coming soon."}</div>
-            
-            {project.socialLinks && project.socialLinks.length > 0 && (
-                <div class="social-links">
-                    {project.socialLinks.map((link) => (
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" class="social-btn">
-                            View on {link.platform} ↗
-                        </a>
-                    ))}
-                </div>
-            )}
+            .project-details {
+                padding: 100px 60px;
+                max-width: 1280px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                gap: 80px;
+            }
+            .project-meta h3 {
+                font-family: "Syne", sans-serif;
+                color: rgba(255, 255, 255, 0.4);
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                margin-bottom: 6px;
+            }
+            .project-meta p {
+                color: #fff;
+                font-size: 1.15rem;
+                margin-bottom: 35px;
+                font-weight: 500;
+                font-family: "DM Sans", sans-serif;
+            }
+            .project-description {
+                font-size: 1.15rem;
+                line-height: 1.8;
+                color: rgba(255, 255, 255, 0.85);
+                white-space: pre-wrap;
+                margin-bottom: 40px;
+                font-family: "DM Sans", sans-serif;
+            }
 
-            {ytId && (
-                <div class="cinematic-embed-wrapper reveal reveal-d3">
-                    <iframe 
-                        src={`https://www.youtube.com/embed/${ytId}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0`} 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen
-                    ></iframe>
-                </div>
-            )}
-        </div>
-    </section>
+            .social-links {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-top: 25px;
+            }
+            .social-btn {
+                padding: 10px 22px;
+                background: rgba(255, 77, 77, 0.06);
+                border: 1px solid rgba(255, 77, 77, 0.25);
+                color: #ff4d4d;
+                border-radius: 50px;
+                text-decoration: none;
+                font-size: 0.88rem;
+                font-weight: 600;
+                font-family: "DM Sans", sans-serif;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .social-btn:hover {
+                background: #ff4d4d;
+                color: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(255, 77, 77, 0.2);
+            }
 
-    {/* FINAL ARTWORK SECTION (Auto-format WebP + Dynamic Alt) */}
-    {validFinalImages.length > 0 && (
-        <section class="gallery-container">
-            <h2 class="gallery-heading">Final Artwork</h2>
-            <div class="final-grid">
-                {validFinalImages.map((image: any, index: number) => (
-                    <img 
-                        src={urlFor(image).width(1920).auto('format').url()} 
-                        alt={image.alt || `Final Artwork ${index + 1} - ${project.title}`} 
-                        class={`gallery-img-large reveal reveal-d${(index % 3) + 1}`} 
-                        loading="lazy" 
-                    />
-                ))}
-            </div>
-        </section>
-    )}
+            .cinematic-embed-wrapper {
+                margin-top: 45px;
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                border-radius: 16px;
+                overflow: hidden;
+                background: #090909;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            }
+            .cinematic-embed-wrapper iframe {
+                width: 100%;
+                height: 100%;
+                border: 0;
+            }
 
-    {/* WIP SECTION (Auto-format WebP + Dynamic Alt) */}
-    {validWipImages.length > 0 && (
-        <section class="gallery-container">
-            <h2 class="gallery-heading">Work in Progress</h2>
-            <div class="wip-masonry">
-                {validWipImages.map((image: any, index: number) => (
-                    <img 
-                        src={urlFor(image).width(800).auto('format').url()} 
-                        alt={image.alt || `Work in Progress ${index + 1} - ${project.title}`} 
-                        class={`gallery-img-half reveal reveal-d${(index % 3) + 1}`} 
-                        loading="lazy" 
-                    />
-                ))}
-            </div>
-        </section>
-    )}
+            /* --- FINAL & WIP LAYOUTS --- */
+            .gallery-container {
+                padding: 0 60px 120px;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+            .gallery-heading {
+                color: #fff;
+                margin-bottom: 40px;
+                font-family: "Syne", sans-serif;
+                font-size: 2.2rem;
+            }
 
-    {/* PROJECT NAVIGATION */}
-    <div class="project-navigation reveal">
-        {prevProject ? (
-            <a href={`/project/${prevProject.slug.current}`} class="nav-card prev">
-                <span class="nav-label">Previous Project</span>
-                <h4 class="nav-title"><span>&larr;</span> {prevProject.title}</h4>
-            </a>
-        ) : (
-            <div class="nav-card prev" style="visibility: hidden;"></div>
-        )}
-        
-        {nextProject ? (
-            <a href={`/project/${nextProject.slug.current}`} class="nav-card next">
-                <span class="nav-label">Next Project</span>
-                <h4 class="nav-title">{nextProject.title} <span>&rarr;</span></h4>
-            </a>
-        ) : (
-            <div class="nav-card next" style="visibility: hidden;"></div>
-        )}
-    </div>
+            .final-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 40px;
+            }
+            .gallery-img-large {
+                width: 100%;
+                border-radius: 16px;
+                display: block;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                transition: transform 0.4s ease;
+            }
+            .gallery-img-large:hover {
+                transform: scale(1.01);
+            }
 
-    <footer class="footer" style="text-align: center; padding: 100px 20px 60px;">
-        <h2 style="font-family: 'Syne', sans-serif; font-size: 2.2rem; margin-bottom: 30px; color: #fff; letter-spacing: -0.01em;">Ready to start your project?</h2>
-        <a href="/#contact" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 36px; background: #ff4d4d; color: #fff; border-radius: 50px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; transition: background 0.3s ease; border: 1px solid transparent;">
-            Work With Us &rarr;
-        </a>
-    </footer>
+            .wip-masonry {
+                column-count: 2;
+                column-gap: 30px;
+            }
+            .gallery-img-half {
+                width: 100%;
+                margin-bottom: 30px;
+                border-radius: 16px;
+                display: block;
+                break-inside: avoid;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                transition: transform 0.4s ease;
+            }
+            .gallery-img-half:hover {
+                transform: scale(1.01);
+            }
 
-    <script>
-        document.addEventListener('astro:page-load', () => {
-            const revealEls = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-            }, { threshold: 0.05 });
-            revealEls.forEach(el => observer.observe(el));
+            /* --- PROJECT NAVIGATION STYLES --- */
+            .project-navigation {
+                display: flex;
+                justify-content: space-between;
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 60px 80px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                padding-top: 80px;
+            }
+            .nav-card {
+                flex: 1;
+                text-decoration: none;
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.3s ease;
+            }
+            .nav-card:hover {
+                transform: translateY(-5px);
+            }
+            .nav-card.prev {
+                text-align: left;
+                padding-right: 20px;
+                border-right: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .nav-card.next {
+                text-align: right;
+                padding-left: 20px;
+            }
+            .nav-label {
+                color: rgba(255, 255, 255, 0.4);
+                font-family: "Syne", sans-serif;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 0.1em;
+                margin-bottom: 10px;
+            }
+            .nav-title {
+                color: #fff;
+                font-family: "DM Sans", sans-serif;
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+            }
+            .nav-title span {
+                color: #ff4d4d;
+                transition: margin 0.3s ease;
+            }
+            .nav-card.prev:hover .nav-title span {
+                margin-right: 8px;
+            }
+            .nav-card.next:hover .nav-title span {
+                margin-left: 8px;
+            }
 
-            // NAVBAR SCROLL — transparent at top, opaque on scroll
-            const navbar = document.getElementById("navbar");
-            const handleScroll = () => {
-                if (window.scrollY > 50) {
-                    navbar?.classList.add("scrolled");
-                } else {
-                    navbar?.classList.remove("scrolled");
+            @media (max-width: 768px) {
+                .project-hero {
+                    padding: 40px 20px;
+                    height: 50vh;
                 }
-            };
-            window.addEventListener("scroll", handleScroll);
+                .project-details {
+                    grid-template-columns: 1fr;
+                    padding: 60px 20px;
+                    gap: 40px;
+                }
+                .gallery-container {
+                    padding: 0 20px 80px;
+                }
+                .wip-masonry {
+                    column-count: 1;
+                }
+                .project-navigation {
+                    flex-direction: column;
+                    gap: 40px;
+                    padding: 60px 20px;
+                }
+                .nav-card.prev {
+                    border-right: none;
+                    padding-right: 0;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                    padding-bottom: 40px;
+                }
+                .nav-card.next {
+                    padding-left: 0;
+                    text-align: left;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <Navbar />
 
-            document.addEventListener("astro:before-swap", () => {
-                window.removeEventListener("scroll", handleScroll);
-            }, { once: true });
+        <header class="project-hero">
+            {
+                project.shortVideoUrl ? (
+                    <video
+                        src={project.shortVideoUrl}
+                        poster={posterUrl}
+                        class="project-hero-media"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                    />
+                ) : project.mainImage && project.mainImage.asset ? (
+                    <img
+                        src={posterUrl}
+                        alt={project.mainImage.alt || project.title}
+                        class="project-hero-media"
+                    />
+                ) : null
+            }
 
-            // MOBILE MENU TOGGLE
-            const hamburger = document.getElementById("hamburger");
-            const mobileMenu = document.getElementById("mobileMenu");
-            const mobileLinks = document.querySelectorAll(".mobile-link");
+            <div class="project-hero-content reveal">
+                <a href="/#work" class="back-btn">← Back to Portfolio</a>
+                <h1
+                    style="font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 5.5vw, 5.5rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 800; color: #fff; margin: 0;"
+                >
+                    {project.title}
+                </h1>
+            </div>
+        </header>
 
-            hamburger?.addEventListener("click", () => {
-                hamburger.classList.toggle("active");
-                mobileMenu?.classList.toggle("active");
-            });
+        <section class="project-details">
+            <div class="project-meta reveal reveal-d1">
+                <h3>Role / Service</h3>
+                <p>{project.tag || "N/A"}</p>
 
-            mobileLinks.forEach((link) => {
-                link.addEventListener("click", () => {
-                    hamburger?.classList.remove("active");
-                    mobileMenu?.classList.remove("active");
+                <h3>Category</h3>
+                <p>{project.subtitle || "N/A"}</p>
+            </div>
+            <div class="project-info reveal reveal-d2">
+                <div class="project-description">
+                    {project.description || "In-depth case study coming soon."}
+                </div>
+
+                {
+                    project.socialLinks && project.socialLinks.length > 0 && (
+                        <div class="social-links">
+                            {project.socialLinks.map((link) => (
+                                <a
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="social-btn"
+                                >
+                                    View on {link.platform} ↗
+                                </a>
+                            ))}
+                        </div>
+                    )
+                }
+
+                {
+                    ytId && (
+                        <div class="cinematic-embed-wrapper reveal reveal-d3">
+                            <iframe
+                                src={`https://www.youtube.com/embed/${ytId}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                            />
+                        </div>
+                    )
+                }
+            </div>
+        </section>
+
+        {/* FINAL ARTWORK SECTION (Auto-format WebP + Dynamic Alt) */}
+        {
+            validFinalImages.length > 0 && (
+                <section class="gallery-container">
+                    <h2 class="gallery-heading">Final Artwork</h2>
+                    <div class="final-grid">
+                        {validFinalImages.map((image: any, index: number) => (
+                            <img
+                                src={urlFor(image)
+                                    .width(1920)
+                                    .auto("format")
+                                    .url()}
+                                alt={
+                                    image.alt ||
+                                    `Final Artwork ${index + 1} - ${project.title}`
+                                }
+                                class={`gallery-img-large reveal reveal-d${(index % 3) + 1}`}
+                                loading="lazy"
+                            />
+                        ))}
+                    </div>
+                </section>
+            )
+        }
+
+        {/* WIP SECTION (Auto-format WebP + Dynamic Alt) */}
+        {
+            validWipImages.length > 0 && (
+                <section class="gallery-container">
+                    <h2 class="gallery-heading">Work in Progress</h2>
+                    <div class="wip-masonry">
+                        {validWipImages.map((image: any, index: number) => (
+                            <img
+                                src={urlFor(image)
+                                    .width(800)
+                                    .auto("format")
+                                    .url()}
+                                alt={
+                                    image.alt ||
+                                    `Work in Progress ${index + 1} - ${project.title}`
+                                }
+                                class={`gallery-img-half reveal reveal-d${(index % 3) + 1}`}
+                                loading="lazy"
+                            />
+                        ))}
+                    </div>
+                </section>
+            )
+        }
+
+        {/* PROJECT NAVIGATION */}
+        <div class="project-navigation reveal">
+            {
+                prevProject ? (
+                    <a
+                        href={`/project/${prevProject.slug.current}`}
+                        class="nav-card prev"
+                    >
+                        <span class="nav-label">Previous Project</span>
+                        <h4 class="nav-title">
+                            <span>&larr;</span> {prevProject.title}
+                        </h4>
+                    </a>
+                ) : (
+                    <div class="nav-card prev" style="visibility: hidden;" />
+                )
+            }
+
+            {
+                nextProject ? (
+                    <a
+                        href={`/project/${nextProject.slug.current}`}
+                        class="nav-card next"
+                    >
+                        <span class="nav-label">Next Project</span>
+                        <h4 class="nav-title">
+                            {nextProject.title} <span>&rarr;</span>
+                        </h4>
+                    </a>
+                ) : (
+                    <div class="nav-card next" style="visibility: hidden;" />
+                )
+            }
+        </div>
+
+        <footer
+            class="footer"
+            style="text-align: center; padding: 100px 20px 60px;"
+        >
+            <h2
+                style="font-family: 'Syne', sans-serif; font-size: 2.2rem; margin-bottom: 30px; color: #fff; letter-spacing: -0.01em;"
+            >
+                Ready to start your project?
+            </h2>
+            <a
+                href="/#contact"
+                style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 36px; background: #ff4d4d; color: #fff; border-radius: 50px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; transition: background 0.3s ease; border: 1px solid transparent;"
+            >
+                Work With Me &rarr;
+            </a>
+        </footer>
+
+        <script>
+            document.addEventListener("astro:page-load", () => {
+                const revealEls = document.querySelectorAll(".reveal");
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((e) => {
+                            if (e.isIntersecting)
+                                e.target.classList.add("visible");
+                        });
+                    },
+                    { threshold: 0.05 },
+                );
+                revealEls.forEach((el) => observer.observe(el));
+
+                // NAVBAR SCROLL — transparent at top, opaque on scroll
+                const navbar = document.getElementById("navbar");
+                const handleScroll = () => {
+                    if (window.scrollY > 50) {
+                        navbar?.classList.add("scrolled");
+                    } else {
+                        navbar?.classList.remove("scrolled");
+                    }
+                };
+                window.addEventListener("scroll", handleScroll);
+
+                document.addEventListener(
+                    "astro:before-swap",
+                    () => {
+                        window.removeEventListener("scroll", handleScroll);
+                    },
+                    { once: true },
+                );
+
+                // MOBILE MENU TOGGLE
+                const hamburger = document.getElementById("hamburger");
+                const mobileMenu = document.getElementById("mobileMenu");
+                const mobileLinks = document.querySelectorAll(".mobile-link");
+
+                hamburger?.addEventListener("click", () => {
+                    hamburger.classList.toggle("active");
+                    mobileMenu?.classList.toggle("active");
+                });
+
+                mobileLinks.forEach((link) => {
+                    link.addEventListener("click", () => {
+                        hamburger?.classList.remove("active");
+                        mobileMenu?.classList.remove("active");
+                    });
                 });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>
