@@ -13,7 +13,7 @@ const projects = await client.fetch(`*[_type == "project"] | order(order asc)`);
 
 // Fetch Testimonials AND expand references to get the URL slugs
 const testimonials = await client.fetch(`
-    *[_type == "testimonial"] | order(_createdAt desc) {
+    *[_type == "testimonial"] | order(order asc) {
         ...,
         projectRef->{
             slug

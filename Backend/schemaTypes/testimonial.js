@@ -48,6 +48,13 @@ export default {
       to: [{ type: 'manga' }],
       description: 'Select the manga this review is for to display a "Preview Work" link.',
     },
+    {
+      name: 'order',
+      title: 'Display Order',
+      type: 'number',
+      description: 'Determines the sorting order of reviews (ascending).',
+      initialValue: 0,
+    },
   ],
   preview: {
     select: {
