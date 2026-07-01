@@ -3,7 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
-  site: "https://xyro.art",
+  site: "https://xyroart.pages.dev",
   adapter: cloudflare({
     prerenderEnvironment: 'node'
   }),
