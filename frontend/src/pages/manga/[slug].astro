@@ -54,7 +54,7 @@ const schemaData = {
     "@graph": [
         {
             "@type": "ComicStory",
-            "@id": `https://xyro.art/manga/${manga.slug.current}/#comic`,
+            "@id": `https://xyroart.pages.dev/manga/${manga.slug.current}/#comic`,
             "name": manga.title,
             "headline": manga.title,
             "description": manga.subtitle || `Read ${manga.title} online at Xyro.`,
@@ -62,36 +62,36 @@ const schemaData = {
             "genre": manga.genre || 'Manga',
             "creator": {
                 "@type": "Person",
-                "@id": "https://xyro.art/#person",
+                "@id": "https://xyroart.pages.dev/#person",
                 "name": "Xyro",
-                "url": "https://xyro.art/"
+                "url": "https://xyroart.pages.dev/"
             },
             "publisher": {
                 "@type": "Person",
-                "@id": "https://xyro.art/#person"
+                "@id": "https://xyroart.pages.dev/#person"
             }
         },
         {
             "@type": "BreadcrumbList",
-            "@id": `https://xyro.art/manga/${manga.slug.current}/#breadcrumb`,
+            "@id": `https://xyroart.pages.dev/manga/${manga.slug.current}/#breadcrumb`,
             "itemListElement": [
                 {
                     "@type": "ListItem",
                     "position": 1,
                     "name": "Home",
-                    "item": "https://xyro.art/"
+                    "item": "https://xyroart.pages.dev/"
                 },
                 {
                     "@type": "ListItem",
                     "position": 2,
                     "name": "Manga",
-                    "item": "https://xyro.art/#work"
+                    "item": "https://xyroart.pages.dev/#work"
                 },
                 {
                     "@type": "ListItem",
                     "position": 3,
                     "name": manga.title,
-                    "item": `https://xyro.art/manga/${manga.slug.current}/`
+                    "item": `https://xyroart.pages.dev/manga/${manga.slug.current}/`
                 }
             ]
         }
@@ -105,7 +105,7 @@ const schemaData = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{manga.title} — Xyro</title>
-    <link rel="canonical" href={`https://xyro.art/manga/${manga.slug.current}/`} />
+    <link rel="canonical" href={`https://xyroart.pages.dev/manga/${manga.slug.current}/`} />
 
     {/* --- BRANDING METADATA --- */}
     <meta name="theme-color" content="#0d0d0d" />
@@ -119,7 +119,7 @@ const schemaData = {
     <meta property="og:title" content={`${manga.title} — Xyro`} />
     <meta property="og:description" content={manga.subtitle || `Read ${manga.title} online at Xyro.`} />
     <meta property="og:type" content="article" />
-    <meta property="og:url" content={`https://xyro.art/manga/${manga.slug.current}/`} />
+    <meta property="og:url" content={`https://xyroart.pages.dev/manga/${manga.slug.current}/`} />
     <meta property="og:site_name" content="Xyro" />
     <meta property="og:image" content={ogImageUrl} />
 

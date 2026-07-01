@@ -45,7 +45,7 @@ function run() {
   let updatedBlocks = [];
 
   for (const item of matches) {
-    const locMatch = /<loc>(https:\/\/xyro\.art[^<]*)<\/loc>/.exec(item.inner);
+    const locMatch = /<loc>(https:\/\/xyroart\.pages\.dev[^<]*)<\/loc>/.exec(item.inner);
     if (!locMatch) {
       updatedBlocks.push(item.full);
       continue;
@@ -53,7 +53,7 @@ function run() {
 
     const url = locMatch[1];
     // Map URL to local built HTML file
-    let relativePath = url.replace('https://xyro.art', '');
+    let relativePath = url.replace('https://xyroart.pages.dev', '');
     if (relativePath.endsWith('/')) {
       relativePath += 'index.html';
     } else if (relativePath === '') {

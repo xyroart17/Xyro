@@ -84,47 +84,47 @@ const schemaData = {
     "@graph": [
         {
             "@type": "VisualArtwork",
-            "@id": `https://xyro.art/project/${project.slug.current}/#artwork`,
+            "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#artwork`,
             name: project.title,
             headline: project.title,
             description: project.description
                 ? project.description.substring(0, 200) + "..."
                 : "A creative project by Xyro.",
-            image: ogImageUrl || "https://xyro.art/assets/about-pic.jpg",
+            image: ogImageUrl || "https://xyroart.pages.dev/assets/about-pic.jpg",
             creator: {
                 "@type": "Person",
-                "@id": "https://xyro.art/#person",
+                "@id": "https://xyroart.pages.dev/#person",
                 name: "Xyro",
-                url: "https://xyro.art/",
+                url: "https://xyroart.pages.dev/",
             },
             publisher: {
                 "@type": "Person",
-                "@id": "https://xyro.art/#person",
+                "@id": "https://xyroart.pages.dev/#person",
             },
             artMedium: "Digital",
             genre: project.tag || "3D & 2D Art",
         },
         {
             "@type": "BreadcrumbList",
-            "@id": `https://xyro.art/project/${project.slug.current}/#breadcrumb`,
+            "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#breadcrumb`,
             itemListElement: [
                 {
                     "@type": "ListItem",
                     position: 1,
                     name: "Home",
-                    item: "https://xyro.art/",
+                    item: "https://xyroart.pages.dev/",
                 },
                 {
                     "@type": "ListItem",
                     position: 2,
                     name: "Projects",
-                    item: "https://xyro.art/#work",
+                    item: "https://xyroart.pages.dev/#work",
                 },
                 {
                     "@type": "ListItem",
                     position: 3,
                     name: project.title,
-                    item: `https://xyro.art/project/${project.slug.current}/`,
+                    item: `https://xyroart.pages.dev/project/${project.slug.current}/`,
                 },
             ],
         },
@@ -140,7 +140,7 @@ const schemaData = {
         <title>{project.title} — Xyro</title>
         <link
             rel="canonical"
-            href={`https://xyro.art/project/${project.slug.current}/`}
+            href={`https://xyroart.pages.dev/project/${project.slug.current}/`}
         />
 
         {/* --- BRANDING METADATA --- */}
@@ -167,7 +167,7 @@ const schemaData = {
         <meta property="og:type" content="article" />
         <meta
             property="og:url"
-            content={`https://xyro.art/project/${project.slug.current}/`}
+            content={`https://xyroart.pages.dev/project/${project.slug.current}/`}
         />
         <meta property="og:site_name" content="Xyro" />
         {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}

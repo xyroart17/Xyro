@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://xyro.art/sitemap-index.xml
+Sitemap: https://xyroart.pages.dev/sitemap-index.xml
