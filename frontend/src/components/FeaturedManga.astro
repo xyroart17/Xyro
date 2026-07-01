@@ -99,11 +99,41 @@ const mangaList = await client.fetch(`
 <script>
     import { initMangaEngine } from "../scripts/mangaEngine.js";
 
+    // Module-scoped state to persist across client-side page transitions
+    let visibleMangaCount = 2;
+
+    function restoreManga() {
+        const allManga = document.querySelectorAll(".manga-card");
+        if (allManga.length > 0) {
+            allManga.forEach((el, index) => {
+                if (index < visibleMangaCount) {
+                    el.classList.remove("manga-hidden");
+                    el.classList.add("visible");
+                } else {
+                    el.classList.add("manga-hidden");
+                    el.classList.remove("visible");
+                }
+            });
+
+            const mangaLoadMoreBtn = document.getElementById("mangaLoadMoreBtn");
+            if (mangaLoadMoreBtn) {
+                if (visibleMangaCount >= allManga.length) {
+                    mangaLoadMoreBtn.classList.add("disabled-coming");
+                    mangaLoadMoreBtn.setAttribute("disabled", "true");
+                    mangaLoadMoreBtn.innerHTML = "Coming More";
+                }
+            }
+        }
+    }
+
     function setupManga() {
         initMangaEngine();
+        restoreManga();
 
         // MANGA LOAD MORE SCRIPT
         const mangaLoadMoreBtn = document.getElementById("mangaLoadMoreBtn");
+        const allManga = document.querySelectorAll(".manga-card");
+
         if (mangaLoadMoreBtn) {
             mangaLoadMoreBtn.addEventListener("click", () => {
                 const hiddenManga = Array.from(
@@ -114,7 +144,9 @@ const mangaList = await client.fetch(`
                     el.classList.remove("manga-hidden");
                     el.classList.add("visible");
                 });
-                if (hiddenManga.length <= 2) {
+                visibleMangaCount += toShow.length;
+
+                if (visibleMangaCount >= allManga.length) {
                     mangaLoadMoreBtn.classList.add("disabled-coming");
                     mangaLoadMoreBtn.setAttribute("disabled", "true");
                     mangaLoadMoreBtn.innerHTML = "Coming More";
@@ -124,5 +156,6 @@ const mangaList = await client.fetch(`
     }
 
     // Support Astro SPA transition navigation
+    document.addEventListener("astro:after-swap", restoreManga);
     document.addEventListener("astro:page-load", setupManga);
 </script>

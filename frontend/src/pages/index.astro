@@ -832,9 +832,41 @@ const testimonials = await client.fetch(`
         <script src="../scripts/animations/MessagePlane.ts"></script>
 
         <script>
+            // Module-scoped state to persist across client-side page transitions
+            let visibleProjectsCount = 2;
+
+            function restoreProjects() {
+                const allProjects = document.querySelectorAll(".work-item");
+                if (allProjects.length > 0) {
+                    allProjects.forEach((el, index) => {
+                        if (index < visibleProjectsCount) {
+                            el.classList.remove("project-hidden");
+                            el.classList.add("visible");
+                        } else {
+                            el.classList.add("project-hidden");
+                            el.classList.remove("visible");
+                        }
+                    });
+
+                    const loadMoreBtn = document.getElementById("loadMoreBtn");
+                    if (loadMoreBtn) {
+                        if (visibleProjectsCount >= allProjects.length) {
+                            loadMoreBtn.classList.add("disabled-coming");
+                            loadMoreBtn.setAttribute("disabled", "true");
+                            loadMoreBtn.innerHTML = "Coming More";
+                        }
+                    }
+                }
+            }
+
+            document.addEventListener("astro:after-swap", restoreProjects);
+
             document.addEventListener("astro:page-load", () => {
+                restoreProjects();
+
                 // LOAD MORE PROJECTS SCRIPT
                 const loadMoreBtn = document.getElementById("loadMoreBtn");
+                const allProjects = document.querySelectorAll(".work-item");
                 if (loadMoreBtn) {
                     loadMoreBtn.addEventListener("click", () => {
                         const hiddenProjects = Array.from(
@@ -847,7 +879,9 @@ const testimonials = await client.fetch(`
                             el.classList.remove("project-hidden");
                             el.classList.add("visible");
                         });
-                        if (hiddenProjects.length <= 2) {
+                        visibleProjectsCount += toShow.length;
+
+                        if (visibleProjectsCount >= allProjects.length) {
                             loadMoreBtn.classList.add("disabled-coming");
                             loadMoreBtn.setAttribute("disabled", "true");
                             loadMoreBtn.innerHTML = "Coming More";
