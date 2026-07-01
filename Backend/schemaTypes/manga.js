@@ -87,21 +87,12 @@ export default {
       initialValue: false,
     },
     {
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
-      group: 'core',
-      description: 'Determines the sorting order of manga on the homepage (ascending).',
-      initialValue: 0,
-    },
-    {
       name: 'publishDate',
-      title: 'Publish Date',
-      type: 'date',
+      title: 'Publish Date & Time',
+      type: 'datetime',
       group: 'core',
-      options: {
-        dateFormat: 'YYYY-MM-DD',
-      },
+      description: 'Determines the sorting order of manga on the website (latest first).',
+      initialValue: () => new Date().toISOString(),
     },
     {
       name: 'coverImage',

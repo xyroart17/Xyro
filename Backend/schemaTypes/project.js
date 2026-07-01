@@ -58,12 +58,12 @@ export default {
       description: 'e.g., Commission Work, Personal Project, Xyro'
     },
     {
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
+      name: 'publishDate',
+      title: 'Publish Date & Time',
+      type: 'datetime',
       group: 'core',
-      description: 'Determines the sorting order of projects on the homepage (ascending).',
-      initialValue: 0,
+      description: 'Determines the sorting order of projects on the website (latest first).',
+      initialValue: () => new Date().toISOString(),
     },
     
     // DEEP DIVE (The project page)

@@ -6,9 +6,9 @@ import { client, urlFor } from "../../utils/sanity.js";
 import Navbar from "../../components/Navbar.astro";
 
 export async function getStaticPaths() {
-    // We fetch ALL projects ordered by display order first so we can calculate Next/Prev
+    // We fetch ALL projects ordered by publishDate desc first so we can calculate Next/Prev
     const projects =
-        await client.fetch(`*[_type == "project" && defined(slug.current)] | order(order asc) {
+        await client.fetch(`*[_type == "project" && defined(slug.current)] | order(coalesce(publishDate, _createdAt) desc) {
         ...,
         "shortVideoUrl": shortVideo.asset->url
     }`);
@@ -251,22 +251,30 @@ const schemaData = {
             .project-hero {
                 position: relative;
                 width: 100%;
-                height: 70vh;
-                min-height: 500px;
+                height: 75vh;
+                min-height: 550px;
                 overflow: hidden;
                 display: flex;
                 align-items: flex-end;
                 padding: 80px 60px;
-                background: var(--bg-primary);
+                background: #0d0d0d;
+            }
+            .project-hero-bg-blur {
+                position: absolute;
+                inset: -20px;
+                background-size: cover;
+                background-position: center;
+                filter: blur(20px) brightness(0.25);
+                z-index: 0;
+                pointer-events: none;
             }
             .project-hero-media {
                 position: absolute;
                 inset: 0;
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
-                object-position: top center;
-                z-index: 0;
+                object-fit: contain;
+                z-index: 1;
             }
             .project-hero::after {
                 content: "";
@@ -274,17 +282,17 @@ const schemaData = {
                 inset: 0;
                 background: linear-gradient(
                     to bottom,
-                    rgba(13, 13, 13, 0.8) 0%,
+                    rgba(13, 13, 13, 0.4) 0%,
                     rgba(13, 13, 13, 0.1) 20%,
-                    rgba(13, 13, 13, 0.4) 60%,
+                    rgba(13, 13, 13, 0.3) 60%,
                     #0d0d0d 100%
                 );
-                z-index: 1;
+                z-index: 2;
                 pointer-events: none;
             }
             .project-hero-content {
                 position: relative;
-                z-index: 2;
+                z-index: 3;
                 max-width: 900px;
                 width: 100%;
             }
@@ -523,6 +531,7 @@ const schemaData = {
         <Navbar />
 
         <header class="project-hero">
+            <div class="project-hero-bg-blur" style={`background-image: url(${posterUrl});`} />
             {
                 project.shortVideoUrl ? (
                     <video

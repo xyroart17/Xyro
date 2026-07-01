@@ -2,9 +2,9 @@
 import { client, urlFor } from "../utils/sanity.js";
 import "../styles/featuredManga.css";
 
-// Fetch only featured manga sorted by order
+// Fetch only featured manga sorted by publishDate desc
 const mangaList = await client.fetch(`
-    *[_type == "manga" && featured == true] | order(order asc) {
+    *[_type == "manga" && featured == true] | order(coalesce(publishDate, _createdAt) desc) {
         title,
         slug,
         subtitle,

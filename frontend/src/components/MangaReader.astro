@@ -59,17 +59,17 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
 
     <!-- Reading Area Stack -->
     <main class="reader-content gap-none">
-        {manga.pages.map((url, index) => (
+        {manga.pages.map((page, index) => (
             <div 
                 class="manga-page-wrapper" 
                 data-page-number={index + 1}
-                data-src={url}
+                data-src={page.url}
             >
                 <!-- Subtle Skeleton Loader -->
                 <div class="page-loader-skeleton"></div>
                 <!-- Lazy image loaded via JS -->
                 <img 
-                    alt={`Page ${index + 1} of ${manga.pageCount} - ${manga.title}`}
+                    alt={page.alt || `Page ${index + 1} of ${manga.pageCount} - ${manga.title}`}
                     class="manga-page-img"
                 />
             </div>

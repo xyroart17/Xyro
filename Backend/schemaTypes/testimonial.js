@@ -49,11 +49,11 @@ export default {
       description: 'Select the manga this review is for to display a "Preview Work" link.',
     },
     {
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
-      description: 'Determines the sorting order of reviews (ascending).',
-      initialValue: 0,
+      name: 'publishDate',
+      title: 'Publish Date & Time',
+      type: 'datetime',
+      description: 'Determines the sorting order of reviews on the website (latest first).',
+      initialValue: () => new Date().toISOString(),
     },
   ],
   preview: {

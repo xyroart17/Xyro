@@ -4,7 +4,7 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import IframePreview from './components/IframePreview'
 import {CaseIcon, BookIcon, HeartIcon} from '@sanity/icons'
-import {MoveToTopAction, MoveUpAction, MoveDownAction, MoveToBottomAction} from './actions/orderActions'
+
 import React from 'react'
 
 const Logo = () => {
@@ -90,14 +90,6 @@ export default defineConfig({
     types: schemaTypes,
   },
 
-  document: {
-    actions: (prev, context) => {
-      if (['project', 'manga', 'testimonial'].includes(context.schemaType)) {
-        return [MoveToTopAction, MoveUpAction, MoveDownAction, MoveToBottomAction, ...prev]
-      }
-      return prev
-    }
-  },
 
   studio: {
     components: {

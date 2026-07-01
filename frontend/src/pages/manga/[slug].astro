@@ -7,7 +7,7 @@ import { urlFor } from '../../utils/sanity.js';
 
 export async function getStaticPaths() {
     const { client } = await import('../../utils/sanity.js');
-    const mangaList = await client.fetch(`*[_type == "manga" && featured == true] | order(order asc) {
+    const mangaList = await client.fetch(`*[_type == "manga" && featured == true] | order(coalesce(publishDate, _createdAt) desc) {
         title,
         slug,
         subtitle,
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
         status,
         tag,
         socialLinks,
-        "pages": pages[].asset->url,
+        "pages": pages[]{ "url": asset->url, alt },
         "pageCount": count(pages),
         "wip": wip[].asset->url
     }`);

@@ -9,11 +9,11 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 
 // Fetch Projects
-const projects = await client.fetch(`*[_type == "project"] | order(order asc)`);
+const projects = await client.fetch(`*[_type == "project"] | order(coalesce(publishDate, _createdAt) desc)`);
 
 // Fetch Testimonials AND expand references to get the URL slugs
 const testimonials = await client.fetch(`
-    *[_type == "testimonial"] | order(order asc) {
+    *[_type == "testimonial"] | order(coalesce(publishDate, _createdAt) desc) {
         ...,
         projectRef->{
             slug
