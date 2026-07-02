@@ -84,7 +84,7 @@ export const POST: APIRoute = async ({ request }) => {
             },
             body: JSON.stringify({
                 from: "Xyro Contact Form <onboarding@resend.dev>",
-                to: "xyro.art17@gmail.com",
+                to: "officialxyroart@gmail.com",
                 reply_to: email,
                 subject: "New Project Inquiry — Xyro",
                 html: `

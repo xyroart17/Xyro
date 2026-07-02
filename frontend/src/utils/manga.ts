@@ -4,7 +4,7 @@ export interface Manga {
   coverImage: any;
   genre?: string;
   status?: string;
-  pages: string[];
+  pages: Array<{ url: string; alt?: string }>;
   pageCount: number;
   wip?: string[];
   tag?: string;
