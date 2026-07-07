@@ -23,9 +23,6 @@
     margin-top: 60px;
 }
 
-.manga-hidden {
-    display: none !important;
-}
 
 /* Collectible Card Design */
 .manga-card {
@@ -510,51 +507,4 @@
     }
 }
 
-/* Placeholder card & Coming More button styles */
-.coming-soon-card {
-    border: 1px dashed rgba(255, 255, 255, 0.15) !important;
-    background: rgba(255, 255, 255, 0.02) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    cursor: default !important;
-}
 
-.coming-soon-card:hover {
-    transform: none !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    box-shadow: none !important;
-}
-
-.coming-soon-card::before {
-    display: none !important; /* Remove red gradient */
-}
-
-.coming-soon-content {
-    padding: 60px 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-}
-
-.coming-soon-card .manga-title {
-    color: var(--text-secondary) !important;
-    font-size: 1.6rem !important;
-    margin-bottom: 0 !important;
-}
-
-.coming-soon-card .manga-subtitle {
-    max-width: 320px;
-    margin: 0 !important;
-    font-size: 0.9rem !important;
-    color: var(--text-muted) !important;
-}
-
-.btn.disabled-coming {
-    opacity: 0.4 !important;
-    cursor: default !important;
-    pointer-events: none !important;
-}

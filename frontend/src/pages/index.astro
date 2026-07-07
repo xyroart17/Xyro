@@ -9,7 +9,9 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 
 // Fetch Projects
-const projects = await client.fetch(`*[_type == "project"] | order(coalesce(publishDate, _createdAt) desc)`);
+const projects = await client.fetch(
+    `*[_type == "project"] | order(coalesce(publishDate, _createdAt) desc)`,
+);
 
 // Fetch Testimonials AND expand references to get the URL slugs
 const testimonials = await client.fetch(`
@@ -209,14 +211,6 @@ const testimonials = await client.fetch(`
             .pulse-dot {
                 animation: dot-pulse 1.8s infinite ease-in-out;
             }
-            .project-hidden {
-                display: none !important;
-            }
-            .btn.disabled-coming {
-                opacity: 0.4;
-                cursor: default !important;
-                pointer-events: none;
-            }
         </style>
     </head>
     <body>
@@ -270,7 +264,7 @@ const testimonials = await client.fetch(`
 
         <section class="section" id="work">
             <div class="section-inner">
-                <span class="section-label reveal">Selected Projects</span>
+                <span class="section-label reveal">Selected Artworks</span>
                 <h2 class="section-title reveal reveal-d1">
                     Recent work I'm<br />proud of.
                 </h2>
@@ -279,7 +273,7 @@ const testimonials = await client.fetch(`
                         projects.map((project: any, index: number) => (
                             <a
                                 href={`/project/${project.slug?.current}`}
-                                class={`work-item reveal reveal-d${(index % 4) + 1} ${index >= 2 ? "project-hidden" : ""}`}
+                                class={`work-item reveal reveal-d${(index % 4) + 1}`}
                                 style="display: block; text-decoration: none;"
                             >
                                 <div class="work-item-inner">
@@ -321,30 +315,6 @@ const testimonials = await client.fetch(`
                             </a>
                         ))
                     }
-                </div>
-
-                <div
-                    class="load-more-container"
-                    style="display: flex; justify-content: center; margin-top: 50px;"
-                >
-                    <button
-                        id="loadMoreBtn"
-                        class={`btn btn-outline ${projects.length <= 2 ? "disabled-coming" : ""}`}
-                        style="min-width: 180px;"
-                        disabled={projects.length <= 2}
-                    >
-                        {projects.length <= 2 ? "Coming More" : "Load More"}
-                        {
-                            projects.length > 2 && (
-                                <span
-                                    class="arrow-icon"
-                                    style="margin-left: 8px; display: inline-block; transition: transform var(--transition-fast);"
-                                >
-                                    ↓
-                                </span>
-                            )
-                        }
-                    </button>
                 </div>
             </div>
         </section>
@@ -832,63 +802,7 @@ const testimonials = await client.fetch(`
         <script src="../scripts/animations/MessagePlane.ts"></script>
 
         <script>
-            // Module-scoped state to persist across client-side page transitions
-            let visibleProjectsCount = 2;
-
-            function restoreProjects() {
-                const allProjects = document.querySelectorAll(".work-item");
-                if (allProjects.length > 0) {
-                    allProjects.forEach((el, index) => {
-                        if (index < visibleProjectsCount) {
-                            el.classList.remove("project-hidden");
-                            el.classList.add("visible");
-                        } else {
-                            el.classList.add("project-hidden");
-                            el.classList.remove("visible");
-                        }
-                    });
-
-                    const loadMoreBtn = document.getElementById("loadMoreBtn");
-                    if (loadMoreBtn) {
-                        if (visibleProjectsCount >= allProjects.length) {
-                            loadMoreBtn.classList.add("disabled-coming");
-                            loadMoreBtn.setAttribute("disabled", "true");
-                            loadMoreBtn.innerHTML = "Coming More";
-                        }
-                    }
-                }
-            }
-
-            document.addEventListener("astro:after-swap", restoreProjects);
-
             document.addEventListener("astro:page-load", () => {
-                restoreProjects();
-
-                // LOAD MORE PROJECTS SCRIPT
-                const loadMoreBtn = document.getElementById("loadMoreBtn");
-                const allProjects = document.querySelectorAll(".work-item");
-                if (loadMoreBtn) {
-                    loadMoreBtn.addEventListener("click", () => {
-                        const hiddenProjects = Array.from(
-                            document.querySelectorAll(
-                                ".work-item.project-hidden",
-                            ),
-                        );
-                        const toShow = hiddenProjects.slice(0, 2);
-                        toShow.forEach((el) => {
-                            el.classList.remove("project-hidden");
-                            el.classList.add("visible");
-                        });
-                        visibleProjectsCount += toShow.length;
-
-                        if (visibleProjectsCount >= allProjects.length) {
-                            loadMoreBtn.classList.add("disabled-coming");
-                            loadMoreBtn.setAttribute("disabled", "true");
-                            loadMoreBtn.innerHTML = "Coming More";
-                        }
-                    });
-                }
-
                 // ULTRA-RESPONSIVE INTERSECTION OBSERVER FOR CONTENT REVEALS
                 const revealEls = document.querySelectorAll(".reveal");
                 if (revealEls.length > 0) {

@@ -130,6 +130,9 @@ const schemaData = {
         },
     ],
 };
+
+const wordCount = project.title ? project.title.split(/\s+/).filter(Boolean).length : 0;
+const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8rem, 5.5vw, 5.5rem)";
 ---
 
 <!doctype html>
@@ -555,7 +558,7 @@ const schemaData = {
             <div class="project-hero-content reveal">
                 <a href="/#work" class="back-btn">← Back to Portfolio</a>
                 <h1
-                    style="font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 5.5vw, 5.5rem); line-height: 1.05; letter-spacing: -0.02em; font-weight: 800; color: #fff; margin: 0;"
+                    style={`font-family: 'Syne', sans-serif; font-size: ${titleFontSize}; line-height: 1.05; letter-spacing: -0.02em; font-weight: 800; color: #fff; margin: 0;`}
                 >
                     {project.title}
                 </h1>
