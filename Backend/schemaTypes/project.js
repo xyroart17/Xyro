@@ -92,6 +92,20 @@ export default {
       validation: (Rule) => Rule.required().error('Thumbnail image is required.'),
     },
     { 
+      name: 'gridImage', 
+      title: 'Grid Showcase Image (Optional)', 
+      type: 'image', 
+      group: 'media',
+      options: { hotspot: true },
+      fields: [{ 
+        name: 'alt', 
+        type: 'string', 
+        title: 'Alt text (For SEO)',
+        components: { input: AltTextInput }
+      }],
+      description: 'Optional. Upload/crop a custom display image specifically for portfolio grids and testimonial cards. If empty, defaults to the Thumbnail (Main Poster Image).',
+    },
+    { 
       name: 'finalImages', 
       title: 'Final Artwork', 
       type: 'array', 

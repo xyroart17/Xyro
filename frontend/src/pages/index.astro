@@ -25,12 +25,14 @@ const testimonials = await client.fetch(`
         projectRef->{
             slug,
             mainImage,
+            gridImage,
             title,
             tag
         },
         mangaRef->{
             slug,
             coverImage,
+            gridImage,
             title,
             tag
         }
@@ -349,26 +351,28 @@ clientGroups.forEach((group: any) => {
                                 style="display: block; text-decoration: none;"
                             >
                                 <div class="work-item-inner">
-                                    {project.mainImage &&
-                                    project.mainImage.asset ? (
-                                        <img
-                                            src={urlFor(project.mainImage)
-                                                .width(800)
-                                                .auto("format")
-                                                .url()}
-                                            alt={
-                                                project.mainImage.alt ||
-                                                project.title
-                                            }
-                                            class="work-item-bg"
-                                            loading="lazy"
-                                        />
-                                    ) : (
-                                        <div
-                                            class="work-item-bg"
-                                            style="background: #111;"
-                                        />
-                                    )}
+                                    {(() => {
+                                        const displayImage = project.gridImage || project.mainImage;
+                                        return displayImage && displayImage.asset ? (
+                                            <img
+                                                src={urlFor(displayImage)
+                                                    .width(800)
+                                                    .auto("format")
+                                                    .url()}
+                                                alt={
+                                                    displayImage.alt ||
+                                                    project.title
+                                                }
+                                                class="work-item-bg"
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <div
+                                                class="work-item-bg"
+                                                style="background: #111;"
+                                            />
+                                        );
+                                    })()}
                                     <div class="work-item-overlay">
                                         <span class="work-item-tag">
                                             {project.tag}
@@ -650,7 +654,9 @@ clientGroups.forEach((group: any) => {
                                         "";
                                     const image =
                                         review.cardImage ||
+                                        review.projectRef?.gridImage ||
                                         review.projectRef?.mainImage ||
+                                        review.mangaRef?.gridImage ||
                                         review.mangaRef?.coverImage;
                                     const slug =
                                         review.projectRef?.slug?.current ||

@@ -77,14 +77,32 @@ export default {
       subtitle: 'quote',
       projectTitle: 'projectRef.title',
       mangaTitle: 'mangaRef.title',
+      cardImage: 'cardImage',
+      projectGridImage: 'projectRef.gridImage',
+      projectMainImage: 'projectRef.mainImage',
+      mangaGridImage: 'mangaRef.gridImage',
+      mangaCoverImage: 'mangaRef.coverImage',
     },
     prepare(selection) {
-      const { clientRefName, clientName, subtitle, projectTitle, mangaTitle } = selection
+      const { 
+        clientRefName, 
+        clientName, 
+        subtitle, 
+        projectTitle, 
+        mangaTitle,
+        cardImage,
+        projectGridImage,
+        projectMainImage,
+        mangaGridImage,
+        mangaCoverImage
+      } = selection
       const title = clientRefName || clientName || 'Anonymous Client'
       const ref = projectTitle || mangaTitle || 'General Feedback'
+      const media = cardImage || projectGridImage || projectMainImage || mangaGridImage || mangaCoverImage || HeartIcon
       return {
         title,
         subtitle: `${ref} — "${subtitle || ''}"`,
+        media,
       }
     }
   }

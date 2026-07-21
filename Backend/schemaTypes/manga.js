@@ -114,6 +114,24 @@ export default {
       validation: (Rule) => Rule.required(),
     },
     {
+      name: 'gridImage',
+      title: 'Grid Showcase Image (Optional)',
+      type: 'image',
+      group: 'pages',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alt Text (For SEO)',
+          components: { input: AltTextInput },
+        },
+      ],
+      description: 'Optional. Upload/crop a custom display image specifically for portfolio grids and testimonial cards. If empty, defaults to the Cover Image.',
+    },
+    {
       name: 'pages',
       title: 'Manga Pages',
       type: 'array',
