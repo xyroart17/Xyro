@@ -105,6 +105,17 @@ document.addEventListener("astro:page-load", () => {
         } else {
             navbar?.classList.remove("scrolled");
         }
+
+        // Scroll spy override for the last section (Copyright Notice) when reaching the bottom of the page
+        const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+        if (isAtBottom) {
+            const lastSection = sections[sections.length - 1];
+            if (lastSection) {
+                const id = lastSection.getAttribute("id");
+                setActiveLink(id);
+                history.replaceState(null, "", "#" + id);
+            }
+        }
     };
     window.addEventListener("scroll", handleScroll);
 

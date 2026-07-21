@@ -6,13 +6,14 @@
 interface Props {
     id: string;
     title: string;
+    lastUpdated?: string;
 }
 
-const { id, title } = Astro.props;
+const { id, title, lastUpdated = "June 2026" } = Astro.props;
 ---
 
 <section id={id} class="legal-section legal-reveal" aria-labelledby={`${id}-heading`}>
     <h2 id={`${id}-heading`}>{title}</h2>
-    <p class="legal-section-updated">Last updated: June 2026</p>
+    <p class="legal-section-updated">Last updated: {lastUpdated}</p>
     <slot />
 </section>

@@ -13,6 +13,13 @@ export default {
       description: 'The actual review from the client.',
     },
     {
+      name: 'cardImage',
+      title: 'Review Card Display Image',
+      type: 'image',
+      options: { hotspot: true },
+      description: 'Optional. Upload/crop a custom display image for the testimonial card. If empty, defaults to the associated project or manga image.',
+    },
+    {
       name: 'clientRef',
       title: 'Client Profile',
       type: 'reference',

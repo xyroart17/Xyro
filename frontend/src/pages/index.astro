@@ -649,6 +649,7 @@ clientGroups.forEach((group: any) => {
                                         review.mangaRef?.title ||
                                         "";
                                     const image =
+                                        review.cardImage ||
                                         review.projectRef?.mainImage ||
                                         review.mangaRef?.coverImage;
                                     const slug =
