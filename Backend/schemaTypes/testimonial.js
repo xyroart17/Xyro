@@ -13,16 +13,23 @@ export default {
       description: 'The actual review from the client.',
     },
     {
+      name: 'clientRef',
+      title: 'Client Profile',
+      type: 'reference',
+      to: [{ type: 'client' }],
+      description: 'Select the client who wrote this review. If selected, this client\'s info will override the legacy fields below.',
+    },
+    {
       name: 'clientName',
-      title: 'Client Name',
+      title: 'Client Name (Legacy/Fallback)',
       type: 'string',
-      description: 'e.g., VStrife',
+      description: 'e.g., VStrife (Only used if Client Profile is not selected)',
     },
     {
       name: 'clientTitle',
-      title: 'Client Role',
+      title: 'Client Role (Legacy/Fallback)',
       type: 'string',
-      description: 'e.g., Art Director, Indie Dev, or leave blank',
+      description: 'e.g., Art Director, Indie Dev, or leave blank (Only used if Client Profile is not selected)',
     },
     // NEW FIELD: Adds a clean date picker for the review
     {
@@ -58,16 +65,18 @@ export default {
   ],
   preview: {
     select: {
-      title: 'clientName',
+      clientRefName: 'clientRef.name',
+      clientName: 'clientName',
       subtitle: 'quote',
       projectTitle: 'projectRef.title',
       mangaTitle: 'mangaRef.title',
     },
     prepare(selection) {
-      const { title, subtitle, projectTitle, mangaTitle } = selection
+      const { clientRefName, clientName, subtitle, projectTitle, mangaTitle } = selection
+      const title = clientRefName || clientName || 'Anonymous Client'
       const ref = projectTitle || mangaTitle || 'General Feedback'
       return {
-        title: title || 'Anonymous Client',
+        title,
         subtitle: `${ref} — "${subtitle || ''}"`,
       }
     }

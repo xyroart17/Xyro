@@ -13,18 +13,90 @@ const projects = await client.fetch(
     `*[_type == "project"] | order(coalesce(publishDate, _createdAt) desc)`,
 );
 
-// Fetch Testimonials AND expand references to get the URL slugs
+// Fetch Testimonials AND expand references to get the URL slugs and details
 const testimonials = await client.fetch(`
     *[_type == "testimonial"] | order(coalesce(publishDate, _createdAt) desc) {
         ...,
+        clientRef->{
+            name,
+            avatar,
+            clientSince
+        },
         projectRef->{
-            slug
+            slug,
+            mainImage,
+            title,
+            tag
         },
         mangaRef->{
-            slug
+            slug,
+            coverImage,
+            title,
+            tag
         }
     }
 `);
+
+// Group testimonials by client (either clientRef or clientName legacy)
+const clientGroupsMap = new Map();
+
+testimonials.forEach((testimonial: any) => {
+    const isLegacy = !testimonial.clientRef;
+    const clientId = isLegacy ? `legacy-${testimonial.clientName}` : testimonial.clientRef._id;
+    const clientName = testimonial.clientRef?.name || testimonial.clientName || "Anonymous Client";
+    const clientAvatar = testimonial.clientRef?.avatar || null;
+    const clientSince = testimonial.clientRef?.clientSince || null;
+
+    if (!clientGroupsMap.has(clientId)) {
+        clientGroupsMap.set(clientId, {
+            id: clientId,
+            name: clientName,
+            avatar: clientAvatar,
+            clientSince: clientSince,
+            reviews: []
+        });
+    }
+
+    clientGroupsMap.get(clientId).reviews.push(testimonial);
+});
+
+const clientGroups = Array.from(clientGroupsMap.values());
+
+// Calculate badge texts and layout classes for each client group
+clientGroups.forEach((group: any) => {
+    let sinceDate = group.clientSince;
+    if (!sinceDate) {
+        const dates = group.reviews
+            .map((r: any) => r.reviewDate || r.publishDate || r._createdAt)
+            .filter(Boolean)
+            .map((d: string) => new Date(d));
+        if (dates.length > 0) {
+            sinceDate = new Date(Math.min(...dates.map((d: Date) => d.getTime())));
+        }
+    }
+
+    const projectCount = group.reviews.length;
+    const projectText = projectCount === 1 ? "1 project" : `${projectCount} projects`;
+
+    if (sinceDate) {
+        const d = new Date(sinceDate);
+        const monthYear = d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+        group.badgeText = `Client since ${monthYear} • ${projectText}`;
+    } else {
+        group.badgeText = projectText;
+    }
+
+    // Assign dynamic column class based on review counts
+    if (projectCount === 1) {
+        group.colClass = "cols-1";
+    } else if (projectCount === 2) {
+        group.colClass = "cols-2";
+    } else if (projectCount === 3) {
+        group.colClass = "cols-3";
+    } else {
+        group.colClass = "cols-4";
+    }
+});
 ---
 
 <!doctype html>
@@ -541,152 +613,107 @@ const testimonials = await client.fetch(`
                     What they say about me.
                 </h2>
             </div>
-            <div class="reviews-marquee-container">
-                <div class="reviews-marquee-track">
-                    {
-                        testimonials.map((review: any) => (
-                            <div
-                                class="testimonial-card"
-                                style="display: flex; flex-direction: column;"
-                            >
-                                <p class="testimonial-quote">{review.quote}</p>
-
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 20px;">
-                                    <div
-                                        class="testimonial-author"
-                                        style="margin: 0;"
-                                    >
-                                        <svg
-                                            class="testimonial-avatar"
-                                            viewBox="0 0 48 48"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <>
-                                                <circle
-                                                    cx="24"
-                                                    cy="24"
-                                                    r="24"
-                                                    fill="#334155"
-                                                />
-                                                <circle
-                                                    cx="24"
-                                                    cy="18"
-                                                    r="9"
-                                                    fill="#94a3b8"
-                                                />
-                                                <ellipse
-                                                    cx="24"
-                                                    cy="40"
-                                                    rx="16"
-                                                    ry="10"
-                                                    fill="#94a3b8"
-                                                />
-                                            </>
-                                        </svg>
-                                        <div>
-                                            <h4>{review.clientName}</h4>
-                                            <span>
-                                                {review.clientTitle || "Client"}
-                                                {review.reviewDate
-                                                    ? ` • ${new Date(review.reviewDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
-                                                    : ""}
-                                            </span>
-                                        </div>
+            <div class="section-inner" style="max-width: 1180px; margin: 0 auto; padding: 0 24px;">
+                {
+                    clientGroups.map((group: any) => (
+                        <div class="client-group reveal">
+                            <div class="client-head">
+                                {group.avatar ? (
+                                    <img
+                                        src={urlFor(group.avatar)
+                                            .width(80)
+                                            .height(80)
+                                            .auto("format")
+                                            .url()}
+                                        alt={group.name}
+                                        class="avatar"
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <div class="avatar">
+                                        {group.name.charAt(0).toUpperCase()}
                                     </div>
-
-                                    {review.projectRef?.slug?.current ? (
-                                        <a
-                                            href={`/project/${review.projectRef.slug.current}`}
-                                            class="preview-work-btn"
-                                        >
-                                            Preview Work ↗
-                                        </a>
-                                    ) : review.mangaRef?.slug?.current ? (
-                                        <a
-                                            href={`/manga/${review.mangaRef.slug.current}`}
-                                            class="preview-work-btn"
-                                        >
-                                            Preview Work ↗
-                                        </a>
-                                    ) : null}
-                                </div>
+                                )}
+                                <div class="name">{group.name}</div>
+                                <div class="badge">{group.badgeText}</div>
                             </div>
-                        ))
-                    }
-                </div>
+                            <div class={`card-row ${group.colClass}`}>
+                                {group.reviews.map((review: any) => {
+                                    const tag =
+                                        review.projectRef?.tag ||
+                                        review.mangaRef?.tag ||
+                                        review.clientTitle ||
+                                        "Commission";
+                                    const title =
+                                        review.projectRef?.title ||
+                                        review.mangaRef?.title ||
+                                        "";
+                                    const image =
+                                        review.projectRef?.mainImage ||
+                                        review.mangaRef?.coverImage;
+                                    const slug =
+                                        review.projectRef?.slug?.current ||
+                                        review.mangaRef?.slug?.current;
+                                    const viewUrl = slug
+                                        ? review.mangaRef
+                                            ? `/manga/${slug}`
+                                            : `/project/${slug}`
+                                        : null;
 
-                <div class="reviews-marquee-track" aria-hidden="true">
-                    {
-                        testimonials.map((review: any) => (
-                            <div
-                                class="testimonial-card"
-                                style="display: flex; flex-direction: column;"
-                            >
-                                <p class="testimonial-quote">{review.quote}</p>
-
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 20px;">
-                                    <div
-                                        class="testimonial-author"
-                                        style="margin: 0;"
-                                    >
-                                        <svg
-                                            class="testimonial-avatar"
-                                            viewBox="0 0 48 48"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <>
-                                                <circle
-                                                    cx="24"
-                                                    cy="24"
-                                                    r="24"
-                                                    fill="#334155"
-                                                />
-                                                <circle
-                                                    cx="24"
-                                                    cy="18"
-                                                    r="9"
-                                                    fill="#94a3b8"
-                                                />
-                                                <ellipse
-                                                    cx="24"
-                                                    cy="40"
-                                                    rx="16"
-                                                    ry="10"
-                                                    fill="#94a3b8"
-                                                />
-                                            </>
-                                        </svg>
-                                        <div>
-                                            <h4>{review.clientName}</h4>
-                                            <span>
-                                                {review.clientTitle || "Client"}
-                                                {review.reviewDate
-                                                    ? ` • ${new Date(review.reviewDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
-                                                    : ""}
-                                            </span>
+                                    return (
+                                        <div class="pcard">
+                                            <div class="thumb">
+                                                {image ? (
+                                                    <img
+                                                        src={urlFor(image)
+                                                            .width(400)
+                                                            .height(220)
+                                                            .auto("format")
+                                                            .url()}
+                                                        alt={
+                                                            title ||
+                                                            "Work preview image"
+                                                        }
+                                                        loading="lazy"
+                                                    />
+                                                ) : (
+                                                    <span>
+                                                        {title || "Work Sample"}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {group.reviews.length === 1 ? (
+                                                <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+                                                    <div class="proj">
+                                                        {tag}
+                                                    </div>
+                                                    <p>"{review.quote}"</p>
+                                                    {viewUrl && (
+                                                        <a href={viewUrl}>
+                                                            View ↗
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div class="proj">
+                                                        {tag}
+                                                    </div>
+                                                    <p>"{review.quote}"</p>
+                                                    {viewUrl && (
+                                                        <a href={viewUrl}>
+                                                            View ↗
+                                                        </a>
+                                                    )}
+                                                </>
+                                            )}
                                         </div>
-                                    </div>
-
-                                    {review.projectRef?.slug?.current ? (
-                                        <a
-                                            href={`/project/${review.projectRef.slug.current}`}
-                                            class="preview-work-btn"
-                                        >
-                                            Preview Work ↗
-                                        </a>
-                                    ) : review.mangaRef?.slug?.current ? (
-                                        <a
-                                            href={`/manga/${review.mangaRef.slug.current}`}
-                                            class="preview-work-btn"
-                                        >
-                                            Preview Work ↗
-                                        </a>
-                                    ) : null}
-                                </div>
+                                    );
+                                })}
                             </div>
-                        ))
-                    }
-                </div>
+                        </div>
+                    ))
+                }
             </div>
         </section>
 

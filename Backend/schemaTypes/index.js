@@ -1,5 +1,6 @@
 import project from './project'
-import testimonial from './testimonial' // ✅ Add this line
+import testimonial from './testimonial'
 import manga from './manga'
+import client from './client'
 
-export const schemaTypes = [project, testimonial, manga] // ✅ Add to the array
+export const schemaTypes = [project, testimonial, manga, client]

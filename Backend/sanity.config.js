@@ -3,7 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import IframePreview from './components/IframePreview'
-import {CaseIcon, BookIcon, HeartIcon} from '@sanity/icons'
+import {CaseIcon, BookIcon, HeartIcon, UserIcon} from '@sanity/icons'
 
 import React from 'react'
 
@@ -69,6 +69,13 @@ export default defineConfig({
               .child(
                 S.documentTypeList('testimonial')
                   .title('Client Reviews')
+              ),
+            S.listItem()
+              .title('Clients')
+              .icon(UserIcon)
+              .child(
+                S.documentTypeList('client')
+                  .title('Clients')
               ),
           ]),
       defaultDocumentNode: (S, { schemaType }) => {

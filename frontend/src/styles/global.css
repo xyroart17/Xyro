@@ -313,74 +313,164 @@ body {
 .about-stat h4 { font-family: var(--font-display); font-size: 2.4rem; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; }
 .about-stat span { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.03em; }
 
-/* --- INFINITE AUTO-SCROLLING TESTIMONIAL MARQUEE --- */
-.reviews-marquee-container {
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+/* ===== Client group (Group-By-Client Layout) ===== */
+.client-group {
+    margin-bottom: 56px;
 }
-.reviews-marquee-track {
-    display: flex;
-    gap: 32px;
-    padding: 20px 16px;
-    white-space: normal;
-    animation: reviewsScroll 60s linear infinite; 
+.client-group:last-child {
+    margin-bottom: 0;
 }
-.reviews-marquee-container:hover .reviews-marquee-track {
-    animation-play-state: paused;
-}
-.reviews-marquee-track .testimonial-card {
-    flex: 0 0 420px; 
-    width: 420px;
-    background: var(--bg-primary); 
-    border-radius: var(--radius-xl);
-    padding: 40px;
-    border: 1px solid var(--border-subtle);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-/* Add this new media query immediately below the rule above */
-@media (max-width: 768px) {
-    .reviews-marquee-track .testimonial-card {
-        flex: 0 0 85vw !important; /* Forces cards to take 85% of screen width */
-        width: 85vw !important;
-        margin-right: 16px; /* Ensures there's a gap before the next card peeks in */
-    }
-}
-.reviews-marquee-track .testimonial-quote {
-    font-family: var(--font-body);
-    font-size: 1.02rem;
-    font-style: italic;
-    line-height: 1.6;
-    margin-bottom: 28px;
-    color: var(--text-secondary);
-}
-.reviews-marquee-track .testimonial-author {
+.client-head {
     display: flex;
     align-items: center;
     gap: 14px;
+    margin-bottom: 20px;
 }
-.reviews-marquee-track .testimonial-avatar {
-    width: 44px;
-    height: 44px;
+.client-head .avatar {
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-}
-.reviews-marquee-track .testimonial-author h4 {
+    background: linear-gradient(135deg, var(--accent), #7a2e23);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 16px;
     font-weight: 700;
-    font-size: 0.95rem;
+    color: #0d0d0d;
+    flex-shrink: 0;
+}
+.client-head img.avatar {
+    object-fit: cover;
+}
+.client-head .name {
+    font-weight: 700;
+    font-size: 1.05rem;
     color: var(--text-primary);
 }
-.reviews-marquee-track .testimonial-author span {
-    font-size: 0.82rem;
-    color: var(--text-muted);
+.client-head .badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--border-medium);
+    border-radius: 999px;
+    padding: 4px 10px;
+    margin-left: 2px;
 }
-@keyframes reviewsScroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-100% - 32px)); }
+.card-row {
+    display: grid;
+    gap: 1px;
+    background: var(--border-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cols-1 { grid-template-columns: 1fr; }
+
+@media(max-width:960px) {
+    .cols-4, .cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media(max-width:600px) {
+    .cols-4, .cols-3, .cols-2 { grid-template-columns: 1fr; }
+}
+
+.pcard {
+    background: var(--bg-secondary);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: background var(--transition-fast);
+}
+.pcard:hover {
+    background: var(--bg-tertiary);
+}
+.pcard .thumb {
+    position: relative;
+    width: 100%;
+    height: 110px;
+    border-radius: var(--radius-sm);
+    background:
+      linear-gradient(150deg, rgba(255, 77, 77, 0.12), rgba(13, 13, 13, 0.95) 75%),
+      repeating-linear-gradient(45deg, #1f1f1f 0 2px, #171717 2px 4px);
+    border: 1px dashed var(--border-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.pcard .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-smooth);
+}
+.pcard:hover .thumb img {
+    transform: scale(1.05);
+}
+.pcard .thumb span {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0 8px;
+    letter-spacing: .03em;
+}
+.pcard .proj {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+.pcard p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    flex: 1;
+    margin-bottom: 0;
+}
+.pcard a {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    align-self: flex-start;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+.pcard a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent-hover);
+}
+
+/* single-project client gets a wider row layout */
+.cols-1 .pcard {
+    flex-direction: row;
+    align-items: center;
+    gap: 28px;
+    padding: 28px;
+}
+.cols-1 .pcard .thumb {
+    width: 180px;
+    height: 110px;
+    flex-shrink: 0;
+}
+@media(max-width:600px) {
+    .cols-1 .pcard {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 24px;
+    }
+    .cols-1 .pcard .thumb {
+        width: 100%;
+        height: 130px;
+    }
 }
 
 /* CONTACT SECTION */
