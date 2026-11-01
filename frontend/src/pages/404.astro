@@ -6,23 +6,23 @@ import '../styles/global.css';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found — Xyro</title>
-    <meta name="description" content="The page you are looking for does not exist on Xyro." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>404: Lost in the Ink — XYRO</title>
     <meta name="robots" content="noindex, follow" />
-    
-    {/* --- FAVICONS & MANIFEST (Google Guideline Stable URLs) --- */}
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #0d0d0d; color: #fff; font-family: 'Syne', sans-serif;">
-    <h1 style="font-size: 6rem; margin: 0; color: #ff4d4d;">404</h1>
-    <h2>You've drifted off the map.</h2>
-    <a href="/" style="margin-top: 20px; padding: 12px 24px; background: #fff; color: #000; text-decoration: none; border-radius: 50px; font-family: 'DM Sans', sans-serif;">Return to Base</a>
+<body style="min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 20px; background: var(--bg); color: var(--ink);">
+    <div style="max-width: 600px; border: 5px solid var(--ink); box-shadow: 10px 10px 0 var(--pk); padding: 40px 24px; background: var(--bg);">
+        <span class="lg" style="width: 80px; margin: 0 auto 20px; --c: var(--pk);"></span>
+        <h1 style="font-size: clamp(60px, 15vw, 120px); color: var(--pk); line-height: 1;">404</h1>
+        <h2 style="font-size: clamp(24px, 5vw, 36px); margin: 16px 0;">LOST IN THE INK</h2>
+        <p style="font-weight: 700; margin-bottom: 28px;">This page drifted off the storyboard.</p>
+        <a href="/" class="pill" style="font-size: 18px; padding: 14px 28px; text-decoration: none;">← Return to Base</a>
+    </div>
 </body>
 </html>

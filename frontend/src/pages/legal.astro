@@ -20,6 +20,7 @@ import Footer from "../components/Footer.astro";
             content="Privacy Policy, Terms of Service, Commission Guide, and Copyright Notice for Xyro. Everything you need to know before working with me."
         />
         <link rel="canonical" href="https://xyroart.pages.dev/legal/" />
+        <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 
         {/* --- BRANDING METADATA --- */}
         <meta name="theme-color" content="#0d0d0d" />
@@ -130,36 +131,30 @@ import Footer from "../components/Footer.astro";
         />
     </head>
     <body>
-        <Navbar />
+        <div class="top">
+            <a class="logo lg" href="/" aria-label="XYRO home" style="opacity:1;"></a>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <a class="pill" href="/">Home</a>
+                <a class="pill" href="/vault">Vault</a>
+                <a class="pill" href="/#gacha">Gacha</a>
+                <button class="pill" id="tg" aria-label="Toggle theme">◐</button>
+                <a class="pill" id="bk" href="/#contact">Book a slot</a>
+            </div>
+        </div>
 
         <!-- LEGAL PAGE -->
         <main class="legal-page">
             <!-- HEADER -->
             <header class="legal-header">
-                <a href="/" id="legalBackLink" class="legal-back-link">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M19 12H5"></path>
-                        <path d="M12 19l-7-7 7-7"></path>
-                    </svg>
-                    Back to Home
-                </a>
-                <h1 class="legal-header-title">Legal Center</h1>
+                <div style="margin-bottom: 24px;">
+                    <a href="/" class="pill" style="display:inline-flex;align-items:center;gap:8px;font-size:15px;padding:8px 18px;text-decoration:none;box-shadow:3px 3px 0 var(--ink);">
+                        ← Back to Home
+                    </a>
+                </div>
+                <h1 class="legal-header-title">Legal <em>Center</em></h1>
                 <p class="legal-header-subtitle">
                     Everything you need to know before working with Xyro.
                 </p>
-                <nav class="legal-quick-nav" aria-label="Jump to section">
-                    <a href="#privacy">Privacy Policy</a>
-                    <a href="#terms">Terms of Service</a>
-                    <a href="#commissions">Commission Guide</a>
-                    <a href="#copyright">Copyright Notice</a>
-                </nav>
             </header>
 
             <!-- MOBILE STICKY NAV -->
@@ -1074,5 +1069,28 @@ import Footer from "../components/Footer.astro";
         <!-- FOOTER -->
         <Footer />
         <script src="../scripts/legalNavigation.js"></script>
+        <script is:inline>
+          var rDoc = document.documentElement;
+          try {
+            var savedTheme = localStorage.getItem("xt2");
+            if (savedTheme) rDoc.setAttribute("data-theme", savedTheme);
+          } catch (x) {}
+
+          var tgBtn = document.getElementById("tg");
+          if (tgBtn) {
+            tgBtn.onclick = function () {
+              var curTheme =
+                rDoc.getAttribute("data-theme") ||
+                (matchMedia("(prefers-color-scheme:dark)").matches
+                  ? "dark"
+                  : "light");
+              var nextTheme = curTheme == "dark" ? "light" : "dark";
+              rDoc.setAttribute("data-theme", nextTheme);
+              try {
+                localStorage.setItem("xt2", nextTheme);
+              } catch (x) {}
+            };
+          }
+        </script>
     </body>
 </html>

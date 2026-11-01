@@ -1,6 +1,4 @@
 ---
-import { navItems, getHref } from "../utils/navigation.ts";
-
 interface Props {
     isHomepage?: boolean;
 }
@@ -8,133 +6,135 @@ interface Props {
 const { isHomepage = false } = Astro.props;
 ---
 
-<footer class="footer" id="footer">
-    <div class="footer-inner">
-        <div class="footer-brand">
-            <img
-                src="/logo-transparent.png?v=1"
-                alt="Xyro Logo"
-                style="margin-top: 12px; line-height: 1.7;"
-            />
-            <p>
-                An independent artist crafting bold manga, character designs,
-                and cinematic visuals for ambitious projects worldwide.
-            </p>
+<footer>
+    <!-- BRAND LOGO MARK (Text removed as requested) -->
+    <a href="/" class="footer-logo-link" aria-label="XYRO Logo" style="display:inline-block;text-decoration:none;">
+        <span class="lg" role="img" aria-label="XYRO logo" style="width:min(60vw,240px);margin:0 auto 24px;--c:var(--ink)"></span>
+    </a>
+    
+    <div style="margin: 16px 0;">
+        <button id="footerCopyEmail" class="pill" style="font-size: 16px;">
+            officialxyroart@gmail.com
+        </button>
+    </div>
 
-            <p class="footer-contact-label">✉ Contact Me</p>
-            <button
-                id="copyEmailBtn"
-                class="social-btn"
-                style="cursor: pointer; border: 1px solid rgba(255, 77, 77, 0.25); background: transparent; color: #ff4d4d; border-radius: 50px; padding: 10px 20px; font-family: 'DM Sans';"
-            >
-                officialxyroart@gmail.com
-            </button>
-            <p class="footer-response-hint">
-                Usually replies within 24–48 hours.
-            </p>
-        </div>
-        <div class="footer-links">
-            <h4>Navigation</h4>
-            {
-                navItems.map((item) => (
-                    <a href={getHref(item, isHomepage)}>{item.label}</a>
-                ))
-            }
-        </div>
-        <div class="footer-links">
-            <h4>Socials</h4>
-            <a
-                href="https://www.instagram.com/xyro_.art/"
-                target="_blank"
-                rel="noopener noreferrer">Instagram</a
-            >
-            <a
-                href="https://x.com/Aman67804627885"
-                target="_blank"
-                rel="noopener noreferrer">X / Twitter</a
-            >
-            <a
-                href="https://www.reddit.com/user/Professional-Lake843/"
-                target="_blank"
-                rel="noopener noreferrer">Reddit</a
-            >
-            <button id="discordCopyBtn" class="footer-discord-btn">
-                Discord
-            </button>
-        </div>
-        <div class="footer-links">
-            <h4>Portfolios</h4>
-            <a
-                href="https://www.artstation.com/aman_xyro"
-                target="_blank"
-                rel="noopener noreferrer">ArtStation</a
-            >
-            <a
-                href="https://www.deviantart.com/aman2189"
-                target="_blank"
-                rel="noopener noreferrer">DeviantArt</a
-            >
-            <a
-                href="https://pin.it/1EkhjFukQ"
-                target="_blank"
-                rel="noopener noreferrer">Pinterest</a
-            >
-        </div>
-        <div class="footer-links">
-            <h4>Legal</h4>
+    <div class="footer-socials">
+        <a href="https://www.instagram.com/xyro_.art/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <span>·</span>
+        <a href="https://x.com/xyro_art" target="_blank" rel="noopener noreferrer">X</a>
+        <span>·</span>
+        <a href="https://www.artstation.com/xyro_art" target="_blank" rel="noopener noreferrer">ArtStation</a>
+        <span>·</span>
+        <a href="https://discord.gg/RJ5JPCYS" target="_blank" rel="noopener noreferrer">Discord</a>
+        <span>·</span>
+        <a href="https://www.patreon.com/c/Xyro_art" target="_blank" rel="noopener noreferrer">Patreon</a>
+        <span>·</span>
+        <a href="https://www.reddit.com/user/Professional-Lake843/" target="_blank" rel="noopener noreferrer">Reddit</a>
+        <span>·</span>
+        <a href="https://www.deviantart.com/aman2189" target="_blank" rel="noopener noreferrer">DeviantArt</a>
+        <span>·</span>
+        <a href="https://pin.it/1EkhjFukQ" target="_blank" rel="noopener noreferrer">Pinterest</a>
+    </div>
+
+    <!-- PRESERVED LEGAL CENTER & POLICIES (DUPLICATE PILLS REMOVED) -->
+    <div class="footer-legals-box">
+        <div class="footer-legal-links">
             <a href="/legal#privacy">Privacy Policy</a>
+            <span class="dot">•</span>
             <a href="/legal#terms">Terms of Service</a>
+            <span class="dot">•</span>
             <a href="/legal#commissions">Commission Guide</a>
+            <span class="dot">•</span>
             <a href="/legal#copyright">Copyright Notice</a>
         </div>
-    </div>
-    <div class="footer-bottom">
-        <span>© 2026 Xyro. All Rights Reserved.</span>
-        <div class="footer-legal-shortcuts">
-            <a href="/legal#privacy">Privacy</a>
-            <span class="footer-legal-dot">•</span>
-            <a href="/legal#terms">Terms</a>
-            <span class="footer-legal-dot">•</span>
-            <a href="/legal#commissions">Commission Guide</a>
-            <span class="footer-legal-dot">•</span>
-            <a href="/legal#copyright">Copyright</a>
+        <div class="footer-bottom-bar" style="justify-content:center;">
+            <span>© 2026 Xyro. All Rights Reserved.</span>
         </div>
     </div>
 </footer>
 
+<style>
+    .footer-socials {
+        margin: 18px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 12px 18px;
+        font-size: 16px;
+    }
+    .footer-socials a {
+        text-decoration: none;
+        transition: color 0.15s, transform 0.15s;
+    }
+    .footer-socials a:hover,
+    #footerDiscordBtn:hover {
+        color: var(--pk);
+        transform: translateY(-2px);
+    }
+    .footer-legals-box {
+        margin: 36px auto 10px;
+        max-width: 860px;
+        border: 4px solid var(--ink);
+        background: var(--bg);
+        box-shadow: 6px 6px 0 var(--ink);
+        padding: 20px 24px;
+        border-radius: 4px;
+        text-align: center;
+    }
+    .footer-legal-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 12px 20px;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+    .footer-legal-links a {
+        text-decoration: none;
+        transition: color 0.15s, transform 0.15s;
+    }
+    .footer-legal-links a:hover {
+        color: var(--pk);
+        transform: translateY(-1px);
+    }
+    .footer-bottom-bar {
+        padding-top: 14px;
+        border-top: 2px solid var(--ink);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+    }
+    @media (max-width: 640px) {
+        .footer-bottom-bar {
+            flex-direction: column;
+            justify-content: center;
+        }
+    }
+</style>
+
 <script>
-    document.addEventListener("astro:page-load", () => {
-        // COPY EMAIL SCRIPT
-        const copyEmailBtn = document.getElementById("copyEmailBtn");
-        copyEmailBtn?.addEventListener("click", () => {
+    function setupFooterEvents() {
+        const copyBtn = document.getElementById("footerCopyEmail");
+        copyBtn?.addEventListener("click", () => {
             navigator.clipboard.writeText("officialxyroart@gmail.com");
-            const originalText = copyEmailBtn.innerText;
-            copyEmailBtn.innerText = "Copied!";
+            const original = copyBtn.innerText;
+            copyBtn.innerText = "COPIED! ✓";
             setTimeout(() => {
-                if (copyEmailBtn)
-                    copyEmailBtn.innerText = "officialxyroart@gmail.com";
+                if (copyBtn) copyBtn.innerText = original;
             }, 2000);
         });
+    }
 
-        // COPY DISCORD SCRIPT
-        const discordCopyBtn = document.getElementById("discordCopyBtn");
-        discordCopyBtn?.addEventListener("click", () => {
-            navigator.clipboard
-                .writeText("xyro.art")
-                .then(() => {
-                    if (discordCopyBtn) {
-                        discordCopyBtn.innerText = "xyro.art (Copied!)";
-                        discordCopyBtn.style.color = "#ff4d4d";
-                        setTimeout(() => {
-                            discordCopyBtn.innerText = "Discord";
-                            discordCopyBtn.style.color = "";
-                        }, 3000);
-                    }
-                })
-                .catch((err) => {
-                    console.error("Could not copy Discord username: ", err);
-                    if (discordCopyBtn) discordCopyBtn.innerText = "xyro.art";
-                });
-        });
-    });
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupFooterEvents);
+    } else {
+        setupFooterEvents();
+    }
+    document.addEventListener("astro:page-load", setupFooterEvents);
 </script>

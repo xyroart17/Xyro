@@ -14,27 +14,20 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
 <div class="manga-reader-page" id="mangaReaderData" data-page-count={manga.pageCount}>
     <!-- Sticky Top Navigation -->
     <header class="reader-header">
-        <a href="/#work" class="reader-back">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Back to Work
-        </a>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="/" class="logo lg" style="width:34px;height:34px;flex-shrink:0;" aria-label="XYRO home"></a>
+            <a href="/" class="reader-back" style="display:flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;">
+                <svg viewBox="0 0 24 24" style="width:18px;height:18px;">
+                    <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
         
         <h1 class="reader-title">{manga.title}</h1>
         
         <div class="reader-header-right">
-            <a href="/#contact" class="nav-commission-btn" aria-label="Commissions" style="margin-right: 15px;">
-                <span class="commission-icon-wrap" style="margin: 0; width: 24px; height: 24px;">
-                    <svg class="commission-star-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="50" cy="50" r="38" fill="#0d0d0f" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-                        <path class="commission-motion-arc" d="M 28 35 A 25 25 0 0 1 72 35" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 8" fill="none" />
-                        <path class="commission-motion-arc" d="M 72 65 A 25 25 0 0 1 28 65" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 8" fill="none" />
-                        <path class="commission-orbit" d="M 52 14 C 78 10, 96 32, 90 60 C 85 78, 62 88, 42 86 C 26 84, 14 74, 18 62" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" fill="none" />
-                        <path class="commission-star" d="M 50 20 Q 45 45 25 50 Q 45 55 50 80 Q 55 55 75 50 Q 55 45 50 20 Z" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round" />
-                    </svg>
-                </span>
-            </a>
+            <a href="/#contact" class="pill" style="font-size:13px;padding:6px 14px;text-decoration:none;margin-right:12px;">Book a slot</a>
             <span class="reader-header-counter">1 / {manga.pageCount}</span>
             <button class="reader-settings-btn" aria-label="Reading settings">
                 <svg viewBox="0 0 24 24">
@@ -123,8 +116,8 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
                                 Show WIP
                             </button>
                         )}
-                        <a href="/#selected-projects" class="btn btn-outline end-btn">
-                            Go to Recent Work
+                        <a href="/vault" class="btn btn-outline end-btn">
+                            Explore Vault →
                         </a>
                     </div>
                 </div>
@@ -144,10 +137,10 @@ const { manga, nextManga, isOnlyManga } = Astro.props;
             )}
         </div>
 
-        <footer class="manga-cta-footer" style="text-align: center; padding: 100px 20px 60px; border-top: 1px dashed rgba(255, 255, 255, 0.08); width: 100%; max-width: 800px; margin: 60px auto 0; background: transparent !important;">
-            <h2 style="font-family: 'Syne', sans-serif; font-size: 2.2rem; margin-bottom: 30px; color: #fff; letter-spacing: -0.01em;">Ready to start your project?</h2>
-            <a href="/#contact" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 36px; background: #ff4d4d; color: #fff; border-radius: 50px; text-decoration: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; transition: background 0.3s ease; border: 1px solid transparent;">
-                Work With Me &rarr;
+        <footer class="manga-cta-footer" style="text-align: center; padding: 80px 20px 60px; border-top: 1px dashed rgba(255, 255, 255, 0.15); width: 100%; max-width: 800px; margin: 60px auto 0; background: transparent !important;">
+            <h2 style="font-family: 'Dela Gothic One', sans-serif; font-size: 2rem; margin-bottom: 24px; color: #fff; letter-spacing: -0.01em;">Ready to start your project?</h2>
+            <a href="/#contact" class="pill big" style="font-size:18px;padding:14px 34px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;box-shadow:5px 5px 0 var(--ink);">
+                Book a slot →
             </a>
         </footer>
     </main>

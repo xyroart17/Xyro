@@ -65,6 +65,51 @@ export default {
       description: 'Determines the sorting order of projects on the website (latest first).',
       initialValue: () => new Date().toISOString(),
     },
+    {
+      name: 'featured',
+      title: 'Featured on Homepage',
+      type: 'boolean',
+      group: 'core',
+      description: 'Toggle ON to prioritize this artwork in the top 5 Vault slots on the homepage.',
+      initialValue: false,
+    },
+    {
+      name: 'tags',
+      title: 'Tags / Categories (Vault Filters)',
+      type: 'array',
+      group: 'core',
+      of: [{ type: 'string' }],
+      options: {
+        layout: 'tags',
+        list: [
+          { title: 'Commission', value: 'commission' },
+          { title: 'Original', value: 'original' },
+          { title: 'Fan Art', value: 'fanart' },
+          { title: 'Manga', value: 'manga' },
+          { title: '3D', value: '3d' },
+          { title: 'Digital', value: 'digital' },
+          { title: 'Traditional', value: 'traditional' },
+          { title: 'Mythology', value: 'mythology' },
+          { title: 'Editorial', value: 'editorial' },
+        ],
+      },
+      description: 'Select categories/tags for the Vault gallery display and filtering. (Falls back to Role/Category if empty).',
+    },
+    {
+      name: 'year',
+      title: 'Artwork Year',
+      type: 'string',
+      group: 'core',
+      description: 'e.g., 2026, 2025. Defaults to the year of the Publish Date if left blank.',
+    },
+    {
+      name: 'hue',
+      title: 'Manga-Punk Card Hue (0–360)',
+      type: 'number',
+      group: 'core',
+      description: 'Optional neon background tint hue (0=red, 45=yellow, 180=cyan, 270=purple). Automatically calculated from the artwork palette if left blank.',
+      validation: (Rule) => Rule.min(0).max(360),
+    },
     
     // DEEP DIVE (The project page)
     { 
@@ -185,6 +230,15 @@ export default {
       title: 'title',
       subtitle: 'tag',
       media: 'mainImage',
+      featured: 'featured',
+    },
+    prepare(selection) {
+      const { title, subtitle, media, featured } = selection
+      return {
+        title: (featured ? '★ ' : '') + (title || 'Untitled Project'),
+        subtitle: subtitle || 'No category',
+        media: media,
+      }
     },
   },
 }

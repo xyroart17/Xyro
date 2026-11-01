@@ -5,11 +5,10 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-    { label: "Work", hash: "work" },
-    { label: "Expertise", hash: "services" },
-    { label: "About", hash: "about" },
-    { label: "Testimonials", hash: "testimonials" },
-    { label: "Start a Project", hash: "contact", isCTA: true }
+    { label: "Vault", hash: "work" },
+    { label: "Gacha", hash: "gacha" },
+    { label: "Pricing", hash: "deal" },
+    { label: "Book a slot", hash: "contact", isCTA: true }
 ];
 
 /**

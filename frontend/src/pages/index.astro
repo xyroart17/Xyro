@@ -1,948 +1,729 @@
 ---
 export const prerender = true;
-import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
-import "../styles/messageDelivery.css";
-import { client, urlFor } from "../utils/sanity.js";
-import FeaturedManga from "../components/FeaturedManga.astro";
-import Navbar from "../components/Navbar.astro";
+import { urlFor, fetchVaultData, fetchTestimonials, fetchFeaturedManga } from "../utils/sanity.js";
 import Footer from "../components/Footer.astro";
 
-// Fetch Projects
-const projects = await client.fetch(
-    `*[_type == "project"] | order(coalesce(publishDate, _createdAt) desc)`,
-);
-
-// Fetch Testimonials AND expand references to get the URL slugs and details
-const testimonials = await client.fetch(`
-    *[_type == "testimonial"] | order(coalesce(publishDate, _createdAt) desc) {
-        ...,
-        clientRef->{
-            name,
-            avatar,
-            clientSince
-        },
-        projectRef->{
-            slug,
-            mainImage,
-            gridImage,
-            title,
-            tag
-        },
-        mangaRef->{
-            slug,
-            coverImage,
-            gridImage,
-            title,
-            tag
-        }
-    }
-`);
-
-// Group testimonials by client (either clientRef or clientName legacy)
-const clientGroupsMap = new Map();
-
-testimonials.forEach((testimonial: any) => {
-    const isLegacy = !testimonial.clientRef;
-    const clientId = isLegacy ? `legacy-${testimonial.clientName}` : testimonial.clientRef._id;
-    const clientName = testimonial.clientRef?.name || testimonial.clientName || "Anonymous Client";
-    const clientAvatar = testimonial.clientRef?.avatar || null;
-    const clientSince = testimonial.clientRef?.clientSince || null;
-
-    if (!clientGroupsMap.has(clientId)) {
-        clientGroupsMap.set(clientId, {
-            id: clientId,
-            name: clientName,
-            avatar: clientAvatar,
-            clientSince: clientSince,
-            reviews: []
-        });
-    }
-
-    clientGroupsMap.get(clientId).reviews.push(testimonial);
-});
-
-const clientGroups = Array.from(clientGroupsMap.values());
-
-// Calculate badge texts and layout classes for each client group
-clientGroups.forEach((group: any) => {
-    let sinceDate = group.clientSince;
-    if (!sinceDate) {
-        const dates = group.reviews
-            .map((r: any) => r.reviewDate || r.publishDate || r._createdAt)
-            .filter(Boolean)
-            .map((d: string) => new Date(d));
-        if (dates.length > 0) {
-            sinceDate = new Date(Math.min(...dates.map((d: Date) => d.getTime())));
-        }
-    }
-
-    const projectCount = group.reviews.length;
-    const projectText = projectCount === 1 ? "1 project" : `${projectCount} projects`;
-
-    if (sinceDate) {
-        const d = new Date(sinceDate);
-        const monthYear = d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-        group.badgeText = `Client since ${monthYear} • ${projectText}`;
-    } else {
-        group.badgeText = projectText;
-    }
-
-    // Assign dynamic column class based on review counts
-    if (projectCount === 1) {
-        group.colClass = "cols-1";
-    } else if (projectCount === 2) {
-        group.colClass = "cols-2";
-    } else if (projectCount === 3) {
-        group.colClass = "cols-3";
-    } else {
-        group.colClass = "cols-4";
-    }
-});
+const vaultData = await fetchVaultData();
+const reviews = await fetchTestimonials();
+const mangaList = await fetchFeaturedManga();
 ---
 
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>
-            Xyro | Professional 3D & 2D Artist, Manga & Character Design
-        </title>
-        <meta
-            name="description"
-            content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions."
-        />
-        <meta
-            name="keywords"
-            content="xyro, xyroart, xyro.art, 3D art, 2D art, illustration, manga artist, comic artist, original character, OC, Blender, digital artist, commissions"
-        />
-        <link rel="canonical" href="https://xyroart.pages.dev/" />
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Xyro</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="bar"></div>
+    <div id="cur"></div>
 
-        {/* --- BRANDING METADATA --- */}
-        <meta name="theme-color" content="#0d0d0d" />
-        <meta name="apple-mobile-web-app-title" content="Xyro" />
-        <meta name="application-name" content="Xyro" />
-
-        {/* --- OPEN GRAPH & SOCIAL MEDIA --- */}
-        <meta
-            property="og:title"
-            content="Xyro | Professional 3D & 2D Artist, Manga & Character Design"
-        />
-        <meta
-            property="og:description"
-            content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://xyroart.pages.dev/" />
-        <meta property="og:site_name" content="Xyro" />
-        <meta
-            property="og:image"
-            content="https://xyroart.pages.dev/assets/about-pic.jpg"
-        />
-
-        {/* --- TWITTER CARDS --- */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-            name="twitter:title"
-            content="Xyro | Professional 3D & 2D Artist, Manga & Character Design"
-        />
-        <meta
-            name="twitter:description"
-            content="Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions."
-        />
-        <meta
-            name="twitter:image"
-            content="https://xyroart.pages.dev/assets/about-pic.jpg"
-        />
-
-        <meta
-            name="google-site-verification"
-            content="Ew9fR0MytKcm8vC9K4zSWurLV_5l4iEB2esk5jBmlb8"
-        />
-
-        <ClientRouter />
-
-        {/* --- FAVICONS & MANIFEST (Google Guideline Stable URLs) --- */}
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="48x48"
-            href="/favicon-48x48.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png"
-        />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="manifest" href="/site.webmanifest" />
-
-        {/* --- STRUCTURED DATA (JSON-LD) --- */}
-        <script type="application/ld+json" is:inline>
-            {
-                "@context": "https://schema.org",
-                "@graph": [
-                    {
-                        "@type": "Person",
-                        "@id": "https://xyroart.pages.dev/#person",
-                        "name": "Xyro",
-                        "alternateName": "xyroart",
-                        "url": "https://xyroart.pages.dev/",
-                        "image": "https://xyroart.pages.dev/assets/about-pic.jpg",
-                        "sameAs": [
-                            "https://www.instagram.com/xyro_.art/",
-                            "https://x.com/Aman67804627885",
-                            "https://www.reddit.com/user/Professional-Lake843/",
-                            "https://www.artstation.com/aman_xyro",
-                            "https://www.deviantart.com/aman2189",
-                            "https://pin.it/1EkhjFukQ"
-                        ],
-                        "jobTitle": "Independent Artist",
-                        "knowsAbout": [
-                            "3D Art",
-                            "2D Illustration",
-                            "Manga",
-                            "Character Design",
-                            "Blender"
-                        ],
-                        "description": "An independent artist crafting bold manga, character designs, and cinematic visuals."
-                    },
-                    {
-                        "@type": "WebSite",
-                        "@id": "https://xyroart.pages.dev/#website",
-                        "url": "https://xyroart.pages.dev/",
-                        "name": "Xyro Portfolio",
-                        "description": "Creative portfolio of Xyro (xyroart), featuring original 2D & 3D art, manga, comics, character design, and Blender projects.",
-                        "publisher": {
-                            "@id": "https://xyroart.pages.dev/#person"
-                        }
-                    },
-                    {
-                        "@type": "WebPage",
-                        "@id": "https://xyroart.pages.dev/#webpage",
-                        "url": "https://xyroart.pages.dev/",
-                        "name": "Xyro | Professional 3D & 2D Artist, Manga & Character Design",
-                        "description": "Explore the creative portfolio of Xyro (xyroart). Featuring professional 3D and 2D digital art, original manga, character designs, and Blender projects. Available for commissions.",
-                        "isPartOf": {
-                            "@id": "https://xyroart.pages.dev/#website"
-                        },
-                        "about": {
-                            "@id": "https://xyroart.pages.dev/#person"
-                        }
-                    }
-                ]
-            }
-        </script>
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Syne:wght@400;500;600;700;800&display=swap"
-            rel="stylesheet"
-        />
-
-        <style>
-            /* Sleek style for the new Preview Work button */
-            .preview-work-btn {
-                font-size: 0.85rem;
-                color: rgba(255, 255, 255, 0.3);
-                text-decoration: none;
-                transition: all 0.3s ease;
-                font-family: "DM Sans", sans-serif;
-                font-weight: 600;
-                padding-bottom: 2px;
-                border-bottom: 1px solid transparent;
-            }
-            .preview-work-btn:hover {
-                color: #ff4d4d;
-                border-bottom-color: #ff4d4d;
-            }
-            @keyframes dot-pulse {
-                0%,
-                100% {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-                50% {
-                    transform: scale(1.25);
-                    opacity: 0.55;
-                }
-            }
-            .pulse-dot {
-                animation: dot-pulse 1.8s infinite ease-in-out;
-            }
-        </style>
-    </head>
-    <body>
-        <Navbar isHomepage={true} />
-
-        <section class="hero" id="home">
-            <div class="hero-bg">
-                <div class="orb orb-1"></div>
-                <div class="orb orb-2"></div>
-            </div>
-            <div class="hero-content">
-                <span class="hero-tag">● Independent Artist</span>
-                <h1 class="hero-headline">
-                    Visual<br />
-                    <span class="italic">Storytelling</span>
-                    <br /> Reimagined.
-                </h1>
-                <p class="hero-description">
-                    I craft bold manga, cinematic character designs, and
-                    immersive worlds that hit hard and stay with you.
-                </p>
-                <div class="hero-cta">
-                    <a href="#work" class="btn btn-primary">
-                        Work
-                        <span class="arrow-icon">↓</span>
-                    </a>
-                    <a href="#contact" class="btn btn-outline">
-                        Start a Project
-                        <span class="arrow-icon">→</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <div class="marquee-section">
-            <div class="marquee-track">
-                <span class="filled">Illustration</span><span>✦</span>
-                <span>Concept Art</span><span>✦</span>
-                <span class="filled">Character Design</span><span>✦</span>
-                <span>Background Art</span><span>✦</span>
-                <span class="filled">Manga</span><span>✦</span>
-                <span class="filled">Illustration</span><span>✦</span>
-                <span>Concept Art</span><span>✦</span>
-                <span class="filled">Character Design</span><span>✦</span>
-                <span>Background Art</span><span>✦</span>
-                <span class="filled">Manga</span><span>✦</span>
-            </div>
-        </div>
-
-        <FeaturedManga />
-
-        <section class="section" id="work">
-            <div class="section-inner">
-                <span class="section-label reveal">Selected Artworks</span>
-                <h2 class="section-title reveal reveal-d1">
-                    Recent work I'm<br />proud of.
-                </h2>
-                <div class="work-grid">
-                    {
-                        projects.map((project: any, index: number) => (
-                            <a
-                                href={`/project/${project.slug?.current}`}
-                                class={`work-item reveal reveal-d${(index % 4) + 1}`}
-                                style="display: block; text-decoration: none;"
-                            >
-                                <div class="work-item-inner">
-                                    {(() => {
-                                        const displayImage = project.gridImage || project.mainImage;
-                                        return displayImage && displayImage.asset ? (
-                                            <img
-                                                src={urlFor(displayImage)
-                                                    .width(800)
-                                                    .auto("format")
-                                                    .url()}
-                                                alt={
-                                                    displayImage.alt ||
-                                                    project.title
-                                                }
-                                                class="work-item-bg"
-                                                loading="lazy"
-                                            />
-                                        ) : (
-                                            <div
-                                                class="work-item-bg"
-                                                style="background: #111;"
-                                            />
-                                        );
-                                    })()}
-                                    <div class="work-item-overlay">
-                                        <span class="work-item-tag">
-                                            {project.tag}
-                                        </span>
-                                        <span class="work-item-title">
-                                            {project.title}
-                                        </span>
-                                        <span class="work-item-subtitle">
-                                            {project.subtitle}
-                                        </span>
-                                    </div>
-                                    <span class="work-item-number">
-                                        {project.projectNumber}
-                                    </span>
-                                </div>
-                            </a>
-                        ))
-                    }
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="services" style="padding: 140px 0;">
-            <div
-                class="section-inner"
-                style="max-width: 1200px; margin: 0 auto;"
-            >
-                <span
-                    class="reveal"
-                    style="color: #ff4d4d; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; display: block; margin-bottom: 20px;"
-                >
-                    <span
-                        style="font-size: 1.2rem; vertical-align: middle; margin-right: 5px;"
-                        >&bull;</span
-                    > EXPERTISE
-                </span>
-
-                <h2
-                    class="reveal reveal-d1"
-                    style="font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5.5rem); line-height: 1.05; margin-bottom: 80px; letter-spacing: -0.02em;"
-                >
-                    Crafting visuals<br />that breathe.
-                </h2>
-
-                <div
-                    class="services-grid"
-                    style="display: flex; flex-wrap: wrap; justify-content: center; gap: 60px 40px;"
-                >
-                    <div
-                        class="service-text-card reveal reveal-d1"
-                        style="flex: 1 1 300px; max-width: 360px;"
-                    >
-                        <h3
-                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
-                        >
-                            <span style="color: #ff4d4d;">1.</span> 3D Art & Visuals
-                        </h3>
-                        <hr
-                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
-                        />
-                        <p
-                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
-                        >
-                            High-quality 3D renders and cinematic compositions
-                            for games, music, and brands.
-                        </p>
-                        <div
-                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
-                        >
-                            MODELING &bull; TEXTURING &bull; LIGHTING &bull;
-                            RENDERING
-                        </div>
-                    </div>
-
-                    <div
-                        class="service-text-card reveal reveal-d2"
-                        style="flex: 1 1 300px; max-width: 360px;"
-                    >
-                        <h3
-                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
-                        >
-                            <span style="color: #ff4d4d;">2.</span> 2D Art & Illustration
-                        </h3>
-                        <hr
-                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
-                        />
-                        <p
-                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
-                        >
-                            Stylized key art and illustrations with strong
-                            composition, color, and mood.
-                        </p>
-                        <div
-                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
-                        >
-                            CONCEPT ART &bull; KEY VISUALS &bull; CHARACTER
-                            ILLUSTRATION
-                        </div>
-                    </div>
-
-                    <div
-                        class="service-text-card reveal reveal-d3"
-                        style="flex: 1 1 300px; max-width: 360px;"
-                    >
-                        <h3
-                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
-                        >
-                            <span style="color: #ff4d4d;">3.</span> Manga Panels
-                        </h3>
-                        <hr
-                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
-                        />
-                        <p
-                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
-                        >
-                            Dynamic layouts and panels built for rhythm, impact,
-                            and storytelling flow.
-                        </p>
-                        <div
-                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
-                        >
-                            PANELING &bull; INKING &bull; TONES &bull;
-                            COMPOSITION
-                        </div>
-                    </div>
-
-                    <div
-                        class="service-text-card reveal reveal-d4"
-                        style="flex: 1 1 300px; max-width: 360px;"
-                    >
-                        <h3
-                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
-                        >
-                            <span style="color: #ff4d4d;">4.</span> Environment Design
-                        </h3>
-                        <hr
-                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
-                        />
-                        <p
-                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
-                        >
-                            Immersive backgrounds and worlds that enhance mood
-                            and narrative.
-                        </p>
-                        <div
-                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
-                        >
-                            WORLD BUILDING &bull; ATMOSPHERE &bull; LAYOUT
-                        </div>
-                    </div>
-
-                    <div
-                        class="service-text-card reveal reveal-d5"
-                        style="flex: 1 1 300px; max-width: 360px;"
-                    >
-                        <h3
-                            style="font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; color: #fff;"
-                        >
-                            <span style="color: #ff4d4d;">5.</span> Motion Design
-                            & Animation
-                        </h3>
-                        <hr
-                            style="border: none; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 25px;"
-                        />
-                        <p
-                            style="color: rgba(255,255,255,0.65); line-height: 1.6; font-size: 1rem; margin-bottom: 25px; max-width: 90%;"
-                        >
-                            Motion graphics and animations that elevate your
-                            story or brand.
-                        </p>
-                        <div
-                            style="font-size: 0.7rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em;"
-                        >
-                            TRANSITIONS &bull; VISUAL EFFECTS &bull; ANIMATION
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="reveal reveal-d3"
-                    style="display: flex; justify-content: center; margin-top: 80px;"
-                >
-                    <a
-                        href="#work"
-                        style="display: inline-flex; align-items: center; gap: 15px; padding: 14px 36px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; color: #fff; text-decoration: none; font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; transition: background 0.3s ease, border-color 0.3s ease;"
-                    >
-                        View Work <span
-                            style="color: #ff4d4d; font-size: 1.3rem; line-height: 0;"
-                            >&rarr;</span
-                        >
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="about">
-            <div class="section-inner">
-                <div class="about-grid">
-                    <div class="about-visual reveal">
-                        <div class="about-img-wrap">
-                            <img
-                                src="/assets/about-pic.jpg"
-                                alt="Xyro"
-                                class="about-portrait"
-                                width="1355"
-                                height="1600"
-                                loading="lazy"
-                            />
-                        </div>
-                        <div class="about-accent-box"></div>
-                    </div>
-                    <div class="about-text">
-                        <span class="section-label reveal">About</span>
-                        <p class="reveal reveal-d2">
-                            Xyro is my independent creative outlet where I bring
-                            stylized characters and original stories to life.
-                        </p>
-                        <p class="reveal reveal-d3">
-                            Blending sharp 2D illustration, detailed 3D renders,
-                            and dynamic manga paneling, I create work that feels
-                            cinematic and emotionally charged. Whether it’s a
-                            single key visual, a full character sheet, or an
-                            entire original manga chapter — every piece is built
-                            to leave a lasting impact.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section
-            id="testimonials"
-            class="section"
-            style="background:var(--bg-secondary); overflow:hidden; padding: 100px 0;"
-        >
-            <div
-                class="section-inner"
-                style="margin-bottom: 60px; padding: 0 60px;"
-            >
-                <span class="section-label reveal">Client Feedback</span>
-                <h2 class="section-title reveal reveal-d1" style="margin: 0;">
-                    What they say about me.
-                </h2>
-            </div>
-            <div class="section-inner" style="max-width: 1180px; margin: 0 auto; padding: 0 24px;">
-                {
-                    clientGroups.map((group: any) => (
-                        <div class="client-group reveal">
-                            <div class="client-head">
-                                {group.avatar ? (
-                                    <img
-                                        src={urlFor(group.avatar)
-                                            .width(80)
-                                            .height(80)
-                                            .auto("format")
-                                            .url()}
-                                        alt={group.name}
-                                        class="avatar"
-                                        loading="lazy"
-                                    />
-                                ) : (
-                                    <div class="avatar">
-                                        {group.name.charAt(0).toUpperCase()}
-                                    </div>
-                                )}
-                                <div class="name">{group.name}</div>
-                                <div class="badge">{group.badgeText}</div>
-                            </div>
-                            <div class={`card-row ${group.colClass}`}>
-                                {group.reviews.map((review: any) => {
-                                    const tag =
-                                        review.projectRef?.tag ||
-                                        review.mangaRef?.tag ||
-                                        review.clientTitle ||
-                                        "Commission";
-                                    const title =
-                                        review.projectRef?.title ||
-                                        review.mangaRef?.title ||
-                                        "";
-                                    const image =
-                                        review.cardImage ||
-                                        review.projectRef?.gridImage ||
-                                        review.projectRef?.mainImage ||
-                                        review.mangaRef?.gridImage ||
-                                        review.mangaRef?.coverImage;
-                                    const slug =
-                                        review.projectRef?.slug?.current ||
-                                        review.mangaRef?.slug?.current;
-                                    const viewUrl = slug
-                                        ? review.mangaRef
-                                            ? `/manga/${slug}`
-                                            : `/project/${slug}`
-                                        : null;
-
-                                    return (
-                                        <div class="pcard">
-                                            <div class="thumb">
-                                                {image ? (
-                                                    <img
-                                                        src={urlFor(image)
-                                                            .width(400)
-                                                            .height(220)
-                                                            .auto("format")
-                                                            .url()}
-                                                        alt={
-                                                            title ||
-                                                            "Work preview image"
-                                                        }
-                                                        loading="lazy"
-                                                    />
-                                                ) : (
-                                                    <span>
-                                                        {title || "Work Sample"}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            {group.reviews.length === 1 ? (
-                                                <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
-                                                    <div class="proj">
-                                                        {tag}
-                                                    </div>
-                                                    <p>"{review.quote}"</p>
-                                                    {viewUrl && (
-                                                        <a href={viewUrl}>
-                                                            View ↗
-                                                        </a>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <div class="proj">
-                                                        {tag}
-                                                    </div>
-                                                    <p>"{review.quote}"</p>
-                                                    {viewUrl && (
-                                                        <a href={viewUrl}>
-                                                            View ↗
-                                                        </a>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    ))
-                }
-            </div>
-        </section>
-
-        <section class="section" id="contact">
-            <div class="section-inner">
-                <div class="contact-grid">
-                    <div class="contact-text reveal">
-                        <div
-                            style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;"
-                        >
-                            <span
-                                class="section-label"
-                                style="margin-bottom: 0;">Get in Touch</span
-                            >
-                            <span
-                                style="width: 1px; height: 12px; background: rgba(255, 255, 255, 0.15);"
-                            ></span>
-                            <span
-                                id="commissionsOpenText"
-                                style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #22c55e; will-change: transform, filter;"
-                            >
-                                <span
-                                    class="pulse-dot"
-                                    style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px rgba(34, 197, 94, 0.65); display: inline-block;"
-                                ></span>
-                                Commissions Open
-                            </span>
-                        </div>
-                        <h2 class="section-title" style="margin-bottom: 24px;">
-                            Let's build something<br />incredible.
-                        </h2>
-                        <p class="hero-description" style="margin-bottom: 0;">
-                            Currently accepting illustration, manga, and visual
-                            storytelling projects. Drop me a message and I’ll
-                            get back to you within 24–48 hours.
-                        </p>
-                    </div>
-
-                    <div class="contact-form-wrapper reveal reveal-d2">
-                        <form
-                            action="/api/contact"
-                            method="POST"
-                            class="contact-form"
-                            id="contactForm"
-                        >
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="Your Name"
-                                    aria-label="Your Name"
-                                    required
-                                    class="form-input"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <input
-                                    type="email"
-                                    name="email"
-                                    placeholder="Your Email Address"
-                                    aria-label="Your Email Address"
-                                    required
-                                    pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
-                                    title="Please enter a valid email address (e.g., name@domain.com)"
-                                    class="form-input"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <textarea
-                                    name="message"
-                                    placeholder="Tell me about your project..."
-                                    aria-label="Tell me about your project"
-                                    required
-                                    class="form-input form-textarea"></textarea>
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary"
-                                style="width: 100%; justify-content: center;"
-                                >Send Message<span class="arrow-icon">→</span
-                                ></button
-                            >
-                        </form>
-
-                        <div
-                            id="formSuccess"
-                            class="form-success"
-                            style="display: none;"
-                        >
-                            <div class="success-icon">✓</div>
-                            <h3>Message Sent</h3>
-                            <p>I’ll get back to you within 24–48 hours.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <Footer isHomepage={true} />
-
-        <!-- FLOATING CTA -->
+    <div class="top">
+      <a
+        class="logo lg"
+        id="mainNavLogo"
+        href="#t"
+        aria-label="XYRO home"
+        style="opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity .25s ease,transform .25s ease;"
+      ></a>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <a
-            href="#contact"
-            id="floatingCTA"
-            class="floating-cta"
-            aria-label="Start a Project"
+          id="navVault"
+          class="pill"
+          href="#work"
+          style="display:none;text-decoration:none;">Vault</a
         >
-            <span class="floating-cta-icon">✦</span> Start a Project
+        <a
+          id="navGacha"
+          class="pill"
+          href="#gacha"
+          style="display:none;text-decoration:none;">Gacha</a
+        >
+        <button class="pill" id="tg" aria-label="Toggle theme">◐</button>
+        <a class="pill" id="bk" href="#contact">Book a slot</a>
+      </div>
+    </div>
+
+    <div class="hero" id="t">
+      <div class="hero-center">
+        <span class="lg hero-lg"></span>
+        <p>manga · characters · 3D</p>
+      </div>
+      <span class="sfx" style="left:6%;top:22%;--r:-8deg">ドン!</span>
+    </div>
+
+    <div class="mq" aria-hidden="true">
+      <div>
+        MANGA ✦ 3D ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦ MANGA ✦ 3D
+        ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦
+      </div>
+    </div>
+
+    <section id="work">
+      <h2>The <em>vault</em></h2>
+      <p>
+        Hover a piece to bring it to colour. On a phone, scroll it into view or
+        tap it.
+      </p>
+      <div class="vgrid" id="vg">
+        {
+          vaultData.slice(0, 5).map((d: any) => (
+            <button class="vi" type="button" aria-label={`Preview ${d.t}`}>
+              <div class="vc">
+                <span class="vy">{d.y}</span>
+                <div class="vt" style={`--h:${d.h};--r:${d.r};`}>
+                  {d.img ? (
+                    <img src={d.img} alt={d.t} loading="lazy" />
+                  ) : (
+                    <b>{d.t}</b>
+                  )}
+                </div>
+                <div class="vm">{d.g.join(" · ")}</div>
+              </div>
+            </button>
+          ))
+        }
+      </div>
+      <div style="text-align:center;margin-top:40px;">
+        <a
+          href="/vault"
+          class="pill big"
+          style="font-size:22px;padding:16px 36px;display:inline-flex;align-items:center;gap:12px;text-decoration:none;box-shadow:6px 6px 0 var(--ink);"
+        >
+          Vault <span style="font-size:26px;">→</span>
         </a>
+      </div>
+    </section>
 
-        <script src="../scripts/navigation.js"></script>
-        <script src="../scripts/animations/MessagePlane.ts"></script>
+    <dialog id="lb" aria-label="Artwork preview">
+      <div class="lbx">
+        <button class="lb-close" id="cl" aria-label="Close preview">✕</button>
+        <div class="vt lbt" id="lt"></div>
+      </div>
+    </dialog>
 
-        <script>
-            document.addEventListener("astro:page-load", () => {
-                // ULTRA-RESPONSIVE INTERSECTION OBSERVER FOR CONTENT REVEALS
-                const revealEls = document.querySelectorAll(".reveal");
-                if (revealEls.length > 0) {
-                    const revealObserver = new IntersectionObserver(
-                        (entries: any[]) => {
-                            entries.forEach((entry: any) => {
-                                if (entry.isIntersecting) {
-                                    entry.target.classList.add("visible");
-                                    revealObserver.unobserve(entry.target);
-                                }
-                            });
-                        },
-                        { threshold: 0.01, rootMargin: "0px 0px -40px 0px" },
-                    );
-                    revealEls.forEach((el: any) => revealObserver.observe(el));
-                }
+    {mangaList && mangaList.length > 0 && (
+      <section id="manga">
+        <h2>Featured <em>manga</em></h2>
+        <p>Original stories & serialized chapters crafted frame by frame.</p>
+        <div class="manga-showcase">
+          {mangaList.map((m: any) => {
+            const coverUrl = m.coverImage ? urlFor(m.coverImage.asset || m.coverImage).width(800).auto("format").url() : null;
+            return (
+              <div class="manga-box">
+                <div class="manga-cover-wrap">
+                  {coverUrl ? (
+                    <img src={coverUrl} alt={m.title} class="manga-cover-img" loading="lazy" />
+                  ) : (
+                    <div class="manga-cover-placeholder">MANGA</div>
+                  )}
+                  <span class="manga-badge">{m.status || "Completed"}</span>
+                </div>
+                <div class="manga-info">
+                  <div class="manga-tags">
+                    <span class="manga-tag">{m.tag || "Manga"}</span>
+                    {m.genre && <span class="manga-tag">{m.genre}</span>}
+                    {m.pageCount && <span class="manga-tag">{m.pageCount} Pages</span>}
+                    {m.subtitle && <span class="manga-tag">{m.subtitle}</span>}
+                  </div>
+                  <h3 class="manga-title">{m.title}</h3>
+                  <p class="manga-desc">
+                    A dark fantasy comic commissioned by VStrife. Follow the forbidden rites and molecular transmutations in this high-octane 11-page oneshot.
+                  </p>
+                  <div>
+                    <a href={`/manga/${m.slug}`} class="pill big" style="font-size:20px;padding:14px 32px;display:inline-flex;align-items:center;gap:10px;text-decoration:none;box-shadow:6px 6px 0 var(--ink);">
+                      Read Chapter <span style="font-size:24px;">→</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
 
-                // PARALLAX ORB ON MOUSE MOVE
-                const orb1 = document.querySelector(
-                    ".orb-1",
-                ) as HTMLElement | null;
-                const orb2 = document.querySelector(
-                    ".orb-2",
-                ) as HTMLElement | null;
-                const handleMousemove = (e: MouseEvent) => {
-                    const x = (e.clientX - window.innerWidth / 2) / 60;
-                    const y = (e.clientY - window.innerHeight / 2) / 60;
-                    if (orb1)
-                        orb1.style.transform = `translate(${x * 18}px, ${y * 18}px)`;
-                    if (orb2)
-                        orb2.style.transform = `translate(${-x * 14}px, ${-y * 14}px)`;
-                };
-                document.addEventListener("mousemove", handleMousemove);
+    <section id="gacha">
+      <div class="gac">
+        <span class="lg spin" aria-hidden="true"></span>
+        <h2 style="margin:0 0 10px">Roll a commission</h2>
+        <p>
+          No idea what to order? Spin for a brief, then send it to me in one
+          click.
+        </p>
+        <div class="reels">
+          <div class="reel" id="r1"><small>what</small>?</div>
+          <div class="reel" id="r2"><small>style</small>?</div>
+          <div class="reel" id="r3"><small>mood</small>?</div>
+        </div>
+        <button class="big" id="roll">ROLL!</button>
+        <div class="res" id="res"></div>
+      </div>
+    </section>
 
-                document.addEventListener(
-                    "astro:before-swap",
-                    () => {
-                        document.removeEventListener(
-                            "mousemove",
-                            handleMousemove,
-                        );
-                    },
-                    { once: true },
-                );
+    <section id="deal">
+      <h2>Pick a <em>tier</em></h2>
+      <div class="pn">
+        <div class="pnl">
+          <span class="dg">1</span><h3>Headshot</h3><div class="price">
+            $80+
+          </div><p>2–4 days. Fully rendered portrait, 2 revisions.</p>
+        </div>
+        <div class="pnl">
+          <span class="dg">2</span><h3>Full body</h3><div class="price">
+            $320+
+          </div><p>6–9 days. Full character, background, 3 revisions.</p>
+        </div>
+        <div class="pnl">
+          <span class="dg">3</span><h3>Original character sheet</h3><div
+            class="price"
+          >
+            $500+
+          </div><p>Multi-view turnaround, expressions & details.</p>
+        </div>
+      </div>
+      <p style="margin-top:22px;font-weight:700">
+        Pay 50% to start, 50% before the final file.
+      </p>
+      <p style="margin-top:6px;font-weight:700;font-size:16px;">
+        Price may vary or change.
+      </p>
+    </section>
 
-                // CONTACT FORM BACKGROUND SUBMISSION WITH LIFECYCLE EVENTS
-                const contactForm = document.getElementById(
-                    "contactForm",
-                ) as HTMLFormElement | null;
+    {reviews && reviews.length > 0 && (
+      <section id="reviews">
+        <h2>What they <em>say</em></h2>
+        <p>Direct feedback from commissioners & directors.</p>
+        <div class="rev-grid">
+          {reviews.map((r: any) => {
+            const clientName = r.client?.name || r.clientName || "Collector";
+            const clientAvatar = r.client?.avatar ? urlFor(r.client.avatar).width(120).auto("format").url() : null;
+            const role = r.clientTitle;
+            const workTitle = r.project?.title || r.manga?.title;
+            const workUrl = r.project ? `/project/${r.project.slug}` : (r.manga ? `/manga/${r.manga.slug}` : null);
+            const workImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(200).auto("format").url() :
+              (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(200).auto("format").url() :
+              (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(200).auto("format").url() : null));
+            const workFullImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(1400).auto("format").url() :
+              (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(1400).auto("format").url() :
+              (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(1400).auto("format").url() : null));
+            const cleanQuote = (r.quote || "").replace(/^["'“”]+|["'“”]+$/g, "").trim();
 
-                if (contactForm) {
-                    contactForm.addEventListener("submit", function (e: Event) {
-                        e.preventDefault();
+            return (
+              <div class="rev-card">
+                <div class="rev-header">
+                  <div class="rev-author">
+                    {clientAvatar ? (
+                      <img src={clientAvatar} alt={clientName} class="rev-avatar" />
+                    ) : (
+                      <div class="rev-avatar rev-initials">{clientName.charAt(0)}</div>
+                    )}
+                    <div>
+                      <h3 class="rev-name">{clientName}</h3>
+                      {role && <span class="rev-role">{role}</span>}
+                    </div>
+                  </div>
+                  {workImage && workFullImage && (
+                    <button
+                      type="button"
+                      class="rev-thumb-btn"
+                      data-fullimg={workFullImage}
+                      data-title={workTitle}
+                      aria-label={`Preview ${workTitle}`}
+                    >
+                      <img src={workImage} alt={workTitle || "Commissioned artwork"} class="rev-thumb" />
+                    </button>
+                  )}
+                </div>
+                <blockquote class="rev-quote">
+                  “{cleanQuote}”
+                </blockquote>
+                {workTitle && (
+                  <div class="rev-footer">
+                    <span class="rev-work-label">Commission:</span>
+                    <button
+                      type="button"
+                      class="rev-work-title-btn"
+                      data-fullimg={workFullImage}
+                      data-title={workTitle}
+                    >
+                      {workTitle} <span style="font-size:13px">🔍</span>
+                    </button>
+                    {r.manga && (
+                      <a href={`/manga/${r.manga.slug}`} class="rev-manga-link">Read Manga →</a>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
 
-                        const formData = new FormData(contactForm);
+    <section id="contact">
+      <h2>Send it <em>in</em></h2>
+      <div class="mail">
+        <input id="mn" placeholder="Your name" aria-label="Your name" />
+        <textarea
+          id="mm"
+          rows="5"
+          placeholder="What do you want drawn? Roll above to fill this in."
+          aria-label="Brief"></textarea>
+        <a
+          class="pill big"
+          id="ml"
+          href="#"
+          style="text-align:center;font-size:20px">Open in my email app</a
+        >
+        <small>Opens your email app with the brief ready.</small>
+      </div>
+    </section>
 
-                        // 1. Dispatch start event to lock UI
-                        contactForm.dispatchEvent(
-                            new CustomEvent("form-submit-start"),
-                        );
+    <Footer isHomepage={true} />
 
-                        // 2. Dispatch success event immediately (optimistic UI flow)
-                        contactForm.dispatchEvent(
-                            new CustomEvent("form-submit-success"),
-                        );
+    <script
+      id="vault-data"
+      type="application/json"
+      set:html={JSON.stringify(vaultData)}
+    />
 
-                        // 3. Perform backend fetch submission in the background
-                        fetch("/api/contact", {
-                            method: "POST",
-                            body: formData,
-                        })
-                            .then(async (response) => {
-                                const data = await response
-                                    .json()
-                                    .catch(() => ({}));
-                                console.log(
-                                    "Resend background response:",
-                                    response.status,
-                                    data,
-                                );
-                                if (!response.ok || !data.success) {
-                                    // If background submission fails, dispatch error to revert
-                                    contactForm.dispatchEvent(
-                                        new CustomEvent("form-submit-error", {
-                                            detail: {
-                                                error:
-                                                    data.error ||
-                                                    "Submission server returned an error.",
-                                            },
-                                        }),
-                                    );
-                                }
-                            })
-                            .catch((error: any) => {
-                                console.error("Resend error:", error);
-                                contactForm.dispatchEvent(
-                                    new CustomEvent("form-submit-error", {
-                                        detail: {
-                                            error: "Please verify your network connection.",
-                                        },
-                                    }),
-                                );
-                            });
-                    });
-                }
-            });
-        </script>
-    </body>
+    <script is:inline>
+      var $ = function (i) {
+        return document.getElementById(i);
+      };
+
+      var isTouch =
+        matchMedia("(hover: none)").matches ||
+        matchMedia("(pointer: coarse)").matches ||
+        window.innerWidth < 768;
+
+      /* cursor tracking & hero */
+      var cu = $("cur");
+      var h = document.querySelector(".hero");
+      if (!isTouch) {
+        window.addEventListener("pointermove", function (e) {
+          if (cu)
+            cu.style.transform =
+              "translate(" + (e.clientX - 17) + "px," + (e.clientY - 17) + "px)";
+        });
+
+        document.addEventListener("pointerover", function (e) {
+          var a = e.target.closest("a,button");
+          if (cu) cu.style.width = cu.style.height = a ? "64px" : "34px";
+        });
+      }
+
+      window.addEventListener("scroll", function () {
+        var d = document.documentElement;
+        var b = $("bar");
+        if (b)
+          b.style.width =
+            (scrollY / (d.scrollHeight - innerHeight)) * 100 + "%";
+      });
+
+      /* gacha */
+      var A = [
+          [
+            "Character design",
+            "Manga page",
+            "Portrait",
+            "3D scene",
+            "Full illustration",
+          ],
+          ["anime cel", "watercolour", "manga ink", "Shinkai sky", "painterly"],
+          ["epic", "cozy", "dark", "dreamy", "funny"],
+        ],
+        cb = "";
+
+      function pick(a) {
+        return a[Math.floor(Math.random() * a.length)];
+      }
+
+      var rollBtn = $("roll");
+      if (rollBtn) {
+        rollBtn.onclick = function () {
+          var n = 0;
+          var id = setInterval(function () {
+            for (var i = 0; i < 3; i++) {
+              var rEl = $("r" + (i + 1));
+              if (rEl) rEl.innerHTML = "<span>" + pick(A[i]) + "</span>";
+            }
+            if (++n > 12) {
+              clearInterval(id);
+              var v = [pick(A[0]), pick(A[1]), pick(A[2])];
+              for (var i = 0; i < 3; i++) {
+                var rEl2 = $("r" + (i + 1));
+                if (rEl2) rEl2.innerHTML = "<span>" + v[i] + "</span>";
+              }
+              cb =
+                "I’d like a " +
+                v[0] +
+                " in a " +
+                v[1] +
+                " style, with an " +
+                v[2] +
+                " mood. Details: ";
+              var resEl = $("res");
+              if (resEl)
+                resEl.innerHTML =
+                  "<b>" +
+                  cb +
+                  "</b><br><a href='#contact' style='color:var(--pk);font-weight:700'>Send this to Xyro ↓</a>";
+              var mmEl = $("mm");
+              if (mmEl) mmEl.value = cb;
+              up();
+            }
+          }, 70);
+        };
+      }
+
+      /* mail */
+      function up() {
+        var ml = $("ml");
+        if (!ml) return;
+        var nameVal = $("mn") ? $("mn").value : "";
+        var msgVal = $("mm") ? $("mm").value : "";
+        ml.href =
+          "mailto:officialxyroart@gmail.com?subject=" +
+          encodeURIComponent(
+            "Commission brief from " + (nameVal || "a new client"),
+          ) +
+          "&body=" +
+          encodeURIComponent(msgVal);
+      }
+      if ($("mn")) $("mn").oninput = up;
+      if ($("mm")) $("mm").oninput = up;
+      up();
+
+      /* theme toggle */
+      var rDoc = document.documentElement;
+      try {
+        var savedTheme = localStorage.getItem("xt2");
+        if (savedTheme) rDoc.setAttribute("data-theme", savedTheme);
+      } catch (x) {}
+
+      var tgBtn = $("tg");
+      if (tgBtn) {
+        tgBtn.onclick = function () {
+          var curTheme =
+            rDoc.getAttribute("data-theme") ||
+            (matchMedia("(prefers-color-scheme:dark)").matches
+              ? "dark"
+              : "light");
+          var nextTheme = curTheme == "dark" ? "light" : "dark";
+          rDoc.setAttribute("data-theme", nextTheme);
+          try {
+            localStorage.setItem("xt2", nextTheme);
+          } catch (x) {}
+        };
+      }
+
+      /* audio & interaction effects */
+      var AC = null,
+        snd = true;
+      function thud() {
+        if (!snd) return;
+        try {
+          AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+          if (AC.state === "suspended") AC.resume();
+          var o = AC.createOscillator(),
+            g = AC.createGain();
+          o.type = "sine";
+          o.frequency.setValueAtTime(170, AC.currentTime);
+          o.frequency.exponentialRampToValueAtTime(40, AC.currentTime + 0.22);
+          g.gain.setValueAtTime(0.7, AC.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.3);
+          o.connect(g);
+          g.connect(AC.destination);
+          o.start();
+          o.stop(AC.currentTime + 0.32);
+        } catch (x) {}
+      }
+      window.addEventListener(
+        "pointerdown",
+        function () {
+          try {
+            if (!AC)
+              AC = new (window.AudioContext || window.webkitAudioContext)();
+            if (AC.state === "suspended") AC.resume();
+          } catch (e) {}
+        },
+        { once: true },
+      );
+
+      function shake() {
+        document.body.classList.remove("shake");
+        void document.body.offsetWidth;
+        document.body.classList.add("shake");
+      }
+
+      if (h && !isTouch) {
+        h.addEventListener("pointerdown", function (e) {
+          if (e.target.closest("a,button")) return;
+          var r = h.getBoundingClientRect(),
+            x = e.clientX - r.left,
+            y = e.clientY - r.top;
+          var s = document.createElement("span");
+          s.className = "lg st";
+          s.style.left = x + "px";
+          s.style.top = y + "px";
+          s.style.setProperty("--r", Math.random() * 34 - 17 + "deg");
+          var g = document.createElement("span");
+          g.className = "ring";
+          g.style.left = x + "px";
+          g.style.top = y + "px";
+          h.appendChild(g);
+          h.appendChild(s);
+          setTimeout(function () {
+            g.remove();
+          }, 650);
+          var a = h.querySelectorAll(".st");
+          if (a.length > 30) a[0].remove();
+          thud();
+          shake();
+        });
+
+        h.addEventListener("pointermove", function (e) {
+          var r = h.getBoundingClientRect();
+          h.style.setProperty(
+            "--px",
+            ((e.clientX - r.left) / r.width - 0.5) * -50 + "px",
+          );
+          h.style.setProperty(
+            "--py",
+            ((e.clientY - r.top) / r.height - 0.5) * -36 + "px",
+          );
+        });
+      }
+
+      document.addEventListener("pointerover", function (e) {
+        var on = !!e.target.closest(".vi");
+        if (cu) {
+          cu.classList.toggle("lgm", on);
+          cu.classList.toggle("lg", on);
+        }
+      });
+
+      document.addEventListener("pointermove", function (e) {
+        var p = e.target.closest && e.target.closest(".pill,.big");
+        if (!p) return;
+        var r = p.getBoundingClientRect();
+        p.style.transform =
+          "translate(" +
+          (e.clientX - r.left - r.width / 2) * 0.25 +
+          "px," +
+          (e.clientY - r.top - r.height / 2) * 0.35 +
+          "px)";
+      });
+      document.addEventListener("pointerout", function (e) {
+        var p = e.target.closest && e.target.closest(".pill,.big");
+        if (p) p.style.transform = "";
+      });
+
+      if (rollBtn) {
+        var ro = rollBtn.onclick;
+        rollBtn.onclick = function () {
+          if (ro) ro();
+          setTimeout(function () {
+            thud();
+            shake();
+          }, 1050);
+        };
+      }
+
+      /* vault items & hydration */
+      var bkBtn = $("bk");
+      if (bkBtn) bkBtn.textContent = "Book a slot";
+
+      var D = [];
+      try {
+        var vEl = $("vault-data");
+        if (vEl) D = JSON.parse(vEl.textContent || "[]");
+      } catch (e) {}
+
+      var CT = [
+          ["all", "All"],
+          ["commission", "Commission"],
+          ["original", "Original"],
+          ["fanart", "Fan art"],
+          ["manga", "Manga"],
+          ["3d", "3D"],
+          ["digital", "Digital"],
+          ["traditional", "Traditional"],
+          ["mythology", "Mythology"],
+        ],
+        cf = "all",
+        qq = "",
+        vs = [],
+        ix = 0;
+
+      function tl(d) {
+        return (
+          '<div class="vt" style="--h:' +
+          d.h +
+          ";--r:" +
+          d.r +
+          '">' +
+          (d.img
+            ? '<img src="' + d.img + '" alt="' + d.t + '" loading="lazy">'
+            : "<b>" + d.t + "</b>") +
+          "</div>"
+        );
+      }
+
+      var io =
+        window.IntersectionObserver && matchMedia("(hover:none)").matches
+          ? new IntersectionObserver(
+              function (es) {
+                es.forEach(function (e) {
+                  e.target.classList.toggle("on", e.intersectionRatio > 0.6);
+                });
+              },
+              { threshold: [0, 0.6] },
+            )
+          : null;
+
+      function vd() {
+        var g = $("vg");
+        if (!g) return;
+        vs = D.slice(0, 5);
+
+        var btns = g.querySelectorAll(".vi");
+        if (btns.length === vs.length && vs.length > 0) {
+          btns.forEach(function (b, n) {
+            b.onclick = function () {
+              sh(n);
+              var lb = $("lb");
+              if (lb && typeof lb.showModal === "function") lb.showModal();
+            };
+            if (io) io.observe(b);
+          });
+          return;
+        }
+
+        g.innerHTML = "";
+        vs.forEach(function (d, n) {
+          var b = document.createElement("button");
+          b.className = "vi";
+          b.type = "button";
+          b.innerHTML =
+            '<div class="vc"><span class="vy">' +
+            d.y +
+            "</span>" +
+            tl(d) +
+            '<div class="vm">' +
+            d.g.join(" · ") +
+            "</div></div>";
+          b.onclick = function () {
+            sh(n);
+            var lb = $("lb");
+            if (lb && typeof lb.showModal === "function") lb.showModal();
+          };
+          g.appendChild(b);
+          if (io) io.observe(b);
+        });
+      }
+
+      function sh(n) {
+        var d = vs[n];
+        if (!d) return;
+        var lt = $("lt");
+        if (lt)
+          lt.outerHTML = tl(d).replace('class="vt"', 'class="vt lbt" id="lt"');
+      }
+
+      if ($("cl"))
+        $("cl").onclick = function () {
+          var lb = $("lb");
+          if (lb) lb.close();
+        };
+
+      var lbEl = $("lb");
+      if (lbEl) {
+        lbEl.addEventListener("click", function (e) {
+          if (e.target == lbEl) lbEl.close();
+        });
+      }
+
+      /* client reviews direct image preview */
+      document.querySelectorAll(".rev-thumb-btn, .rev-work-title-btn").forEach(function (btn) {
+        btn.onclick = function () {
+          var fullImg = btn.getAttribute("data-fullimg");
+          var title = btn.getAttribute("data-title") || "Artwork preview";
+          if (!fullImg) return;
+          var lt = $("lt");
+          if (lt) {
+            lt.outerHTML = '<div class="vt lbt" id="lt"><img src="' + fullImg + '" alt="' + title + '" loading="lazy"></div>';
+          }
+          var lb = $("lb");
+          if (lb && typeof lb.showModal === "function") lb.showModal();
+        };
+      });
+
+      /* dynamic navbar links & top-left logo on scroll */
+      var mainNavLogo = $("mainNavLogo");
+      var navVault = $("navVault");
+      var navGacha = $("navGacha");
+      var workSec = $("work");
+      var gachaSec = $("gacha");
+
+      function updateNavScroll() {
+        if (!workSec || !gachaSec) return;
+        var workRect = workSec.getBoundingClientRect();
+        var gachaRect = gachaSec.getBoundingClientRect();
+
+        // Top-left XYRO logo appears when user scrolls to/past Vault, disappears at top
+        if (mainNavLogo) {
+          var showLogo = workRect.top <= 140 || window.scrollY > 150;
+          if (showLogo) {
+            mainNavLogo.style.opacity = "1";
+            mainNavLogo.style.pointerEvents = "auto";
+            mainNavLogo.style.transform = "translateY(0)";
+          } else {
+            mainNavLogo.style.opacity = "0";
+            mainNavLogo.style.pointerEvents = "none";
+            mainNavLogo.style.transform = "translateY(-8px)";
+          }
+        }
+
+        // When scrolled past/below the Vault section
+        if (workRect.bottom < 80) {
+          if (navVault && navVault.style.display !== "inline-block")
+            navVault.style.display = "inline-block";
+        } else {
+          if (navVault && navVault.style.display !== "none")
+            navVault.style.display = "none";
+        }
+
+        // When scrolled past/below the Gacha section
+        if (gachaRect.bottom < 80) {
+          if (navGacha && navGacha.style.display !== "inline-block")
+            navGacha.style.display = "inline-block";
+        } else {
+          if (navGacha && navGacha.style.display !== "none")
+            navGacha.style.display = "none";
+        }
+      }
+
+      window.addEventListener("scroll", updateNavScroll, { passive: true });
+      updateNavScroll();
+
+      vd();
+    </script>
+  </body>
 </html>
