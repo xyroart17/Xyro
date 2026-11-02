@@ -258,13 +258,14 @@ export async function fetchTestimonials() {
       *[_type == "testimonial"] | order(coalesce(reviewDate, publishDate, _createdAt) desc) {
         _id,
         quote,
-        clientName,
         clientTitle,
         reviewDate,
         cardImage,
         "client": clientRef-> {
+          _id,
           name,
-          avatar
+          avatar,
+          clientSince
         },
         "project": projectRef-> {
           title,

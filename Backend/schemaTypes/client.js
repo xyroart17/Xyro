@@ -23,22 +23,21 @@ export default {
     {
       name: 'clientSince',
       title: 'Client Since',
-      type: 'date',
-      options: {
-        dateFormat: 'MMMM YYYY',
-      },
-      description: 'Optional. When did this client start commissioning your work? (Falls back to the date of their oldest review if left blank).',
+      type: 'string',
+      description: 'e.g., April 2026 (leave empty to automatically compute from oldest review).',
     },
   ],
   preview: {
     select: {
       title: 'name',
+      subtitle: 'clientSince',
       media: 'avatar',
     },
     prepare(selection) {
-      const { title, media } = selection
+      const { title, subtitle, media } = selection
       return {
         title: title || 'Unnamed Client',
+        subtitle: subtitle ? `Client since ${subtitle}` : 'Active Client',
         media: media || UserIcon,
       }
     },

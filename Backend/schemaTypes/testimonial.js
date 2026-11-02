@@ -7,101 +7,86 @@ export default {
   icon: HeartIcon,
   fields: [
     {
+      name: 'clientRef',
+      title: 'Client',
+      type: 'reference',
+      to: [{ type: 'client' }],
+      description: 'Select the client who gave this review.',
+      validation: (Rule) => Rule.required().error('Please select a client profile.'),
+    },
+    {
       name: 'quote',
       title: 'Review Quote',
       type: 'text',
-      description: 'The actual review from the client.',
-    },
-    {
-      name: 'cardImage',
-      title: 'Review Card Display Image',
-      type: 'image',
-      options: { hotspot: true },
-      description: 'Optional. Upload/crop a custom display image for the testimonial card. If empty, defaults to the associated project or manga image.',
-    },
-    {
-      name: 'clientRef',
-      title: 'Client Profile',
-      type: 'reference',
-      to: [{ type: 'client' }],
-      description: 'Select the client who wrote this review. If selected, this client\'s info will override the legacy fields below.',
-    },
-    {
-      name: 'clientName',
-      title: 'Client Name (Legacy/Fallback)',
-      type: 'string',
-      description: 'e.g., VStrife (Only used if Client Profile is not selected)',
+      rows: 4,
+      description: 'The testimonial quote from the client.',
+      validation: (Rule) => Rule.required().error('Review quote is required.'),
     },
     {
       name: 'clientTitle',
-      title: 'Client Role (Legacy/Fallback)',
+      title: 'Commission Tag / Badge',
       type: 'string',
-      description: 'e.g., Art Director, Indie Dev, or leave blank (Only used if Client Profile is not selected)',
-    },
-    // NEW FIELD: Adds a clean date picker for the review
-    {
-      name: 'reviewDate',
-      title: 'Review Date',
-      type: 'date',
-      description: 'When did the client leave this review?',
-      options: {
-        dateFormat: 'MMMM YYYY', // Formats it cleanly in the studio
-      }
+      description: 'e.g., Manga, Original Character, OC Design, Character Trio',
     },
     {
       name: 'projectRef',
       title: 'Associated Project',
       type: 'reference',
       to: [{ type: 'project' }],
-      description: 'Select the project this review is for to display a "Preview Work" link.',
+      description: 'Optional. Link this review to a portfolio artwork.',
     },
     {
       name: 'mangaRef',
       title: 'Associated Manga',
       type: 'reference',
       to: [{ type: 'manga' }],
-      description: 'Select the manga this review is for to display a "Preview Work" link.',
+      description: 'Optional. Link this review to a published manga.',
     },
     {
-      name: 'publishDate',
-      title: 'Publish Date & Time',
-      type: 'datetime',
-      description: 'Determines the sorting order of reviews on the website (latest first).',
-      initialValue: () => new Date().toISOString(),
+      name: 'cardImage',
+      title: 'Custom Display Image',
+      type: 'image',
+      options: { hotspot: true },
+      description: 'Optional. If left blank, automatically displays the image from the linked project or manga.',
+    },
+    {
+      name: 'reviewDate',
+      title: 'Review Date',
+      type: 'date',
+      options: {
+        dateFormat: 'MMMM YYYY',
+      },
+      description: 'Optional. Date the review was received.',
     },
   ],
   preview: {
     select: {
-      clientRefName: 'clientRef.name',
-      clientName: 'clientName',
-      subtitle: 'quote',
+      clientName: 'clientRef.name',
+      quote: 'quote',
+      tag: 'clientTitle',
       projectTitle: 'projectRef.title',
       mangaTitle: 'mangaRef.title',
       cardImage: 'cardImage',
-      projectGridImage: 'projectRef.gridImage',
       projectMainImage: 'projectRef.mainImage',
-      mangaGridImage: 'mangaRef.gridImage',
       mangaCoverImage: 'mangaRef.coverImage',
     },
     prepare(selection) {
       const { 
-        clientRefName, 
         clientName, 
-        subtitle, 
+        quote, 
+        tag,
         projectTitle, 
         mangaTitle,
         cardImage,
-        projectGridImage,
         projectMainImage,
-        mangaGridImage,
         mangaCoverImage
       } = selection
-      const title = clientRefName || clientName || 'Anonymous Client'
-      const ref = projectTitle || mangaTitle || 'General Feedback'
-      const media = cardImage || projectGridImage || projectMainImage || mangaGridImage || mangaCoverImage || HeartIcon
+      const title = clientName || 'Anonymous Client'
+      const work = projectTitle || mangaTitle || tag || 'Commission'
+      const media = cardImage || projectMainImage || mangaCoverImage || HeartIcon
       return {
-        title,
-        subtitle: `${ref} — "${subtitle || ''}"`,
+        title: `${title} — ${work}`,
+        subtitle: quote ? `"${quote.slice(0, 50)}..."` : '',
         media,
       }
     }

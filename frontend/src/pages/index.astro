@@ -7,6 +7,48 @@ import Footer from "../components/Footer.astro";
 const vaultData = await fetchVaultData();
 const reviews = await fetchTestimonials();
 const mangaList = await fetchFeaturedManga();
+
+// Group testimonials by client (show client profile once with their project reviews below)
+const clientGroupsMap = new Map();
+
+reviews.forEach((r: any) => {
+  const clientId = r.client?._id || `client-${r.client?.name || "collector"}`;
+  const clientName = r.client?.name || "Collector";
+  const clientAvatar = r.client?.avatar || null;
+  const clientSince = r.client?.clientSince || null;
+
+  if (!clientGroupsMap.has(clientId)) {
+    clientGroupsMap.set(clientId, {
+      id: clientId,
+      name: clientName,
+      avatar: clientAvatar,
+      clientSince: clientSince,
+      reviews: []
+    });
+  }
+
+  clientGroupsMap.get(clientId).reviews.push(r);
+});
+
+const clientGroups = Array.from(clientGroupsMap.values());
+
+clientGroups.forEach((group: any) => {
+  let sinceText = group.clientSince;
+  if (!sinceText) {
+    const dates = group.reviews
+      .map((r: any) => r.reviewDate || r._createdAt)
+      .filter(Boolean)
+      .map((d: string) => new Date(d));
+    if (dates.length > 0) {
+      const oldestDate = new Date(Math.min(...dates.map((d: Date) => d.getTime())));
+      sinceText = oldestDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    }
+  }
+
+  const projectCount = group.reviews.length;
+  const projectText = projectCount === 1 ? "1 project" : `${projectCount} projects`;
+  group.badgeText = sinceText ? `Client since ${sinceText} • ${projectText}` : projectText;
+});
 ---
 
 <!doctype html>
@@ -81,7 +123,7 @@ const mangaList = await fetchFeaturedManga();
       </p>
       <div class="vgrid" id="vg">
         {
-          vaultData.slice(0, 5).map((d: any) => (
+          vaultData.slice(0, 4).map((d: any) => (
             <button class="vi" type="button" aria-label={`Preview ${d.t}`}>
               <div class="vc">
                 <span class="vy">{d.y}</span>
@@ -204,70 +246,81 @@ const mangaList = await fetchFeaturedManga();
       </p>
     </section>
 
-    {reviews && reviews.length > 0 && (
+    {clientGroups && clientGroups.length > 0 && (
       <section id="reviews">
         <h2>What they <em>say</em></h2>
         <p>Direct feedback from commissioners & directors.</p>
-        <div class="rev-grid">
-          {reviews.map((r: any) => {
-            const clientName = r.client?.name || r.clientName || "Collector";
-            const clientAvatar = r.client?.avatar ? urlFor(r.client.avatar).width(120).auto("format").url() : null;
-            const role = r.clientTitle;
-            const workTitle = r.project?.title || r.manga?.title;
-            const workUrl = r.project ? `/project/${r.project.slug}` : (r.manga ? `/manga/${r.manga.slug}` : null);
-            const workImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(200).auto("format").url() :
-              (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(200).auto("format").url() :
-              (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(200).auto("format").url() : null));
-            const workFullImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(1400).auto("format").url() :
-              (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(1400).auto("format").url() :
-              (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(1400).auto("format").url() : null));
-            const cleanQuote = (r.quote || "").replace(/^["'“”]+|["'“”]+$/g, "").trim();
 
+        <div class="client-groups-wrap">
+          {clientGroups.map((group: any) => {
+            const clientAvatarUrl = group.avatar ? urlFor(group.avatar).width(160).auto("format").url() : null;
             return (
-              <div class="rev-card">
-                <div class="rev-header">
-                  <div class="rev-author">
-                    {clientAvatar ? (
-                      <img src={clientAvatar} alt={clientName} class="rev-avatar" />
+              <div class="client-group">
+                <div class="client-header">
+                  <div class="client-profile">
+                    {clientAvatarUrl ? (
+                      <img src={clientAvatarUrl} alt={group.name} class="client-avatar" />
                     ) : (
-                      <div class="rev-avatar rev-initials">{clientName.charAt(0)}</div>
+                      <div class="client-avatar client-initials">{group.name.charAt(0)}</div>
                     )}
                     <div>
-                      <h3 class="rev-name">{clientName}</h3>
-                      {role && <span class="rev-role">{role}</span>}
+                      <h3 class="client-name">{group.name}</h3>
+                      <span class="client-badge">{group.badgeText}</span>
                     </div>
                   </div>
-                  {workImage && workFullImage && (
-                    <button
-                      type="button"
-                      class="rev-thumb-btn"
-                      data-fullimg={workFullImage}
-                      data-title={workTitle}
-                      aria-label={`Preview ${workTitle}`}
-                    >
-                      <img src={workImage} alt={workTitle || "Commissioned artwork"} class="rev-thumb" />
-                    </button>
-                  )}
                 </div>
-                <blockquote class="rev-quote">
-                  “{cleanQuote}”
-                </blockquote>
-                {workTitle && (
-                  <div class="rev-footer">
-                    <span class="rev-work-label">Commission:</span>
-                    <button
-                      type="button"
-                      class="rev-work-title-btn"
-                      data-fullimg={workFullImage}
-                      data-title={workTitle}
-                    >
-                      {workTitle} <span style="font-size:13px">🔍</span>
-                    </button>
-                    {r.manga && (
-                      <a href={`/manga/${r.manga.slug}`} class="rev-manga-link">Read Manga →</a>
-                    )}
-                  </div>
-                )}
+
+                <div class="rev-grid">
+                  {group.reviews.map((r: any) => {
+                    const tag = r.clientTitle || (r.manga ? "Manga" : "Commission");
+                    const workTitle = r.project?.title || r.manga?.title;
+                    const workImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(200).auto("format").url() :
+                      (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(200).auto("format").url() :
+                      (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(200).auto("format").url() : null));
+                    const workFullImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(1400).auto("format").url() :
+                      (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(1400).auto("format").url() :
+                      (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(1400).auto("format").url() : null));
+                    const cleanQuote = (r.quote || "").replace(/^["'“”]+|["'“”]+$/g, "").trim();
+
+                    return (
+                      <div class="rev-card">
+                        <div class="rev-card-top">
+                          <span class="rev-role">{tag}</span>
+                          {workImage && workFullImage && (
+                            <button
+                              type="button"
+                              class="rev-thumb-btn"
+                              data-fullimg={workFullImage}
+                              data-title={workTitle}
+                              aria-label={`Preview ${workTitle}`}
+                            >
+                              <img src={workImage} alt={workTitle || "Commissioned artwork"} class="rev-thumb" />
+                            </button>
+                          )}
+                        </div>
+                        <blockquote class="rev-quote">
+                          “{cleanQuote}”
+                        </blockquote>
+                        {workTitle && (
+                          <div class="rev-footer">
+                            <span class="rev-work-label">Commission:</span>
+                            <button
+                              type="button"
+                              class="rev-work-title-btn"
+                              data-fullimg={workFullImage}
+                              data-title={workTitle}
+                            >
+                              {workTitle} <span style="font-size:13px">🔍</span>
+                            </button>
+                            {r.manga && (
+                              <a href={`/manga/${r.manga.slug}`} class="rev-manga-link">Read Manga →</a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
