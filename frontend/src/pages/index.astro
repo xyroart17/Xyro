@@ -68,11 +68,11 @@ clientGroups.forEach((group: any) => {
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <title>Xyro</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=3" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+    <link rel="icon" href="/favicon.ico?v=3" />
     <link
       href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
@@ -398,14 +398,50 @@ clientGroups.forEach((group: any) => {
           id="mm"
           rows="5"
           placeholder="What do you want drawn? Roll above to fill this in."
-          aria-label="Brief"></textarea>
+          aria-label="Brief"
+        ></textarea>
         <a
           class="pill big"
           id="ml"
           href="#"
-          style="text-align:center;font-size:20px">Open in my email app</a
+          style="text-align:center;font-size:20px;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;"
         >
-        <small>Opens your email app with the brief ready.</small>
+          <span>Open in my email app</span> <span>✉️</span>
+        </a>
+
+        <!-- Direct browser / webmail options for desktop & all browsers -->
+        <div class="mail-web-options">
+          <span class="mail-web-label">Or open directly in browser:</span>
+          <div class="mail-web-pills">
+            <a
+              id="btnGmail"
+              class="mail-web-pill"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Compose in Gmail Web"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:6px;"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+              Gmail (Web)
+            </a>
+            <a
+              id="btnOutlook"
+              class="mail-web-pill"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Compose in Outlook Web"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:6px;"><path fill="#0078D4" d="M14.5 12a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path fill="#0078D4" d="M22 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17.5v-11A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5zm-2 0a.5.5 0 0 0-.5-.5h-15a.5.5 0 0 0-.5.5v.354l8 5 8-5V6.5zm0 2.213-7.53 4.707a.9.9 0 0 1-.94 0L4 8.713V17.5a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5V8.713z"/></svg>
+              Outlook (Web)
+            </a>
+            <button type="button" id="btnCopyBrief" class="mail-web-pill">
+              📋 <span id="copyBtnLabel">Copy Brief</span>
+            </button>
+          </div>
+        </div>
+
+        <small>Works with Apple Mail, Gmail, Outlook, or any email service.</small>
       </div>
     </section>
 
@@ -507,23 +543,92 @@ clientGroups.forEach((group: any) => {
         };
       }
 
-      /* mail */
-      function up() {
-        var ml = $("ml");
-        if (!ml) return;
-        var nameVal = $("mn") ? $("mn").value : "";
-        var msgVal = $("mm") ? $("mm").value : "";
-        ml.href =
-          "mailto:officialxyroart@gmail.com?subject=" +
-          encodeURIComponent(
-            "Commission brief from " + (nameVal || "a new client"),
-          ) +
-          "&body=" +
-          encodeURIComponent(msgVal);
+      /* mail links & compose actions */
+      var ml = $("ml");
+      var btnGmail = $("btnGmail");
+      var btnOutlook = $("btnOutlook");
+      var btnCopyBrief = $("btnCopyBrief");
+      var copyBtnLabel = $("copyBtnLabel");
+
+      function getMailData() {
+        var nameVal = $("mn") ? $("mn").value.trim() : "";
+        var msgVal = $("mm") ? $("mm").value.trim() : "";
+        var subject = "Commission brief from " + (nameVal || "a new client");
+        var body = msgVal || "Hi Xyro,\n\nI'd like to commission an artwork.\n\nFrom: " + (nameVal || "Client");
+        return { nameVal: nameVal, msgVal: msgVal, subject: subject, body: body };
       }
+
+      function up() {
+        var d = getMailData();
+        var encSub = encodeURIComponent(d.subject);
+        var encBody = encodeURIComponent(d.body);
+
+        if (ml) {
+          ml.href = "mailto:officialxyroart@gmail.com?subject=" + encSub + "&body=" + encBody;
+        }
+        if (btnGmail) {
+          btnGmail.href = "https://mail.google.com/mail/?view=cm&fs=1&to=officialxyroart@gmail.com&su=" + encSub + "&body=" + encBody;
+        }
+        if (btnOutlook) {
+          btnOutlook.href = "https://outlook.live.com/mail/0/deeplink/compose?to=officialxyroart@gmail.com&subject=" + encSub + "&body=" + encBody;
+        }
+      }
+
       if ($("mn")) $("mn").oninput = up;
       if ($("mm")) $("mm").oninput = up;
       up();
+
+      // On desktop, clicking Open in Mail App triggers mailto directly
+      if (ml) {
+        ml.addEventListener("click", function () {
+          var d = getMailData();
+          var encSub = encodeURIComponent(d.subject);
+          var encBody = encodeURIComponent(d.body);
+          var mailtoUrl = "mailto:officialxyroart@gmail.com?subject=" + encSub + "&body=" + encBody;
+          if (!isTouch) {
+            window.location.href = mailtoUrl;
+          }
+        });
+      }
+
+      // Copy Brief button
+      if (btnCopyBrief) {
+        btnCopyBrief.addEventListener("click", function (e) {
+          e.preventDefault();
+          var d = getMailData();
+          var fullText = "To: officialxyroart@gmail.com\nSubject: " + d.subject + "\n\n" + d.body;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fullText).then(showCopied).catch(function () {
+              fallbackCopy(fullText);
+            });
+          } else {
+            fallbackCopy(fullText);
+          }
+        });
+      }
+
+      function fallbackCopy(text) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showCopied();
+        } catch (err) {}
+        document.body.removeChild(ta);
+      }
+
+      function showCopied() {
+        if (!copyBtnLabel) return;
+        var prev = copyBtnLabel.textContent;
+        copyBtnLabel.textContent = "Copied! ✓";
+        setTimeout(function () {
+          copyBtnLabel.textContent = prev;
+        }, 2200);
+      }
 
       /* theme toggle */
       var rDoc = document.documentElement;

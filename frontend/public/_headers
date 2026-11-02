@@ -1,0 +1,8 @@
+/assets/branding/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/favicon*
+  Cache-Control: public, max-age=0, must-revalidate

@@ -23,7 +23,7 @@ a{color:inherit}
 .pill{background:var(--ink);color:var(--bg);border:0;border-radius:99px;padding:11px 20px;font:700 15px 'Space Grotesk';text-decoration:none;cursor:pointer}
 #navVault,#navGacha{animation:navPop .25s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes navPop{from{opacity:0;transform:translateY(-6px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-.lg{display:block;aspect-ratio:1;background:var(--c,var(--rd));-webkit-mask-image:url(/assets/branding/XYRO_red_vector.svg);mask-image:url(/assets/branding/XYRO_red_vector.svg);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.lg{display:block;aspect-ratio:1;background:var(--c,var(--rd));-webkit-mask-image:url(/assets/branding/XYRO_red_vector.svg?v=3);mask-image:url(/assets/branding/XYRO_red_vector.svg?v=3);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
 .logo{width:62px;text-decoration:none;transition:transform .2s}.logo:hover{transform:rotate(-8deg) scale(1.1)}
 .hero{position:relative;height:100svh;min-height:560px;overflow:hidden;display:grid;place-items:center;text-align:center;padding:20px;background:var(--bg)}
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(#0003 1.4px,transparent 1.7px) 0 0/10px 10px;pointer-events:none}
@@ -75,7 +75,49 @@ h2 em{font-style:normal;background:var(--pk);color:#fff;padding:0 14px;display:i
 #contact h2{text-align:center;margin-bottom:26px}
 .mail{display:grid;gap:14px;width:100%;max-width:680px;margin:0 auto;text-align:left}
 .mail input,.mail textarea{font:500 17px 'Space Grotesk';padding:14px;border:4px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:4px;width:100%}
-.mail small{text-align:center;display:block}
+.mail small{text-align:center;display:block;opacity:0.8;font-size:13px;margin-top:4px}
+.mail-web-options {
+  margin: 6px 0 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.mail-web-label {
+  font: 700 13px 'Space Grotesk', sans-serif;
+  opacity: 0.8;
+  color: var(--ink);
+}
+.mail-web-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mail-web-pill {
+  background: var(--bg);
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 99px;
+  padding: 7px 16px;
+  font: 700 14px 'Space Grotesk', sans-serif;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mail-web-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 var(--pk);
+  background: var(--bg);
+}
+.mail-web-pill:active {
+  transform: translateY(0);
+  box-shadow: 1px 1px 0 var(--ink);
+}
 footer{padding:50px 20px 70px;text-align:center;font-weight:700}
 .st{position:absolute;width:130px;pointer-events:none;z-index:4;--c:var(--rd);animation:stp .35s cubic-bezier(.2,1.8,.4,1) both;mix-blend-mode:multiply}
 @keyframes stp{from{transform:translate(-50%,-50%) scale(2.6) rotate(var(--r));opacity:0}to{transform:translate(-50%,-50%) scale(1) rotate(var(--r));opacity:.92}}
