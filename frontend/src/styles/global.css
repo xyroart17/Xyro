@@ -23,7 +23,7 @@ a{color:inherit}
 .pill{background:var(--ink);color:var(--bg);border:0;border-radius:99px;padding:11px 20px;font:700 15px 'Space Grotesk';text-decoration:none;cursor:pointer}
 #navVault,#navGacha{animation:navPop .25s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes navPop{from{opacity:0;transform:translateY(-6px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-.lg{display:block;aspect-ratio:1;background:var(--c,var(--rd));-webkit-mask-image:url(/assets/branding/XYRO_red_vector.svg?v=3);mask-image:url(/assets/branding/XYRO_red_vector.svg?v=3);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.lg{display:block;aspect-ratio:1;background:var(--c,var(--rd));-webkit-mask-image:url(/assets/branding/XYRO_red_vector.svg?v=4);mask-image:url(/assets/branding/XYRO_red_vector.svg?v=4);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
 .logo{width:62px;text-decoration:none;transition:transform .2s}.logo:hover{transform:rotate(-8deg) scale(1.1)}
 .hero{position:relative;height:100svh;min-height:560px;overflow:hidden;display:grid;place-items:center;text-align:center;padding:20px;background:var(--bg)}
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(#0003 1.4px,transparent 1.7px) 0 0/10px 10px;pointer-events:none}

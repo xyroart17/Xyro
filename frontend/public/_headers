@@ -7,3 +7,8 @@
 /favicon*
   Cache-Control: public, max-age=0, must-revalidate
 
+/logo*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/android*
+  Cache-Control: public, max-age=0, must-revalidate
