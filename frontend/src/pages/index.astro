@@ -316,7 +316,7 @@ clientGroups.forEach((group: any) => {
                 data-client-id={group.id}
                 aria-labelledby={`client-tab-${group.id}`}
               >
-                <div class="client-group">
+                <div class={`client-group count-${Math.min(group.reviews.length, 4)}`}>
                   <div class="client-header">
                     <div class="client-profile">
                       {clientAvatarUrl ? (

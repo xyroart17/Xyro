@@ -441,6 +441,56 @@ dialog::backdrop{background:#000c;backdrop-filter:blur(6px);-webkit-backdrop-fil
   box-shadow: 10px 10px 0 var(--ink);
   border-radius: 6px;
   padding: 32px 28px;
+  margin: 0 auto;
+  width: 100%;
+  transition: max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dynamic Box & Card Layout based on review count */
+.client-group.count-1 {
+  max-width: 620px;
+}
+.client-group.count-1 .client-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+}
+.client-group.count-1 .rev-grid {
+  display: flex;
+  justify-content: center;
+}
+.client-group.count-1 .rev-card {
+  width: 100%;
+  max-width: 540px;
+  transform: none;
+}
+
+.client-group.count-2 {
+  max-width: 840px;
+}
+.client-group.count-2 .rev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  justify-content: center;
+}
+
+.client-group.count-3 {
+  max-width: 1100px;
+}
+.client-group.count-3 .rev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  justify-content: center;
+}
+
+.client-group.count-4 {
+  max-width: 1200px;
+}
+.client-group.count-4 .rev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 22px;
 }
 .client-header {
   margin-bottom: 24px;
@@ -484,17 +534,6 @@ dialog::backdrop{background:#000c;backdrop-filter:blur(6px);-webkit-backdrop-fil
   padding: 5px 14px;
   border-radius: 99px;
   letter-spacing: 0.02em;
-}
-.client-panel .rev-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 22px;
-}
-.client-panel .rev-card:only-child {
-  max-width: 640px;
-  margin: 0 auto;
-  width: 100%;
-  transform: none;
 }
 .rev-grid {
   display: grid;
