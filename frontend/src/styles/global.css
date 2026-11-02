@@ -73,51 +73,28 @@ h2 em{font-style:normal;background:var(--pk);color:#fff;padding:0 14px;display:i
 /* contact */
 #contact{display:flex;flex-direction:column;align-items:center;text-align:center}
 #contact h2{text-align:center;margin-bottom:26px}
-.mail{display:grid;gap:14px;width:100%;max-width:680px;margin:0 auto;text-align:left}
-.mail input,.mail textarea{font:500 17px 'Space Grotesk';padding:14px;border:4px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:4px;width:100%}
-.mail small{text-align:center;display:block;opacity:0.8;font-size:13px;margin-top:4px}
-.mail-web-options {
-  margin: 6px 0 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.mail-web-label {
-  font: 700 13px 'Space Grotesk', sans-serif;
-  opacity: 0.8;
-  color: var(--ink);
-}
-.mail-web-pills {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.mail-web-pill {
-  background: var(--bg);
-  color: var(--ink);
-  border: 2.5px solid var(--ink);
-  border-radius: 99px;
-  padding: 7px 16px;
-  font: 700 14px 'Space Grotesk', sans-serif;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-.mail-web-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 4px 4px 0 var(--pk);
-  background: var(--bg);
-}
-.mail-web-pill:active {
-  transform: translateY(0);
-  box-shadow: 1px 1px 0 var(--ink);
-}
+.mail{display:grid;gap:16px;width:100%;max-width:680px;margin:0 auto;text-align:left}
+.mail input,.mail textarea{font:500 17px 'Space Grotesk',sans-serif;padding:14px 16px;border:4px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:4px;width:100%;transition:border-color .15s ease,box-shadow .15s ease;box-sizing:border-box}
+.mail input:focus,.mail textarea:focus{outline:none;border-color:var(--pk);box-shadow:4px 4px 0 var(--ink)}
+.mail input::placeholder,.mail textarea::placeholder{color:var(--ink);opacity:0.45}
+.mail textarea{resize:vertical;min-height:130px;line-height:1.5}
+.contact-submit-btn{font:400 22px 'Dela Gothic One',sans-serif;letter-spacing:-0.02em;padding:16px 28px;border:4px solid var(--ink);border-radius:99px;background:var(--pk);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:5px 5px 0 var(--ink);transition:transform .15s ease,box-shadow .15s ease,background .15s ease;width:100%;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.contact-submit-btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.contact-submit-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.contact-submit-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none}
+.contact-status-box{border:4px solid var(--ink);border-radius:4px;padding:18px 22px;margin-top:6px;animation:fadeSlideIn .25s ease-out both}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.contact-status-box.success{background:var(--bg);box-shadow:6px 6px 0 var(--ink);border-color:var(--ink)}
+.contact-status-box.success .status-title{font:400 20px 'Dela Gothic One',sans-serif;color:var(--pk);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.contact-status-box.success p{font:500 15px 'Space Grotesk',sans-serif;line-height:1.5;margin:0;color:var(--ink)}
+.contact-status-box.error{background:rgba(255,42,75,0.08);border-color:var(--pk);box-shadow:5px 5px 0 var(--pk)}
+.contact-status-box.error .status-title{font:700 16px 'Space Grotesk',sans-serif;color:var(--pk);margin-bottom:4px}
+.contact-status-box.error p{font:500 14px 'Space Grotesk',sans-serif;margin:0;color:var(--ink)}
+.contact-direct-line{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:12px;font:600 14px 'Space Grotesk',sans-serif;color:var(--ink);opacity:0.85}
+.contact-direct-link{color:var(--pk);text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.copy-email-badge{background:var(--bg);border:2px solid var(--ink);border-radius:99px;padding:3px 12px;font:700 12px 'Space Grotesk',sans-serif;color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 var(--ink);transition:transform .1s ease,box-shadow .1s ease;display:inline-flex;align-items:center;gap:4px}
+.copy-email-badge:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.copy-email-badge:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
 footer{padding:50px 20px 70px;text-align:center;font-weight:700}
 .st{position:absolute;width:130px;pointer-events:none;z-index:4;--c:var(--rd);animation:stp .35s cubic-bezier(.2,1.8,.4,1) both;mix-blend-mode:multiply}
 @keyframes stp{from{transform:translate(-50%,-50%) scale(2.6) rotate(var(--r));opacity:0}to{transform:translate(-50%,-50%) scale(1) rotate(var(--r));opacity:.92}}
