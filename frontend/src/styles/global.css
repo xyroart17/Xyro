@@ -299,11 +299,142 @@ dialog::backdrop{background:#000c;backdrop-filter:blur(6px);-webkit-backdrop-fil
   text-align: center;
   opacity: 0.85;
 }
-.client-groups-wrap {
+/* Reviews Section - Interactive Horizontal Client Selector */
+.client-circles-bar {
+  display: flex;
+  align-items: center;
+  justify-content: safe center;
+  gap: 24px;
+  margin: 0 auto 36px;
+  padding: 8px 16px 14px;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.client-circles-bar::-webkit-scrollbar {
+  display: none;
+}
+.client-circle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  color: var(--ink);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+  flex-shrink: 0;
+  opacity: 0.55;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
+.client-circle-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+}
+.client-circle-btn.active {
+  opacity: 1;
+  transform: translateY(-4px);
+}
+.client-circle-pfp-wrap {
+  position: relative;
+  width: 68px;
+  height: 68px;
+}
+.client-circle-pfp {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  background: var(--bg);
+  display: block;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.client-circle-btn:hover:not(.active) .client-circle-pfp {
+  border-color: var(--ink);
+  box-shadow: 5px 5px 0 var(--pk);
+  transform: scale(1.05);
+}
+.client-circle-btn.active .client-circle-pfp {
+  border-color: var(--yel);
+  box-shadow: 0 0 0 3px var(--ink), 6px 6px 0 var(--ink);
+  transform: scale(1.08);
+}
+.client-circle-count {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  background: var(--yel);
+  color: #000;
+  font: 800 11px/1 'Space Grotesk', sans-serif;
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+  padding: 2.5px 6px;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.client-circle-btn.active .client-circle-count {
+  background: var(--pk);
+  color: #fff;
+  transform: scale(1.05);
+}
+.client-circle-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.client-circle-name {
+  font: 700 15px/1.2 'Space Grotesk', sans-serif;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+.client-circle-btn.active .client-circle-name {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--yel);
+}
+.client-circle-sub {
+  font: 600 11px/1.2 'Space Grotesk', sans-serif;
+  opacity: 0.65;
+  color: var(--ink);
+}
+.client-circle-btn.active .client-circle-sub {
+  opacity: 0.95;
+}
+
+/* Review Panels */
+.client-panels-wrap {
+  width: 100%;
+}
+.client-panel {
+  display: none;
+  opacity: 0;
+}
+.client-panel.active {
+  display: block;
+  animation: panelSlideFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes panelSlideFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .client-group {
   border: 5px solid var(--ink);
   background: var(--bg);
@@ -353,6 +484,17 @@ dialog::backdrop{background:#000c;backdrop-filter:blur(6px);-webkit-backdrop-fil
   padding: 5px 14px;
   border-radius: 99px;
   letter-spacing: 0.02em;
+}
+.client-panel .rev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
+}
+.client-panel .rev-card:only-child {
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  transform: none;
 }
 .rev-grid {
   display: grid;
@@ -647,12 +789,78 @@ dialog::backdrop{background:#000c;backdrop-filter:blur(6px);-webkit-backdrop-fil
     padding: 18px;
     transform: none !important;
   }
-  .rev-grid {
+  .rev-grid,
+  .client-panel .rev-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
   .rev-card {
-    padding: 18px;
+    padding: 16px;
+    border-width: 3px;
+    box-shadow: 4px 4px 0 var(--ink);
     transform: none !important;
+  }
+  .rev-quote {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .rev-footer {
+    font-size: 13px;
+    padding-top: 12px;
+    flex-wrap: wrap;
+  }
+  #reviews {
+    padding: 50px 16px;
+  }
+  #reviews > h2 {
+    font-size: clamp(32px, 8vw, 48px);
+  }
+  #reviews > p {
+    font-size: 16px;
+    margin-bottom: 22px;
+  }
+  .client-circles-bar {
+    gap: 14px;
+    margin-bottom: 20px;
+    padding: 6px 4px 12px;
+    justify-content: flex-start;
+  }
+  .client-circle-pfp-wrap {
+    width: 58px;
+    height: 58px;
+  }
+  .client-circle-name {
+    font-size: 13px;
+  }
+  .client-circle-sub {
+    font-size: 10px;
+  }
+  .client-group {
+    padding: 20px 14px;
+    border-width: 4px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .client-header {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+  }
+  .client-profile {
+    gap: 12px;
+  }
+  .client-avatar {
+    width: 52px;
+    height: 52px;
+    border-width: 3px;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .client-name {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .client-badge {
+    font-size: 11px;
+    padding: 4px 10px;
   }
   .mail input, .mail textarea {
     padding: 12px;

@@ -38,6 +38,7 @@ reviews.forEach((r: any) => {
 });
 
 const clientGroups = Array.from(clientGroupsMap.values());
+clientGroups.sort((a: any, b: any) => b.reviews.length - a.reviews.length);
 
 clientGroups.forEach((group: any) => {
   let sinceText = group.clientSince;
@@ -258,75 +259,129 @@ clientGroups.forEach((group: any) => {
         <h2>What they <em>say</em></h2>
         <p>Direct feedback from commissioners & directors.</p>
 
-        <div class="client-groups-wrap">
-          {clientGroups.map((group: any) => {
+        {/* Horizontal Track of Circular Client Pfps */}
+        <div class="client-circles-bar" role="tablist" aria-label="Clients">
+          {clientGroups.map((group: any, idx: number) => {
+            const clientAvatarUrl = group.avatar
+              ? urlFor(group.avatar).width(160).auto("format").url()
+              : null;
+            return (
+              <button
+                type="button"
+                role="tab"
+                class={`client-circle-btn ${idx === 0 ? "active" : ""}`}
+                data-client-id={group.id}
+                aria-selected={idx === 0 ? "true" : "false"}
+                aria-controls={`client-panel-${group.id}`}
+                id={`client-tab-${group.id}`}
+                title={`View ${group.name}'s reviews`}
+              >
+                <div class="client-circle-pfp-wrap">
+                  {clientAvatarUrl ? (
+                    <img
+                      src={clientAvatarUrl}
+                      alt={group.name}
+                      class="client-circle-pfp"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="client-circle-pfp client-initials">
+                      {group.name.charAt(0)}
+                    </div>
+                  )}
+                  <span class="client-circle-count" aria-label={`${group.reviews.length} reviews`}>
+                    {group.reviews.length}
+                  </span>
+                </div>
+                <div class="client-circle-meta">
+                  <span class="client-circle-name">{group.name}</span>
+                  <span class="client-circle-sub">
+                    {group.reviews.length === 1 ? "1 review" : `${group.reviews.length} reviews`}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Client Review Panels (one visible at a time) */}
+        <div class="client-panels-wrap">
+          {clientGroups.map((group: any, idx: number) => {
             const clientAvatarUrl = group.avatar ? urlFor(group.avatar).width(160).auto("format").url() : null;
             return (
-              <div class="client-group">
-                <div class="client-header">
-                  <div class="client-profile">
-                    {clientAvatarUrl ? (
-                      <img src={clientAvatarUrl} alt={group.name} class="client-avatar" />
-                    ) : (
-                      <div class="client-avatar client-initials">{group.name.charAt(0)}</div>
-                    )}
-                    <div>
-                      <h3 class="client-name">{group.name}</h3>
-                      <span class="client-badge">{group.badgeText}</span>
+              <div
+                id={`client-panel-${group.id}`}
+                class={`client-panel ${idx === 0 ? "active" : ""}`}
+                role="tabpanel"
+                data-client-id={group.id}
+                aria-labelledby={`client-tab-${group.id}`}
+              >
+                <div class="client-group">
+                  <div class="client-header">
+                    <div class="client-profile">
+                      {clientAvatarUrl ? (
+                        <img src={clientAvatarUrl} alt={group.name} class="client-avatar" />
+                      ) : (
+                        <div class="client-avatar client-initials">{group.name.charAt(0)}</div>
+                      )}
+                      <div>
+                        <h3 class="client-name">{group.name}</h3>
+                        <span class="client-badge">{group.badgeText}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="rev-grid">
-                  {group.reviews.map((r: any) => {
-                    const tag = r.clientTitle || (r.manga ? "Manga" : "Commission");
-                    const workTitle = r.project?.title || r.manga?.title;
-                    const workImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(200).auto("format").url() :
-                      (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(200).auto("format").url() :
-                      (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(200).auto("format").url() : null));
-                    const workFullImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(1400).auto("format").url() :
-                      (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(1400).auto("format").url() :
-                      (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(1400).auto("format").url() : null));
-                    const cleanQuote = (r.quote || "").replace(/^["'“”]+|["'“”]+$/g, "").trim();
+                  <div class="rev-grid">
+                    {group.reviews.map((r: any) => {
+                      const tag = r.clientTitle || (r.manga ? "Manga" : "Commission");
+                      const workTitle = r.project?.title || r.manga?.title;
+                      const workImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(200).auto("format").url() :
+                        (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(200).auto("format").url() :
+                        (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(200).auto("format").url() : null));
+                      const workFullImage = r.cardImage ? urlFor(r.cardImage.asset || r.cardImage).width(1400).auto("format").url() :
+                        (r.project?.mainImage ? urlFor(r.project.mainImage.asset || r.project.mainImage).width(1400).auto("format").url() :
+                        (r.manga?.coverImage ? urlFor(r.manga.coverImage.asset || r.manga.coverImage).width(1400).auto("format").url() : null));
+                      const cleanQuote = (r.quote || "").replace(/^["'“”]+|["'“”]+$/g, "").trim();
 
-                    return (
-                      <div class="rev-card">
-                        <div class="rev-card-top">
-                          <span class="rev-role">{tag}</span>
-                          {workImage && workFullImage && (
-                            <button
-                              type="button"
-                              class="rev-thumb-btn"
-                              data-fullimg={workFullImage}
-                              data-title={workTitle}
-                              aria-label={`Preview ${workTitle}`}
-                            >
-                              <img src={workImage} alt={workTitle || "Commissioned artwork"} class="rev-thumb" />
-                            </button>
-                          )}
-                        </div>
-                        <blockquote class="rev-quote">
-                          “{cleanQuote}”
-                        </blockquote>
-                        {workTitle && (
-                          <div class="rev-footer">
-                            <span class="rev-work-label">Commission:</span>
-                            <button
-                              type="button"
-                              class="rev-work-title-btn"
-                              data-fullimg={workFullImage}
-                              data-title={workTitle}
-                            >
-                              {workTitle} <span style="font-size:13px">🔍</span>
-                            </button>
-                            {r.manga && (
-                              <a href={`/manga/${r.manga.slug}`} class="rev-manga-link">Read Manga →</a>
+                      return (
+                        <div class="rev-card">
+                          <div class="rev-card-top">
+                            <span class="rev-role">{tag}</span>
+                            {workImage && workFullImage && (
+                              <button
+                                type="button"
+                                class="rev-thumb-btn"
+                                data-fullimg={workFullImage}
+                                data-title={workTitle}
+                                aria-label={`Preview ${workTitle}`}
+                              >
+                                <img src={workImage} alt={workTitle || "Commissioned artwork"} class="rev-thumb" />
+                              </button>
                             )}
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                          <blockquote class="rev-quote">
+                            “{cleanQuote}”
+                          </blockquote>
+                          {workTitle && (
+                            <div class="rev-footer">
+                              <span class="rev-work-label">Commission:</span>
+                              <button
+                                type="button"
+                                class="rev-work-title-btn"
+                                data-fullimg={workFullImage}
+                                data-title={workTitle}
+                              >
+                                {workTitle} <span style="font-size:13px">🔍</span>
+                              </button>
+                              {r.manga && (
+                                <a href={`/manga/${r.manga.slug}`} class="rev-manga-link">Read Manga →</a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             );
@@ -733,6 +788,43 @@ clientGroups.forEach((group: any) => {
           var lb = $("lb");
           if (lb && typeof lb.showModal === "function") lb.showModal();
         };
+      });
+
+      /* client circular tabs switching (hover & click) */
+      var clientTabs = document.querySelectorAll(".client-circle-btn");
+      var clientPanels = document.querySelectorAll(".client-panel");
+
+      function activateClient(clientId) {
+        if (!clientId) return;
+        clientTabs.forEach(function (tab) {
+          var isMatch = tab.getAttribute("data-client-id") === clientId;
+          tab.classList.toggle("active", isMatch);
+          tab.setAttribute("aria-selected", isMatch ? "true" : "false");
+        });
+        clientPanels.forEach(function (panel) {
+          var isMatch = panel.getAttribute("data-client-id") === clientId;
+          panel.classList.toggle("active", isMatch);
+        });
+      }
+
+      clientTabs.forEach(function (tab) {
+        var id = tab.getAttribute("data-client-id");
+        if (!id) return;
+
+        // Click / tap works on all devices
+        tab.addEventListener("click", function () {
+          activateClient(id);
+          try {
+            tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+          } catch (e) {}
+        });
+
+        // Hover works on desktop
+        tab.addEventListener("mouseenter", function () {
+          if (!isTouch) {
+            activateClient(id);
+          }
+        });
       });
 
       /* dynamic navbar links & top-left logo on scroll */
