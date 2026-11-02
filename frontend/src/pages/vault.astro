@@ -27,6 +27,11 @@ const vaultData = await fetchVaultData();
     />
   </head>
   <body>
+    <!-- OPENING INTRO FLASH -->
+    <div id="introFlash" class="intro-flash-overlay" aria-hidden="true">
+      <div class="intro-flash-logo"></div>
+    </div>
+
     <div id="bar"></div>
     <div id="cur"></div>
 
@@ -255,6 +260,13 @@ const vaultData = await fetchVaultData();
         var p = e.target.closest && e.target.closest(".pill,.big");
         if (p) p.style.transform = "";
       });
+
+      var introFlashEl = document.getElementById("introFlash");
+      if (introFlashEl) {
+        setTimeout(function () {
+          introFlashEl.remove();
+        }, 900);
+      }
 
       renderGrid();
     </script>

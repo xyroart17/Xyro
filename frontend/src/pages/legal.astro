@@ -131,12 +131,19 @@ import Footer from "../components/Footer.astro";
         />
     </head>
     <body>
-        <div class="top">
-            <a class="logo lg" href="/" aria-label="XYRO home" style="opacity:1;"></a>
-            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                <a class="pill" href="/">Home</a>
-                <a class="pill" href="/vault">Vault</a>
-                <a class="pill" href="/#gacha">Gacha</a>
+        <!-- OPENING INTRO FLASH -->
+        <div id="introFlash" class="intro-flash-overlay" aria-hidden="true">
+            <div class="intro-flash-logo"></div>
+        </div>
+
+        <div class="top legal-top-nav">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a class="logo lg" href="/" aria-label="XYRO home" style="opacity:1;"></a>
+                <a class="pill legal-back-home" href="/" style="text-decoration:none;font-weight:700;">← Back to Home</a>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <a class="pill legal-desk-pill" href="/vault">Vault</a>
+                <a class="pill legal-desk-pill" href="/#gacha">Gacha</a>
                 <button class="pill" id="tg" aria-label="Toggle theme">◐</button>
                 <a class="pill" id="bk" href="/#contact">Book a slot</a>
             </div>
@@ -146,11 +153,6 @@ import Footer from "../components/Footer.astro";
         <main class="legal-page">
             <!-- HEADER -->
             <header class="legal-header">
-                <div style="margin-bottom: 24px;">
-                    <a href="/" class="pill" style="display:inline-flex;align-items:center;gap:8px;font-size:15px;padding:8px 18px;text-decoration:none;box-shadow:3px 3px 0 var(--ink);">
-                        ← Back to Home
-                    </a>
-                </div>
                 <h1 class="legal-header-title">Legal <em>Center</em></h1>
                 <p class="legal-header-subtitle">
                     Everything you need to know before working with Xyro.
@@ -797,6 +799,8 @@ import Footer from "../components/Footer.astro";
                                     >
                                     <svg
                                         class="legal-faq-icon"
+                                        width="22"
+                                        height="22"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -828,6 +832,8 @@ import Footer from "../components/Footer.astro";
                                     <span>Do you take rush orders?</span>
                                     <svg
                                         class="legal-faq-icon"
+                                        width="22"
+                                        height="22"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -861,6 +867,8 @@ import Footer from "../components/Footer.astro";
                                     >
                                     <svg
                                         class="legal-faq-icon"
+                                        width="22"
+                                        height="22"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -894,6 +902,8 @@ import Footer from "../components/Footer.astro";
                                     >
                                     <svg
                                         class="legal-faq-icon"
+                                        width="22"
+                                        height="22"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -928,6 +938,8 @@ import Footer from "../components/Footer.astro";
                                     >
                                     <svg
                                         class="legal-faq-icon"
+                                        width="22"
+                                        height="22"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -960,6 +972,8 @@ import Footer from "../components/Footer.astro";
                                     <span>Do you work with NDAs?</span>
                                     <svg
                                         class="legal-faq-icon"
+                                        width="22"
+                                        height="22"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -1090,6 +1104,13 @@ import Footer from "../components/Footer.astro";
                 localStorage.setItem("xt2", nextTheme);
               } catch (x) {}
             };
+          }
+
+          var introFlashEl = document.getElementById("introFlash");
+          if (introFlashEl) {
+            setTimeout(function () {
+              introFlashEl.remove();
+            }, 900);
           }
         </script>
     </body>

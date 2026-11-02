@@ -18,6 +18,11 @@ a{color:inherit}
 #bar{position:fixed;top:0;left:0;height:7px;background:var(--pk);width:0;z-index:50}
 #cur{position:fixed;left:0;top:0;width:34px;height:34px;border:3px solid var(--pk);border-radius:50%;pointer-events:none;z-index:60;transform:translate(-100px,-100px);mix-blend-mode:difference;transition:width .15s,height .15s}
 @media(hover:none){#cur{display:none}}
+/* Opening Intro Logo Flash */
+.intro-flash-overlay{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:introFlashOut .5s cubic-bezier(.16,1,.3,1) forwards;animation-delay:.35s}
+.intro-flash-logo{width:min(44vw,170px);aspect-ratio:1;background:var(--pk);-webkit-mask-image:url(/assets/branding/XYRO_red_vector.svg?v=4);mask-image:url(/assets/branding/XYRO_red_vector.svg?v=4);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;animation:introSlamImpact .35s cubic-bezier(.16,1.4,.3,1) both}
+@keyframes introSlamImpact{0%{transform:scale(.65);opacity:0;filter:blur(4px)}60%{transform:scale(1.08);opacity:1;filter:blur(0)}100%{transform:scale(1);opacity:1;filter:blur(0)}}
+@keyframes introFlashOut{0%{opacity:1;visibility:visible}99%{opacity:0;visibility:visible}100%{opacity:0;visibility:hidden;display:none}}
 .top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:40;display:flex;justify-content:space-between;padding:14px 20px;pointer-events:none}
 .top>*{pointer-events:auto}
 .pill{background:var(--ink);color:var(--bg);border:0;border-radius:99px;padding:11px 20px;font:700 15px 'Space Grotesk';text-decoration:none;cursor:pointer}

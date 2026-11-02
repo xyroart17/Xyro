@@ -79,6 +79,11 @@ clientGroups.forEach((group: any) => {
     />
   </head>
   <body>
+    <!-- OPENING INTRO FLASH -->
+    <div id="introFlash" class="intro-flash-overlay" aria-hidden="true">
+      <div class="intro-flash-logo"></div>
+    </div>
+
     <div id="bar"></div>
     <div id="cur"></div>
 
@@ -1031,6 +1036,71 @@ clientGroups.forEach((group: any) => {
 
       window.addEventListener("scroll", updateNavScroll, { passive: true });
       updateNavScroll();
+
+      /* Section position tracking & auto-restoration on refresh */
+      var secIds = ["work", "gacha", "deal", "contact"];
+      var sectionEls = secIds.map(function (id) { return $(id); }).filter(Boolean);
+
+      // Track active section as user scrolls
+      if ("IntersectionObserver" in window) {
+        var secObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+              var id = entry.target.id;
+              try {
+                sessionStorage.setItem("xyro_last_section", id);
+                if (history.replaceState) {
+                  history.replaceState(null, "", "#" + id);
+                }
+              } catch (e) {}
+            }
+          });
+        }, { threshold: [0.25, 0.5] });
+
+        sectionEls.forEach(function (el) { secObserver.observe(el); });
+      }
+
+      // If user scrolls back to top (hero)
+      window.addEventListener("scroll", function () {
+        if (window.scrollY < 150) {
+          try {
+            sessionStorage.removeItem("xyro_last_section");
+            if (window.location.hash && history.replaceState) {
+              history.replaceState(null, "", window.location.pathname);
+            }
+          } catch (e) {}
+        }
+      }, { passive: true });
+
+      // Auto-restore section on page load / refresh
+      function restoreSection() {
+        var hash = window.location.hash ? window.location.hash.replace("#", "") : "";
+        var savedSec = "";
+        try {
+          savedSec = sessionStorage.getItem("xyro_last_section") || "";
+        } catch (e) {}
+
+        var targetId = hash || savedSec;
+        if (targetId && targetId !== "home" && targetId !== "t") {
+          var targetEl = $(targetId);
+          if (targetEl) {
+            setTimeout(function () {
+              targetEl.scrollIntoView({ behavior: "instant", block: "start" });
+              updateNavScroll();
+            }, 60);
+          }
+        }
+      }
+
+      restoreSection();
+
+      // Clean up intro flash from DOM after animation completes
+      var introFlashEl = $("introFlash");
+      if (introFlashEl) {
+        setTimeout(function () {
+          introFlashEl.remove();
+        }, 900);
+      }
 
       vd();
     </script>
