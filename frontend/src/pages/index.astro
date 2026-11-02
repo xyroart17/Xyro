@@ -1,10 +1,17 @@
 ---
 export const prerender = true;
 import "../styles/global.css";
-import { urlFor, fetchVaultData, fetchTestimonials, fetchFeaturedManga } from "../utils/sanity.js";
+import {
+  urlFor,
+  fetchVaultData,
+  fetchHomeVault,
+  fetchTestimonials,
+  fetchFeaturedManga,
+} from "../utils/sanity.js";
 import Footer from "../components/Footer.astro";
 
 const vaultData = await fetchVaultData();
+const homeVaultItems = await fetchHomeVault();
 const reviews = await fetchTestimonials();
 const mangaList = await fetchFeaturedManga();
 
@@ -123,7 +130,7 @@ clientGroups.forEach((group: any) => {
       </p>
       <div class="vgrid" id="vg">
         {
-          vaultData.slice(0, 4).map((d: any) => (
+          homeVaultItems.map((d: any) => (
             <button class="vi" type="button" aria-label={`Preview ${d.t}`}>
               <div class="vc">
                 <span class="vy">{d.y}</span>
@@ -352,7 +359,7 @@ clientGroups.forEach((group: any) => {
     <script
       id="vault-data"
       type="application/json"
-      set:html={JSON.stringify(vaultData)}
+      set:html={JSON.stringify(homeVaultItems)}
     />
 
     <script is:inline>
@@ -654,7 +661,7 @@ clientGroups.forEach((group: any) => {
       function vd() {
         var g = $("vg");
         if (!g) return;
-        vs = D.slice(0, 5);
+        vs = D.slice(0, 4);
 
         var btns = g.querySelectorAll(".vi");
         if (btns.length === vs.length && vs.length > 0) {

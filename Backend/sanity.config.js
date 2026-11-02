@@ -3,7 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 import IframePreview from './components/IframePreview'
-import {CaseIcon, BookIcon, HeartIcon, UserIcon} from '@sanity/icons'
+import {CaseIcon, BookIcon, HeartIcon, UserIcon, StarIcon} from '@sanity/icons'
 
 import React from 'react'
 
@@ -49,6 +49,16 @@ export default defineConfig({
         S.list()
           .title('Xyro Studio')
           .items([
+            S.listItem()
+              .title('Homepage Top 4 Artworks')
+              .icon(StarIcon)
+              .child(
+                S.document()
+                  .schemaType('homeVault')
+                  .documentId('homeVaultConfig')
+                  .title('Homepage Top 4 Artworks')
+              ),
+            S.divider(),
             S.listItem()
               .title('Portfolio Projects')
               .icon(CaseIcon)

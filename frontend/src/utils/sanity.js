@@ -120,6 +120,76 @@ LEGACY_RAW.forEach((r) => {
   }
 });
 
+// Helper to map and normalize a project or manga item into standard Vault artwork card format
+export function formatVaultItem(item) {
+  if (!item || !item.slug) return null;
+  const slug = item.slug;
+  const legacy = LEGACY_BY_SLUG[slug] || {};
+
+  const title = legacy.title || item.title || "Untitled";
+
+  let tags = [];
+  if (Array.isArray(item.tags) && item.tags.length > 0) {
+    tags = item.tags;
+  } else if (legacy.tags && legacy.tags.length > 0) {
+    tags = legacy.tags;
+  } else {
+    const rawTag = (item.tag || "").toLowerCase();
+    const rawSub = (item.subtitle || "").toLowerCase();
+    if (rawTag.includes("3d") || rawTag.includes("blender")) tags.push("3d");
+    if (rawTag.includes("traditional")) tags.push("traditional");
+    if (rawTag.includes("illustration")) tags.push("digital");
+    if (item._type === "manga" || rawSub.includes("manga")) tags.push("manga");
+    if (rawSub.includes("commission")) tags.push("commission");
+    if (rawSub.includes("fanart") || rawSub.includes("fan art")) tags.push("fanart");
+    if (rawSub.includes("personal") || rawSub.includes("oc")) tags.push("original");
+    if (tags.length === 0) tags = ["original", "digital"];
+  }
+
+  let hue = 200;
+  if (typeof item.hue === "number") {
+    hue = item.hue;
+  } else if (typeof legacy.hue === "number") {
+    hue = legacy.hue;
+  } else if (item.palette?.dominant?.background) {
+    hue = hexToHue(item.palette.dominant.background);
+  }
+
+  let ratio = 0.8;
+  if (item.dimensions?.aspectRatio) {
+    ratio = Math.round(item.dimensions.aspectRatio * 100) / 100;
+  } else if (legacy.ratio) {
+    ratio = legacy.ratio;
+  }
+
+  const year =
+    item.year ||
+    legacy.year ||
+    (item.publishDate ? new Date(item.publishDate).getFullYear().toString() : "2026");
+
+  const asset = item.mainImage || item.coverImage || item.gridImage;
+  let img = "";
+  if (asset) {
+    try {
+      img = urlFor(asset.asset || asset).width(1200).auto("format").url();
+    } catch (e) {}
+  }
+
+  const url = item._type === "manga" ? `/manga/${slug}` : `/project/${slug}`;
+
+  return {
+    id: item._id,
+    t: title,
+    g: tags,
+    h: hue,
+    r: ratio,
+    y: year,
+    img,
+    url,
+    featured: Boolean(item.featured || slug === "eva"),
+  };
+}
+
 // Dynamic Vault fetcher: gets ALL works directly from Sanity, preserves legacy curated meta, and handles new uploads seamlessly
 export async function fetchVaultData() {
   try {
@@ -144,72 +214,7 @@ export async function fetchVaultData() {
       }
     `);
 
-    const vaultData = sanityItems.map((item) => {
-      const slug = item.slug;
-      const legacy = LEGACY_BY_SLUG[slug] || {};
-
-      const title = legacy.title || item.title || "Untitled";
-
-      let tags = [];
-      if (Array.isArray(item.tags) && item.tags.length > 0) {
-        tags = item.tags;
-      } else if (legacy.tags && legacy.tags.length > 0) {
-        tags = legacy.tags;
-      } else {
-        const rawTag = (item.tag || "").toLowerCase();
-        const rawSub = (item.subtitle || "").toLowerCase();
-        if (rawTag.includes("3d") || rawTag.includes("blender")) tags.push("3d");
-        if (rawTag.includes("traditional")) tags.push("traditional");
-        if (rawTag.includes("illustration")) tags.push("digital");
-        if (item._type === "manga" || rawSub.includes("manga")) tags.push("manga");
-        if (rawSub.includes("commission")) tags.push("commission");
-        if (rawSub.includes("fanart") || rawSub.includes("fan art")) tags.push("fanart");
-        if (rawSub.includes("personal") || rawSub.includes("oc")) tags.push("original");
-        if (tags.length === 0) tags = ["original", "digital"];
-      }
-
-      let hue = 200;
-      if (typeof item.hue === "number") {
-        hue = item.hue;
-      } else if (typeof legacy.hue === "number") {
-        hue = legacy.hue;
-      } else if (item.palette?.dominant?.background) {
-        hue = hexToHue(item.palette.dominant.background);
-      }
-
-      let ratio = 0.8;
-      if (item.dimensions?.aspectRatio) {
-        ratio = Math.round(item.dimensions.aspectRatio * 100) / 100;
-      } else if (legacy.ratio) {
-        ratio = legacy.ratio;
-      }
-
-      const year =
-        item.year ||
-        legacy.year ||
-        (item.publishDate ? new Date(item.publishDate).getFullYear().toString() : "2026");
-
-      const asset = item.mainImage || item.coverImage || item.gridImage;
-      let img = "";
-      if (asset) {
-        try {
-          img = urlFor(asset.asset || asset).width(1200).auto("format").url();
-        } catch (e) {}
-      }
-
-      const url = item._type === "manga" ? `/manga/${slug}` : `/project/${slug}`;
-
-      return {
-        t: title,
-        g: tags,
-        h: hue,
-        r: ratio,
-        y: year,
-        img,
-        url,
-        featured: Boolean(item.featured || slug === "eva"),
-      };
-    });
+    const vaultData = sanityItems.map(formatVaultItem).filter(Boolean);
 
     // Pinned sort: Eva is always first, then featured items, then latest
     vaultData.sort((a, b) => {
@@ -224,6 +229,59 @@ export async function fetchVaultData() {
   } catch (err) {
     console.error("fetchVaultData error:", err);
     return [];
+  }
+}
+
+// Fetch the curated Top 4 artworks selected in Sanity (with fallback to top 4 of all vault works)
+export async function fetchHomeVault() {
+  try {
+    const homeDoc = await client.fetch(`
+      *[_type == "homeVault"][0] {
+        featuredArtworks[]-> {
+          _id,
+          _type,
+          title,
+          "slug": slug.current,
+          tag,
+          tags,
+          subtitle,
+          publishDate,
+          year,
+          hue,
+          featured,
+          mainImage,
+          coverImage,
+          gridImage,
+          "dimensions": coalesce(mainImage.asset->metadata.dimensions, coverImage.asset->metadata.dimensions),
+          "palette": coalesce(mainImage.asset->metadata.palette, coverImage.asset->metadata.palette)
+        }
+      }
+    `);
+
+    let curated = [];
+    if (homeDoc && Array.isArray(homeDoc.featuredArtworks)) {
+      curated = homeDoc.featuredArtworks
+        .map(formatVaultItem)
+        .filter(Boolean);
+    }
+
+    if (curated.length < 4) {
+      const allVault = await fetchVaultData();
+      const existingUrls = new Set(curated.map((c) => c.url));
+      for (const item of allVault) {
+        if (!existingUrls.has(item.url)) {
+          curated.push(item);
+          existingUrls.add(item.url);
+          if (curated.length >= 4) break;
+        }
+      }
+    }
+
+    return curated.slice(0, 4);
+  } catch (err) {
+    console.error("fetchHomeVault error:", err);
+    const fallback = await fetchVaultData();
+    return fallback.slice(0, 4);
   }
 }
 

@@ -70,7 +70,7 @@ export default {
       title: 'Featured on Homepage',
       type: 'boolean',
       group: 'core',
-      description: 'Toggle ON to prioritize this artwork in the top 5 Vault slots on the homepage.',
+      description: 'Toggle ON to feature this artwork in the top 4 Vault slots on the homepage.',
       initialValue: false,
     },
     {
