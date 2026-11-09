@@ -56,14 +56,109 @@ h2 em{font-style:normal;background:var(--pk);color:#fff;padding:0 14px;display:i
 .bk{transform:rotateY(180deg);background:var(--bg);padding:22px;display:flex;flex-direction:column;gap:10px;justify-content:center}
 .bk h3{font-size:28px}.bk a{align-self:flex-start}
 .tag{position:absolute;top:12px;right:-6px;background:var(--pk);color:#fff;padding:3px 12px;font-weight:700;font-size:13px;z-index:2;border:3px solid var(--ink)}
-/* gacha */
-.gac{background:var(--ink);color:var(--bg);border-radius:6px;padding:clamp(24px,5vw,60px);text-align:center;border:5px solid var(--ink);box-shadow:12px 12px 0 var(--pk)}
-.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0}
-.reel{background:var(--bg);color:var(--ink);border-radius:6px;padding:26px 8px;font:400 clamp(16px,3.2vw,36px) 'Dela Gothic One';min-height:100px;display:grid;place-items:center}
-.reel small{display:block;font:700 12px 'Space Grotesk';opacity:.6}
+/* ==========================================================================
+   XYRO GACHA V2 — INTELLIGENT COMMISSIONS GENERATOR
+   ========================================================================== */
+.gac{background:var(--ink);color:var(--bg);border-radius:8px;padding:clamp(18px,3vw,34px);border:5px solid var(--ink);box-shadow:12px 12px 0 var(--rd);position:relative;overflow:hidden;text-align:left}
+.gac>*:not(.spin){position:relative;z-index:1}
+.gac .spin{position:absolute;right:-10%;top:-30%;width:55%;opacity:.16;animation:rot 40s linear infinite;pointer-events:none}
+.gac .spin svg{display:block;width:100%;height:100%;fill:currentColor}
+.gac *{scrollbar-width:none}
+.gac *::-webkit-scrollbar{display:none}
+
+dialog{border:0;padding:0;background:transparent;max-width:min(900px,95vw);width:100%}
+dialog::backdrop{background:#000d}
+
+.ghead{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:14px;position:relative;z-index:1;text-align:left}
+.ghead h2{font-size:clamp(30px,4.5vw,56px)!important;margin:0!important;color:var(--bg)}
+.gsub{margin:0!important;max-width:none!important;font-size:15px;color:var(--bg);opacity:.9}
+
+.gtb{margin-left:auto;background:var(--bg);color:var(--ink);font-size:14px!important;padding:9px 16px!important;border:0;cursor:pointer}
+.gtb.new{animation:tpl 1.6s infinite}
+
+.gwrap{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:16px;position:relative;z-index:1;text-align:left;align-items:start}
+.gleft{display:flex;flex-direction:column;gap:9px}
+.gl{display:flex;flex-direction:column;gap:3px;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--bg)}
+.gl input,.gser input{width:100%;font:500 15px 'Space Grotesk',sans-serif;padding:9px 12px;border:3px solid var(--bg);background:var(--ink);color:var(--bg);border-radius:6px;text-transform:none;letter-spacing:0}
+.gl input::placeholder,.gser input::placeholder{color:var(--bg);opacity:.5}
+
+.gser{position:relative;display:block}
+#gsg{position:absolute;left:0;right:0;top:100%;z-index:20;margin:2px 0 0;padding:0;list-style:none;background:var(--bg);color:var(--ink);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--rd)}
+#gsg li{padding:7px 12px;cursor:pointer;font-weight:700;font-size:14px;text-transform:none;letter-spacing:0}
+#gsg li:hover{background:var(--rd);color:#fff}
+
+.gmsg{font-size:13px;opacity:.85;text-transform:none;letter-spacing:0;min-height:16px;color:var(--bg)}
+
+.ggen{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ggen button{border:2px solid var(--bg);background:transparent;color:var(--bg);border-radius:99px;padding:3px 11px;font:700 13px 'Space Grotesk',sans-serif;cursor:pointer;transition:background .15s,color .15s}
+.ggen button:hover{background:var(--bg);color:var(--ink)}
+.ggen button[aria-pressed=true]{background:var(--bg);color:var(--ink)}
+
+.gbt{display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 0!important;justify-content:flex-start!important}
+#gacha .big{background:var(--pk);color:#fff;border:0;border-radius:99px;padding:11px 24px!important;font:400 19px 'Dela Gothic One',sans-serif;cursor:pointer;box-shadow:0 6px 0 #7a001f}
+#gacha .big:active{transform:translateY(5px);box-shadow:0 1px 0 #7a001f}
+#gacha .big.sm{font-size:16px!important;padding:11px 16px!important;background:var(--bg);color:var(--ink);box-shadow:0 6px 0 #888}
+.gp{background:var(--bg);color:var(--ink);padding:9px 14px!important;font-size:14px!important;border:0;border-radius:99px;cursor:pointer}
+
+.gcard{--rc:#cfd3dc;position:relative;z-index:1;background:var(--bg);color:var(--ink);border:5px solid var(--rc);box-shadow:0 0 0 4px var(--ink),0 0 44px -4px var(--rc);padding:14px 16px!important;margin:0!important;max-width:none!important;text-align:left;transition:box-shadow .3s,border-color .3s}
+.gtop{display:flex;justify-content:space-between;align-items:center}
+.grar{background:var(--rc);color:#0b0b0b;font:400 16px 'Dela Gothic One',sans-serif;padding:3px 14px;border:3px solid #0b0b0b}
+#gct{font-weight:700;font-size:13px;opacity:.8;color:inherit}
+
+.gname{font:400 clamp(26px,3.6vw,44px)/1 'Dela Gothic One',sans-serif;margin:8px 0 10px!important;display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:inherit}
+.ocb{display:inline-block;background:var(--rd);color:#fff;font:400 14px 'Dela Gothic One',sans-serif;padding:3px 10px;border:3px solid var(--ink);transform:rotate(-4deg);letter-spacing:.04em}
+.ocb.fan{background:#ffd400;color:#0b0b0b;font-size:12px}
+.ocb[hidden]{display:none}
+.sr{font:700 15px "Space Grotesk",sans-serif;opacity:.75}
+
+.gch{display:flex!important;flex-wrap:wrap;gap:6px!important}
+.gc1{font:inherit;color:inherit;cursor:pointer;display:inline-flex!important;align-items:baseline;gap:6px;padding:4px 11px!important;border:3px solid var(--ink);border-radius:99px;background:color-mix(in srgb,var(--ink) 7%,var(--bg));animation:pp .3s cubic-bezier(.2,2,.4,1) both;animation-delay:calc(var(--i)*.04s);text-align:left}
+.gc1 small{display:inline!important;font-size:10px!important;letter-spacing:.1em;text-transform:uppercase;opacity:.7;font-weight:700}
+.gc1 b{display:inline!important;font-size:14px!important;font-weight:700;line-height:1.15}
+.gc1.lkd{border-color:var(--rc);box-shadow:inset 0 0 0 2px var(--rc)}
+.gc1.lkd::before{content:"🔒";font-size:12px}
+
+.lk{border:0;background:transparent;font-size:16px;cursor:pointer;opacity:.3;padding:2px 4px}
+.lk[aria-pressed=true]{opacity:1}
+
+.spinning .gc1 b,.spinning #gnm{filter:blur(2px)}
+
+.g10{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))!important;gap:8px;margin-top:10px!important;max-width:none!important;position:relative;z-index:1}
+.g10[hidden]{display:none!important}
+.g1{border:3px solid var(--rc);background:var(--bg);color:var(--ink);padding:6px 8px!important;text-align:left;cursor:pointer;font:inherit;animation:pp .25s both}
+.g1 b{display:block;font:400 13px 'Dela Gothic One',sans-serif}
+.g1 small{font-weight:700;opacity:.75}
+
+.ghist{display:flex;gap:6px;flex-wrap:wrap!important;justify-content:flex-start!important;margin-top:10px!important;overflow:visible!important;position:relative;z-index:1}
+.ghist button{border:2px solid var(--rc);background:transparent;color:var(--bg);border-radius:99px;padding:3px 12px;font:700 13px 'Space Grotesk',sans-serif;cursor:pointer;flex:none}
+
+.conf{position:absolute;top:35%;left:50%;width:10px;height:10px;z-index:3;pointer-events:none;animation:cf 1.1s ease-out forwards}
+
+@media(max-width:860px){.gwrap{grid-template-columns:1fr}}
+
+/* Tutorial modal */
+#gtut{max-width:min(560px,94vw)}
+.tut{position:relative;background:var(--bg);color:var(--ink);border:6px solid var(--ink);box-shadow:12px 12px 0 var(--rd);padding:26px}
+.tux{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:3px solid var(--ink);background:var(--rd);color:#fff;font:400 16px 'Dela Gothic One',sans-serif;cursor:pointer;z-index:2}
+.tu-ic{font-size:42px;line-height:1}
+.tut h3{font-size:clamp(26px,4vw,38px);margin:8px 44px 10px 0}
+.tut p{margin:0 0 14px;font-size:17px}
+.tdemo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:3px dashed var(--ink);padding:12px;margin-bottom:14px}
+.tdots{display:flex;gap:6px;margin:14px 0}
+.tdots i{width:12px;height:12px;border-radius:50%;border:3px solid var(--ink);display:inline-block}
+.tdots i.on{background:var(--rd)}
+.tnav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.tnav .pill:disabled{opacity:.3;cursor:default}
+.tskip{background:transparent!important;color:var(--ink)!important;text-decoration:underline}
+
+/* Keyframe Animations */
+.xshake{animation:sk .28s}
+@keyframes pp{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes cf{0%{transform:translate(-50%,-50%) translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(720deg);opacity:0}}
+@keyframes tpl{0%,100%{box-shadow:0 0 0 0 rgba(224,0,7,.7)}50%{box-shadow:0 0 0 6px rgba(224,0,7,0)}}
+
 .big{background:var(--pk);color:#fff;border:0;border-radius:99px;padding:18px 36px;font:400 24px 'Dela Gothic One';cursor:pointer;box-shadow:0 6px 0 #7a001f}
 .big:active{transform:translateY(5px);box-shadow:0 1px 0 #7a001f}
-.res{margin:22px auto 0;max-width:640px;min-height:56px;font-size:19px}
 /* panels */
 .pn{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
 .pnl{border:5px solid var(--ink);padding:22px;background:var(--bg);box-shadow:8px 8px 0 var(--ink)}
@@ -108,8 +203,6 @@ footer{padding:50px 20px 70px;text-align:center;font-weight:700}
 .shake{animation:sk .28s}
 @keyframes sk{20%{transform:translate(-7px,5px)}40%{transform:translate(6px,-6px)}60%{transform:translate(-4px,3px)}80%{transform:translate(3px,-2px)}}
 #cur.lgm{border:0;border-radius:0;width:78px!important;height:78px!important;background:var(--rd);mix-blend-mode:normal}
-.gac{position:relative;overflow:hidden}.gac>*:not(.spin){position:relative;z-index:1}
-.gac .spin{position:absolute;right:-10%;top:-30%;width:55%;opacity:.16;animation:rot 40s linear infinite}
 @keyframes rot{to{transform:rotate(360deg)}}
 #sn{margin-right:2px}
 .vctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0}
