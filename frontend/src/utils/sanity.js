@@ -1,5 +1,5 @@
 import { createClient } from '@sanity/client';
-import imageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 
 export const client = createClient({
   projectId: 'pfnvy1zn',
@@ -8,7 +8,7 @@ export const client = createClient({
   apiVersion: '2026-05-18',
 });
 
-const builder = imageUrlBuilder(client);
+const builder = createImageUrlBuilder(client);
 
 // Helper function to turn Sanity asset references into ultra-fast CDN URLs (uncropped)
 export function urlFor(source) {
