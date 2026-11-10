@@ -218,15 +218,6 @@ export async function fetchVaultData() {
 
     const vaultData = sanityItems.map(formatVaultItem).filter(Boolean);
 
-    // Pinned sort: Eva is always first, then featured items, then latest
-    vaultData.sort((a, b) => {
-      if (a.t === "Eva" || a.url === "/project/eva") return -1;
-      if (b.t === "Eva" || b.url === "/project/eva") return 1;
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return 0;
-    });
-
     return vaultData;
   } catch (err) {
     console.error("fetchVaultData error:", err);
