@@ -96,71 +96,94 @@ a {
   }
 }
 
-/* Opening Intro Logo Flash */
-.intro-flash-overlay {
+/* ==========================================================================
+   XYRO VIDEO INTRO / LOADING SCREEN
+   ========================================================================== */
+body.intro-active {
+  overflow: hidden !important;
+}
+
+.intro-video-overlay {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #000;
   z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.intro-video-overlay.fade-out {
+  opacity: 0;
   pointer-events: none;
-  animation: introFlashOut .5s cubic-bezier(.16, 1, .3, 1) forwards;
-  animation-delay: .35s
 }
 
-.intro-flash-logo {
-  width: min(44vw, 170px);
-  aspect-ratio: 1;
-  background: var(--pk);
-  -webkit-mask-image: url(/assets/branding/XYRO_red_vector.svg?v=4);
-  mask-image: url(/assets/branding/XYRO_red_vector.svg?v=4);
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  animation: introSlamImpact .35s cubic-bezier(.16, 1.4, .3, 1) both
+.intro-video-wrap {
+  width: 100%;
+  max-width: 1100px;
+  max-height: 85vh;
+  max-height: 85dvh;
+  aspect-ratio: 3842 / 1800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  pointer-events: none;
 }
 
-@keyframes introSlamImpact {
-  0% {
-    transform: scale(.65);
-    opacity: 0;
-    filter: blur(4px)
-  }
+.intro-video {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 85vh;
+  max-height: 85dvh;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+  background: #000;
+}
 
-  60% {
-    transform: scale(1.08);
-    opacity: 1;
-    filter: blur(0)
-  }
+.intro-skip-btn {
+  position: absolute;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  right: max(20px, env(safe-area-inset-right));
+  z-index: 100000;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font: 700 12px 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s, transform 0.2s;
+}
 
-  100% {
-    transform: scale(1);
-    opacity: 1;
-    filter: blur(0)
+.intro-skip-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .intro-video-wrap {
+    max-width: 100vw;
+    padding: 0;
   }
 }
 
-@keyframes introFlashOut {
-  0% {
-    opacity: 1;
-    visibility: visible
-  }
-
-  99% {
-    opacity: 0;
-    visibility: visible
-  }
-
-  100% {
-    opacity: 0;
-    visibility: hidden;
-    display: none
-  }
+/* Legacy Intro Flash Fallback */
+.intro-flash-overlay {
+  display: none !important;
 }
 
 .top {

@@ -140,10 +140,23 @@ clientGroups.forEach((group: any) => {
       rel="stylesheet"
     />
   </head>
-  <body>
-    <!-- OPENING INTRO FLASH -->
-    <div id="introFlash" class="intro-flash-overlay" aria-hidden="true">
-      <div class="intro-flash-logo"></div>
+  <body class="intro-active">
+    <!-- OPENING VIDEO INTRO LOADING SCREEN -->
+    <div id="introOverlay" class="intro-video-overlay" role="dialog" aria-modal="true" aria-label="XYRO intro">
+      <div class="intro-video-wrap">
+        <video
+          id="introVideo"
+          class="intro-video"
+          src="/assets/xyro-intro.mp4"
+          autoplay
+          muted
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          aria-label="XYRO intro video"
+        ></video>
+      </div>
+      <button id="introSkipBtn" class="intro-skip-btn" type="button" aria-label="Skip intro">Skip ✕</button>
     </div>
 
     <div id="bar"></div>
@@ -1913,13 +1926,61 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
 
       restoreSection();
 
-      // Clean up intro flash from DOM after animation completes
-      var introFlashEl = $("introFlash");
-      if (introFlashEl) {
-        setTimeout(function () {
-          introFlashEl.remove();
-        }, 900);
-      }
+      // Controller for 3-second opening video intro
+      (function () {
+        var overlay = $("introOverlay");
+        var video = $("introVideo");
+        var skipBtn = $("introSkipBtn");
+        var dismissed = false;
+
+        function finishIntro() {
+          if (dismissed) return;
+          dismissed = true;
+          document.body.classList.remove("intro-active");
+          if (overlay) {
+            overlay.classList.add("fade-out");
+            setTimeout(function () {
+              if (video) {
+                try {
+                  video.pause();
+                  video.removeAttribute("src");
+                  video.load();
+                } catch (e) {}
+              }
+              overlay.remove();
+            }, 550);
+          }
+        }
+
+        if (video) {
+          try {
+            var p = video.play();
+            if (p !== undefined) {
+              p.catch(function () {});
+            }
+          } catch (e) {}
+          video.addEventListener("ended", finishIntro);
+        }
+
+        if (overlay) {
+          overlay.addEventListener("click", finishIntro);
+        }
+        if (skipBtn) {
+          skipBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            finishIntro();
+          });
+        }
+
+        // Safety fallback: video is ~3.2s, dismiss after 3.6s regardless
+        setTimeout(finishIntro, 3600);
+
+        window.addEventListener("keydown", function (e) {
+          if (!dismissed && (e.key === "Escape" || e.key === " " || e.key === "Enter")) {
+            finishIntro();
+          }
+        });
+      })();
 
       vd();
     </script>
