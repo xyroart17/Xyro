@@ -125,6 +125,7 @@ const vaultData = await fetchVaultData();
       <div class="lbx">
         <button class="lb-close" id="cl" aria-label="Close preview">✕</button>
         <div class="vt lbt" id="lt"></div>
+        <div class="lb-footer-bar" id="lbFooter" style="display:none;"></div>
       </div>
     </dialog>
 
@@ -216,26 +217,82 @@ const vaultData = await fetchVaultData();
         });
       }
 
+      function getYouTubeId(url) {
+        if (!url) return null;
+        var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
+        return m ? m[1] : null;
+      }
+
       function sh(n) {
         var d = vs[n];
         if (!d) return;
+
         var lt = $("lt");
-        if (lt)
-          lt.outerHTML = tl(d).replace('class="vt"', 'class="vt lbt" id="lt"');
+        var lbFooter = $("lbFooter");
+        var ytId = getYouTubeId(d.videoUrl);
+
+        if (ytId) {
+          var isShort = d.videoUrl && d.videoUrl.indexOf("/shorts/") !== -1;
+          var shortClass = isShort ? " lb-video-short" : "";
+          if (lt) {
+            lt.outerHTML = '<div class="vt lbt lb-video-container' + shortClass + '" id="lt">' +
+              '<iframe src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+              '</div>';
+          }
+        } else {
+          if (lt) {
+            lt.outerHTML = tl(d).replace('class="vt"', 'class="vt lbt" id="lt"');
+          }
+        }
+
+        if (lbFooter) {
+          lbFooter.innerHTML = '<span class="lb-title"><b>' + d.t + '</b> <small style="opacity:0.75;margin-left:6px;">(' + d.y + ')</small></span>' +
+            (d.url ? '<a href="' + d.url + '" class="lb-view-btn">Full Project →</a>' : '');
+          lbFooter.style.display = "flex";
+        }
+
+        // Push artwork URL into browser address bar so users can share the work!
+        if (d.url && window.history && history.pushState) {
+          try {
+            history.pushState({ modalOpen: true, artworkUrl: d.url }, "", d.url);
+          } catch (e) {}
+        }
       }
 
-      if ($("cl"))
-        $("cl").onclick = function () {
-          var lb = $("lb");
-          if (lb) lb.close();
-        };
+      function closeLb() {
+        var lb = $("lb");
+        if (lb && lb.open) lb.close();
+        var lt = $("lt");
+        if (lt) lt.innerHTML = ""; // Stop video playback & audio
+        var lbFooter = $("lbFooter");
+        if (lbFooter) lbFooter.style.display = "none";
+        // Restore browser address bar to /vault
+        if (window.history && history.pushState) {
+          try {
+            history.pushState(null, "", "/vault");
+          } catch (e) {}
+        }
+      }
+
+      if ($("cl")) $("cl").onclick = closeLb;
 
       var lbEl = $("lb");
       if (lbEl) {
         lbEl.addEventListener("click", function (e) {
-          if (e.target == lbEl) lbEl.close();
+          if (e.target == lbEl) closeLb();
         });
       }
+
+      window.addEventListener("popstate", function (e) {
+        var lb = $("lb");
+        if (lb && lb.open) {
+          lb.close();
+          var lt = $("lt");
+          if (lt) lt.innerHTML = "";
+          var lbFooter = $("lbFooter");
+          if (lbFooter) lbFooter.style.display = "none";
+        }
+      });
 
       /* cursor & progress */
       var cu = $("cur");

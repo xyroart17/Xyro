@@ -107,8 +107,8 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
           <a href={isHomepage ? "#deal" : "/#deal"} class="site-menu-item" data-menu-link>
             <span class="site-menu-num">04</span>
             <div class="site-menu-item-text">
-              <span class="site-menu-title">HOW IT WORKS</span>
-              <span class="site-menu-desc">Turnarounds, pricing & 3-step pipeline</span>
+              <span class="site-menu-title">PICK A TIER</span>
+              <span class="site-menu-desc">Pricing, turnarounds & commission tiers</span>
             </div>
             <span class="site-menu-arrow">→</span>
           </a>
@@ -197,29 +197,22 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
   </div>
 </div>
 
-<!-- KO-FI FLOATING OVERLAY WIDGET (Bottom-Left Area) -->
-<script is:inline src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
-<script is:inline>
-  (function () {
-    function initKofi() {
-      if (typeof kofiWidgetOverlay !== "undefined") {
-        try {
-          kofiWidgetOverlay.draw("xyroart", {
-            "type": "floating-chat",
-            "floating-chat.donateButton.text": "Support me",
-            "floating-chat.donateButton.background-color": "#f2be54",
-            "floating-chat.donateButton.text-color": "#0b0b0b"
-          });
-        } catch (e) {}
-      }
-    }
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initKofi);
-    } else {
-      initKofi();
-    }
-  })();
-</script>
+<!-- NATIVE FLOATING KO-FI SUPPORT BUTTON (Bottom-Left) -->
+<a
+  href="https://ko-fi.com/xyroart"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="floating-kofi-pill"
+  id="floatingKofiBtn"
+  aria-label="Support me on Ko-fi"
+>
+  <span class="floating-kofi-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+      <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.047 3.974-4.047 3.974s-2.7-2.486-3.96-3.951c-.966-1.122-1.39-2.325-1.39-3.238 0-1.802 1.442-3.244 3.244-3.244 1.144 0 2.148.59 2.731 1.488.583-.898 1.587-1.488 2.731-1.488 1.802 0 3.244 1.442 3.244 3.244 0 .93-.44 2.152-1.553 3.215zm6.053-.941c-.482.464-1.141.71-1.895.733.023-.979.033-2.02.033-3.093h1.862c.677 0 1.258.455 1.341 1.127.135 1.092-.859 1.697-1.341 1.233z"/>
+    </svg>
+  </span>
+  <span class="floating-kofi-text">Support me</span>
+</a>
 
 <script is:inline>
   (function () {
@@ -302,23 +295,6 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
       };
     }
 
-    // Ko-fi nav button click handler
-    var kofiNavBtn = document.getElementById("kofiNavBtn");
-    if (kofiNavBtn) {
-      kofiNavBtn.addEventListener("click", function (e) {
-        try {
-          var kofiFrame = document.querySelector(".floatingchat-container") || document.querySelector(".floatingchat-container-mobi");
-          if (kofiFrame && kofiFrame.contentDocument) {
-            var btn = kofiFrame.contentDocument.getElementById("kofi-donate-button") || kofiFrame.contentDocument.querySelector(".floating-chat-donate-button");
-            if (btn) {
-              e.preventDefault();
-              btn.click();
-              return;
-            }
-          }
-        } catch (err) {}
-      });
-    }
     // Discord menu chip click handler
     var discordChip = document.getElementById("siteMenuDiscordChip");
     if (discordChip) {
