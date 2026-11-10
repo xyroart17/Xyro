@@ -163,7 +163,6 @@ clientGroups.forEach((group: any) => {
           aria-label="XYRO intro video"
         ></video>
       </div>
-      <button id="introSkipBtn" class="intro-skip-btn" type="button" aria-label="Skip intro">Skip ✕</button>
     </div>
 
     <div id="bar"></div>
@@ -241,38 +240,61 @@ clientGroups.forEach((group: any) => {
     <section id="work">
       <h2>The <em>vault</em></h2>
       <p>
-        Hover a piece to bring it to colour. On a phone, scroll it into view or
-        tap it.
+        Selected illustrations & character designs. Hover or tap any piece to inspect.
       </p>
-      <div class="vgrid" id="vg">
-        {
-          homeVaultItems.map((d: any) => (
-            <button class="vi" type="button" aria-label={`Preview ${d.t}`}>
-              <div class="vc">
-                <span class="vy">{d.y}</span>
-                {d.videoUrl && (
-                  <span class="vault-play-badge" aria-label="Has video">▶</span>
-                )}
-                <div class="vt" style={`--h:${d.h};--r:${d.r};`}>
-                  {d.img ? (
-                    <img src={d.img} alt={d.t} loading="lazy" />
-                  ) : (
-                    <b>{d.t}</b>
+
+      <!-- CONTINUOUS CIRCULAR MOVING HORIZONTAL REEL -->
+      <div class="home-vault-marquee-wrapper" id="homeVaultMarquee">
+        <div class="home-vault-track" id="vg">
+          {
+            homeVaultItems.map((d: any, idx: number) => (
+              <button class="vi home-vault-card" type="button" aria-label={`Preview ${d.t}`} data-vault-idx={idx}>
+                <div class="vc">
+                  <span class="vy">{d.y}</span>
+                  {d.videoUrl && (
+                    <span class="vault-play-badge" aria-label="Has video">▶</span>
                   )}
+                  <div class="vt" style={`--h:${d.h};--r:${d.r};`}>
+                    {d.img ? (
+                      <img src={d.img} alt={d.t} loading="lazy" />
+                    ) : (
+                      <b>{d.t}</b>
+                    )}
+                  </div>
+                  <div class="vm">{d.g.join(" · ")}</div>
                 </div>
-                <div class="vm">{d.g.join(" · ")}</div>
-              </div>
-            </button>
-          ))
-        }
+              </button>
+            ))
+          }
+          {
+            homeVaultItems.map((d: any, idx: number) => (
+              <button class="vi home-vault-card" type="button" aria-label={`Preview ${d.t}`} data-vault-idx={idx} aria-hidden="true" tabindex="-1">
+                <div class="vc">
+                  <span class="vy">{d.y}</span>
+                  {d.videoUrl && (
+                    <span class="vault-play-badge" aria-label="Has video">▶</span>
+                  )}
+                  <div class="vt" style={`--h:${d.h};--r:${d.r};`}>
+                    {d.img ? (
+                      <img src={d.img} alt={d.t} loading="lazy" />
+                    ) : (
+                      <b>{d.t}</b>
+                    )}
+                  </div>
+                  <div class="vm">{d.g.join(" · ")}</div>
+                </div>
+              </button>
+            ))
+          }
+        </div>
       </div>
-      <div style="text-align:center;margin-top:40px;">
+      <div style="text-align:center;margin-top:36px;">
         <a
           href="/vault"
           class="pill big"
-          style="font-size:22px;padding:16px 36px;display:inline-flex;align-items:center;gap:12px;text-decoration:none;box-shadow:6px 6px 0 var(--ink);"
+          style="font-size:20px;padding:14px 34px;display:inline-flex;align-items:center;gap:12px;text-decoration:none;box-shadow:6px 6px 0 var(--ink);"
         >
-          Vault <span style="font-size:26px;">→</span>
+          Explore All Works in Vault <span style="font-size:24px;">→</span>
         </a>
       </div>
     </section>
@@ -1715,42 +1737,22 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
       function vd() {
         var g = $("vg");
         if (!g) return;
-        vs = D.slice(0, 4);
+        vs = D;
 
         var btns = g.querySelectorAll(".vi");
-        if (btns.length === vs.length && vs.length > 0) {
-          btns.forEach(function (b, n) {
+        if (btns.length > 0) {
+          btns.forEach(function (b) {
+            var rawIdx = b.getAttribute("data-vault-idx");
+            var n = rawIdx !== null ? parseInt(rawIdx, 10) : 0;
             b.onclick = function () {
               sh(n);
               var lb = $("lb");
               if (lb && typeof lb.showModal === "function") lb.showModal();
+              if (g) g.classList.add("is-paused");
             };
-            if (io) io.observe(b);
           });
           return;
         }
-
-        g.innerHTML = "";
-        vs.forEach(function (d, n) {
-          var b = document.createElement("button");
-          b.className = "vi";
-          b.type = "button";
-          b.innerHTML =
-            '<div class="vc"><span class="vy">' +
-            d.y +
-            "</span>" +
-            tl(d) +
-            '<div class="vm">' +
-            d.g.join(" · ") +
-            "</div></div>";
-          b.onclick = function () {
-            sh(n);
-            var lb = $("lb");
-            if (lb && typeof lb.showModal === "function") lb.showModal();
-          };
-          g.appendChild(b);
-          if (io) io.observe(b);
-        });
       }
 
       function getYouTubeId(url) {
@@ -1808,6 +1810,8 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
         if (lt) lt.innerHTML = ""; // Stop video playback & audio
         var lbFooter = $("lbFooter");
         if (lbFooter) lbFooter.style.display = "none";
+        var g = $("vg");
+        if (g) g.classList.remove("is-paused");
         // Restore URL to /
         if (window.history && history.pushState) {
           try {
@@ -1833,6 +1837,8 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
           if (lt) lt.innerHTML = "";
           var lbFooter = $("lbFooter");
           if (lbFooter) lbFooter.style.display = "none";
+          var g = $("vg");
+          if (g) g.classList.remove("is-paused");
         }
       });
 
@@ -1968,7 +1974,6 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
       (function () {
         var overlay = $("introOverlay");
         var video = $("introVideo");
-        var skipBtn = $("introSkipBtn");
         var dismissed = false;
 
         function finishIntro() {
@@ -2011,12 +2016,6 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
 
         if (overlay) {
           overlay.addEventListener("click", finishIntro);
-        }
-        if (skipBtn) {
-          skipBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            finishIntro();
-          });
         }
 
         // Safety fallback: video is ~3.2s, dismiss after 3.6s regardless

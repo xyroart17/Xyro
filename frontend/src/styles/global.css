@@ -1489,7 +1489,7 @@ footer{padding:50px 20px 70px;text-align:center;font-weight:700}
 .vi{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;margin:0 0 22px;display:block;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .vc{position:relative;border:5px solid var(--ink);box-shadow:8px 8px 0 var(--ink);border-radius:3px;overflow:hidden;background:var(--bg);transition:box-shadow .15s;transform:translateZ(0)}
 .vi:hover .vc,.vi:focus-visible .vc{box-shadow:12px 12px 0 var(--rd)}
-.vt{position:relative;background:linear-gradient(150deg,hsl(var(--h) 90% 60%),hsl(calc(var(--h) + 60) 85% 35%));filter:grayscale(1);transition:filter .5s;display:block;width:100%}
+.vt{position:relative;background:linear-gradient(150deg,hsl(var(--h) 90% 60%),hsl(calc(var(--h) + 60) 85% 35%));filter:none;display:block;width:100%}
 .vt img{display:block;width:100%;height:auto;object-fit:contain}
 .vt b{position:absolute;left:12px;bottom:10px;z-index:1;font:400 22px/1 'Dela Gothic One';color:#fff;text-shadow:3px 3px 0 var(--ink);text-align:left;max-width:90%}
 .vi:hover .vt,.vi.on .vt,.vi:focus-visible .vt{filter:none}
@@ -1521,6 +1521,137 @@ dialog#lb::backdrop{background:#000d;backdrop-filter:blur(8px);-webkit-backdrop-
   height: 100% !important;
   border: 0 !important;
   display: block !important
+}
+
+/* HOMEPAGE VAULT CONTINUOUS CIRCULAR MARQUEE REEL */
+.home-vault-marquee-wrapper {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: hidden;
+  padding: 24px 0 32px;
+  mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.home-vault-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 22px;
+  width: max-content;
+  animation: homeVaultMarqueeScroll 45s linear infinite;
+  will-change: transform;
+}
+
+/* Hover, active, focus, or paused class stops movement */
+.home-vault-marquee-wrapper:hover .home-vault-track,
+.home-vault-marquee-wrapper:focus-within .home-vault-track,
+.home-vault-track.is-paused {
+  animation-play-state: paused !important;
+}
+
+@keyframes homeVaultMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.home-vault-card {
+  flex: 0 0 280px;
+  width: 280px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.home-vault-card:hover {
+  transform: translateY(-6px);
+}
+
+.home-vault-card .vc {
+  position: relative;
+  border: 4px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+
+.home-vault-card:hover .vc {
+  box-shadow: 8px 8px 0 var(--rd);
+}
+
+.home-vault-card .vt {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  background: #111;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: none !important;
+}
+
+.home-vault-card .vt img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.home-vault-card .vm {
+  padding: 10px 14px;
+  font: 700 13px 'Space Grotesk', sans-serif;
+  border-top: 3px solid var(--ink);
+  background: var(--bg);
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: auto;
+}
+
+@media (max-width: 768px) {
+  .home-vault-marquee-wrapper {
+    padding: 14px 0 22px;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .home-vault-card {
+    flex: 0 0 230px;
+    width: 230px;
+  }
+
+  .home-vault-card .vt {
+    height: 280px;
+  }
+
+  .home-vault-track {
+    gap: 16px;
+    animation-duration: 32s;
+  }
 }
 
 @media(prefers-reduced-motion:reduce) {

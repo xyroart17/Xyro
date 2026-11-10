@@ -59,13 +59,13 @@ export default defineConfig({
                   .title('Homepage Hero')
               ),
             S.listItem()
-              .title('Homepage Top 4 Artworks')
+              .title('Homepage Vault Reel')
               .icon(StarIcon)
               .child(
                 S.document()
                   .schemaType('homeVault')
                   .documentId('homeVaultConfig')
-                  .title('Homepage Top 4 Artworks')
+                  .title('Homepage Vault Reel')
               ),
             S.divider(),
             S.listItem()

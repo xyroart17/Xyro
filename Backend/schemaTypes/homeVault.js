@@ -2,7 +2,7 @@ import { StarIcon } from '@sanity/icons'
 
 export default {
   name: 'homeVault',
-  title: 'Homepage Top 4 Artworks',
+  title: 'Homepage Vault Showcase',
   type: 'document',
   icon: StarIcon,
   fields: [
@@ -10,21 +10,20 @@ export default {
       name: 'title',
       title: 'Section Label',
       type: 'string',
-      initialValue: 'Homepage Vault (Top 4 Artworks)',
+      initialValue: 'Homepage Vault Reel',
       description: 'Internal label for this showcase picker.',
     },
     {
       name: 'featuredArtworks',
-      title: 'Select 4 Artworks for Homepage',
+      title: 'Select Artworks for Homepage Reel',
       type: 'array',
-      description: 'Pick up to 4 artworks (projects or manga) to feature in The Vault section on the homepage. Drag to reorder slots 1 through 4.',
+      description: 'Pick artworks (projects or manga) to feature in The Vault marquee on the homepage. You can add as many as you want and drag to reorder them. If empty, the newest artworks will be displayed automatically.',
       of: [
         {
           type: 'reference',
           to: [{ type: 'project' }, { type: 'manga' }],
         },
       ],
-      validation: (Rule) => Rule.max(4).warning('Only the first 4 artworks will be shown on the homepage.'),
     },
   ],
   preview: {
@@ -34,11 +33,10 @@ export default {
     prepare({ items }) {
       const count = items ? items.length : 0
       return {
-        title: 'Homepage Top 4 Artworks',
-        subtitle: count > 0 ? `${count} of 4 slots selected` : 'Using newest artworks (default)',
+        title: 'Homepage Vault Showcase',
+        subtitle: count > 0 ? `${count} artworks selected for reel` : 'Using newest artworks (default)',
         media: StarIcon,
       }
     },
   },
 }
-

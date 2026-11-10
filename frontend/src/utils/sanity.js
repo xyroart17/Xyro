@@ -259,23 +259,18 @@ export async function fetchHomeVault() {
         .filter(Boolean);
     }
 
-    if (curated.length < 4) {
-      const allVault = await fetchVaultData();
-      const existingUrls = new Set(curated.map((c) => c.url));
-      for (const item of allVault) {
-        if (!existingUrls.has(item.url)) {
-          curated.push(item);
-          existingUrls.add(item.url);
-          if (curated.length >= 4) break;
-        }
-      }
+    // If curated list is set by the user, return all curated items (no 4-item hard limit)
+    if (curated.length > 0) {
+      return curated;
     }
 
-    return curated.slice(0, 4);
+    // Fallback: If no curated artworks in Sanity yet, use newest works from the vault
+    const allVault = await fetchVaultData();
+    return allVault.slice(0, 12);
   } catch (err) {
     console.error("fetchHomeVault error:", err);
     const fallback = await fetchVaultData();
-    return fallback.slice(0, 4);
+    return fallback.slice(0, 12);
   }
 }
 
