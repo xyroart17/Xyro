@@ -3,7 +3,7 @@ export const prerender = true;
 import { ClientRouter } from "astro:transitions";
 import "../../styles/global.css";
 import { client, urlFor } from "../../utils/sanity.js";
-import Navbar from "../../components/Navbar.astro";
+import SiteNav from "../../components/SiteNav.astro";
 
 export async function getStaticPaths() {
     // We fetch ALL projects ordered by publishDate desc first so we can calculate Next/Prev
@@ -531,7 +531,7 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
         </style>
     </head>
     <body>
-        <Navbar />
+        <SiteNav isHomepage={false} hideLogoOnTop={false} />
 
         <header class="project-hero">
             <div class="project-hero-bg-blur" style={`background-image: url(${posterUrl});`} />

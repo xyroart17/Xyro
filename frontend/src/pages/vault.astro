@@ -3,6 +3,7 @@ export const prerender = true;
 import "../styles/global.css";
 import { fetchVaultData } from "../utils/sanity.js";
 import Footer from "../components/Footer.astro";
+import SiteNav from "../components/SiteNav.astro";
 
 const vaultData = await fetchVaultData();
 ---
@@ -36,22 +37,7 @@ const vaultData = await fetchVaultData();
     <div id="cur"></div>
 
     <!-- FIXED TOP NAVBAR -->
-    <div class="top">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <a class="logo lg" href="/" aria-label="XYRO home"></a>
-        <a class="pill" href="/" style="text-decoration:none;font-weight:700;"
-          >← Back to Home</a
-        >
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <a class="pill" href="/#gacha" style="text-decoration:none;">Gacha</a>
-        <a class="pill" href="/#deal" style="text-decoration:none;">Pricing</a>
-        <button class="pill" id="tg" aria-label="Toggle theme">◐</button>
-        <a class="pill" id="bk" href="/#contact" style="text-decoration:none;"
-          >Book a slot</a
-        >
-      </div>
-    </div>
+    <SiteNav isHomepage={false} hideLogoOnTop={false} />
 
     <main class="vwrap" id="app">
       <div class="vhead">

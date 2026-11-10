@@ -9,6 +9,7 @@ import {
   fetchFeaturedManga,
 } from "../utils/sanity.js";
 import Footer from "../components/Footer.astro";
+import SiteNav from "../components/SiteNav.astro";
 
 const vaultData = await fetchVaultData();
 const homeVaultItems = await fetchHomeVault();
@@ -87,31 +88,7 @@ clientGroups.forEach((group: any) => {
     <div id="bar"></div>
     <div id="cur"></div>
 
-    <div class="top">
-      <a
-        class="logo lg"
-        id="mainNavLogo"
-        href="#t"
-        aria-label="XYRO home"
-        style="opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity .25s ease,transform .25s ease;"
-      ></a>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <a
-          id="navVault"
-          class="pill"
-          href="#work"
-          style="display:none;text-decoration:none;">Vault</a
-        >
-        <a
-          id="navGacha"
-          class="pill"
-          href="#gacha"
-          style="display:none;text-decoration:none;">Gacha</a
-        >
-        <button class="pill" id="tg" aria-label="Toggle theme">◐</button>
-        <a class="pill" id="bk" href="#contact">Book a slot</a>
-      </div>
-    </div>
+    <SiteNav isHomepage={true} hideLogoOnTop={true} />
 
     <div class="hero" id="t">
       <div class="hero-center">
@@ -1559,17 +1536,13 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
         });
       });
 
-      /* dynamic navbar links & top-left logo on scroll */
+      /* dynamic top-left logo on scroll */
       var mainNavLogo = $("mainNavLogo");
-      var navVault = $("navVault");
-      var navGacha = $("navGacha");
       var workSec = $("work");
-      var gachaSec = $("gacha");
 
       function updateNavScroll() {
-        if (!workSec || !gachaSec) return;
+        if (!workSec) return;
         var workRect = workSec.getBoundingClientRect();
-        var gachaRect = gachaSec.getBoundingClientRect();
         var isScrolled = workRect.top <= 140 || window.scrollY > 150;
 
         // Top-left XYRO logo appears when user scrolls to/past Vault, disappears at top
@@ -1583,26 +1556,6 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
             mainNavLogo.style.pointerEvents = "none";
             mainNavLogo.style.transform = "translateY(-8px)";
           }
-        }
-
-        // When scrolled, show Vault button unless user is currently inside the Vault section
-        var inVault = workRect.top <= 120 && workRect.bottom >= 120;
-        if (isScrolled && !inVault) {
-          if (navVault && navVault.style.display !== "inline-block")
-            navVault.style.display = "inline-block";
-        } else {
-          if (navVault && navVault.style.display !== "none")
-            navVault.style.display = "none";
-        }
-
-        // When scrolled, show Gacha button unless user is currently inside the Gacha section
-        var inGacha = gachaRect.top <= 120 && gachaRect.bottom >= 120;
-        if (isScrolled && !inGacha) {
-          if (navGacha && navGacha.style.display !== "inline-block")
-            navGacha.style.display = "inline-block";
-        } else {
-          if (navGacha && navGacha.style.display !== "none")
-            navGacha.style.display = "none";
         }
       }
 

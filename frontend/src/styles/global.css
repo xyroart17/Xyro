@@ -1031,5 +1031,403 @@ dialog::backdrop{background:#000c;backdrop-filter:blur(6px);-webkit-backdrop-fil
   .shake { animation: none !important; }
 }
 
+/* ==========================================================================
+   CLEAN NAVBAR & FULL-PAGE BLURRED POPUP MENU
+   ========================================================================== */
+.site-navbar {
+  position: fixed;
+  top: env(safe-area-inset-top, 0px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  pointer-events: none;
+}
+.site-navbar > * {
+  pointer-events: auto;
+}
+.nav-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  font-weight: 700;
+  border: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.nav-theme-btn {
+  font-size: 16px;
+  padding: 10px 14px;
+  min-width: 44px;
+  justify-content: center;
+}
+.nav-kofi-pill {
+  background: #ff3f38;
+  color: #fff !important;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #9e0005;
+}
+.nav-kofi-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #9e0005;
+  color: #fff !important;
+}
+.nav-kofi-pill:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #9e0005;
+}
+.kofi-cup-svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.nav-menu-btn {
+  background: var(--ink);
+  color: var(--bg);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-menu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--rd);
+}
+.hamburger-box {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18px;
+  height: 12px;
+}
+.hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+/* Full-Page Blurred Navigation Overlay */
+.site-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s ease;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.site-menu-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.site-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 1;
+}
+.site-menu-dialog {
+  position: relative;
+  z-index: 2;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 3.5vw, 36px) clamp(16px, 4.5vw, 48px);
+  max-width: 1300px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+.site-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(24px, 4vw, 44px);
+}
+.site-menu-logo {
+  width: 52px;
+  height: 52px;
+}
+.site-menu-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 0;
+  border-radius: 99px;
+  padding: 10px 22px;
+  font: 700 15px 'Space Grotesk', sans-serif;
+  cursor: pointer;
+}
+.site-menu-close:hover {
+  transform: rotate(-3deg) scale(1.05);
+}
+.close-x {
+  font-size: 16px;
+  font-weight: 700;
+}
+.site-menu-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: start;
+}
+.site-menu-heading {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.6;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.site-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.site-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border: 3px solid var(--ink);
+  background: color-mix(in srgb, var(--ink) 4%, var(--bg));
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.site-menu-item:hover {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translateX(8px);
+  box-shadow: 6px 6px 0 var(--rd);
+}
+.site-menu-num {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 14px;
+  opacity: 0.65;
+}
+.site-menu-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.site-menu-title {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: clamp(17px, 2.2vw, 24px);
+  line-height: 1.1;
+}
+.site-menu-desc {
+  font-size: 13px;
+  opacity: 0.75;
+  font-weight: 500;
+}
+.site-menu-arrow {
+  font-size: 20px;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+.site-menu-item:hover .site-menu-arrow {
+  transform: translateX(4px);
+}
+.site-menu-item-cta {
+  border-color: var(--rd);
+  background: color-mix(in srgb, var(--rd) 12%, var(--bg));
+}
+.site-menu-item-cta .site-menu-title {
+  color: var(--rd);
+}
+.site-menu-item-cta:hover {
+  background: var(--rd);
+  color: #fff;
+  border-color: var(--rd);
+}
+.site-menu-item-cta:hover .site-menu-title {
+  color: #fff;
+}
+.site-menu-extra-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.site-menu-kofi-card {
+  border: 4px solid var(--ink);
+  background: color-mix(in srgb, var(--ink) 6%, var(--bg));
+  box-shadow: 8px 8px 0 var(--ink);
+  border-radius: 8px;
+  padding: 24px;
+}
+.site-menu-kofi-badge {
+  display: inline-block;
+  background: #ff3f38;
+  color: #fff;
+  font: 700 11px/1 'Space Grotesk', sans-serif;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: 99px;
+  margin-bottom: 12px;
+}
+.site-menu-kofi-title {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: clamp(22px, 3vw, 32px);
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+.site-menu-kofi-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0.85;
+  margin: 0 0 20px;
+}
+.site-menu-kofi-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-decoration: none;
+  font-size: 18px !important;
+  padding: 14px 22px !important;
+  background: #ff3f38 !important;
+  color: #fff !important;
+  box-shadow: 0 5px 0 #9e0005 !important;
+}
+.site-menu-kofi-btn:hover {
+  filter: brightness(1.08);
+}
+.site-menu-kofi-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #9e0005 !important;
+}
+.site-menu-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.social-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--ink);
+  font: 700 13px 'Space Grotesk', sans-serif;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.social-chip:hover {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translateY(-2px);
+}
+.social-chip.kofi-highlight {
+  border-color: #ff3f38;
+  color: #ff3f38;
+}
+.social-chip.kofi-highlight:hover {
+  background: #ff3f38;
+  color: #fff;
+}
+.chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5865F2;
+}
+.site-menu-locked {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+/* ==========================================================================
+   KO-FI FLOATING OVERLAY WIDGET (BOTTOM-LEFT POSITIONING)
+   ========================================================================== */
+.floatingchat-container-wrap,
+.floatingchat-container-wrap-mobi {
+  left: max(16px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  z-index: 80 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .site-menu-body {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+@media (max-width: 600px) {
+  .site-navbar {
+    padding: 10px 14px;
+  }
+  .nav-actions {
+    gap: 6px;
+  }
+  .nav-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .nav-theme-btn {
+    min-width: 38px;
+    padding: 8px 10px;
+  }
+  .kofi-nav-label {
+    display: none;
+  }
+  .nav-kofi-pill {
+    padding: 8px 12px;
+  }
+  .nav-kofi-pill::after {
+    content: "Ko-fi";
+    font-weight: 700;
+    margin-left: 5px;
+  }
+  .site-menu-item {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .site-menu-title {
+    font-size: 18px;
+  }
+  .site-menu-desc {
+    font-size: 12px;
+  }
+  .floatingchat-container-wrap,
+  .floatingchat-container-wrap-mobi {
+    left: max(10px, env(safe-area-inset-left)) !important;
+    right: auto !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    transform: scale(0.92);
+    transform-origin: bottom left;
+  }
+}
+
 
 

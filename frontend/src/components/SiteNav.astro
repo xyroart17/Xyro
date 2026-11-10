@@ -1,0 +1,323 @@
+---
+interface Props {
+  isHomepage?: boolean;
+  hideLogoOnTop?: boolean;
+}
+
+const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
+---
+
+<!-- FIXED TOP NAVBAR -->
+<header class="top site-navbar" id="siteNavbar">
+  <div class="nav-left">
+    <a
+      class="logo lg"
+      id="mainNavLogo"
+      href={isHomepage ? "#t" : "/"}
+      aria-label="XYRO home"
+      style={hideLogoOnTop ? "opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity .25s ease,transform .25s ease;" : "opacity:1;"}
+    ></a>
+  </div>
+
+  <div class="nav-actions">
+    <!-- Theme Toggle Pill -->
+    <button class="pill nav-btn nav-theme-btn" id="tg" type="button" aria-label="Toggle theme">◐</button>
+
+    <!-- Support me on Ko-fi Pill -->
+    <a
+      class="pill nav-btn nav-kofi-pill"
+      id="kofiNavBtn"
+      href="https://ko-fi.com/xyroart"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Support me on Ko-fi"
+      title="Support me on Ko-fi"
+    >
+      <svg class="kofi-cup-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+        <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.047 3.974-4.047 3.974s-2.7-2.486-3.96-3.951c-.966-1.122-1.39-2.325-1.39-3.238 0-1.802 1.442-3.244 3.244-3.244 1.144 0 2.148.59 2.731 1.488.583-.898 1.587-1.488 2.731-1.488 1.802 0 3.244 1.442 3.244 3.244 0 .93-.44 2.152-1.553 3.215zm6.053-.941c-.482.464-1.141.71-1.895.733.023-.979.033-2.02.033-3.093h1.862c.677 0 1.258.455 1.341 1.127.135 1.092-.859 1.697-1.341 1.233z"/>
+      </svg>
+      <span class="kofi-nav-label">Support me on Ko-fi</span>
+    </a>
+
+    <!-- Hamburger 3-Horizontal-Bars Menu Button -->
+    <button
+      class="pill nav-btn nav-menu-btn"
+      id="navMenuBtn"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="fullNavMenu"
+    >
+      <span class="hamburger-box" aria-hidden="true">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </span>
+      <span class="nav-menu-label">Menu</span>
+    </button>
+  </div>
+</header>
+
+<!-- FULL-PAGE BLURRED POPUP MENU -->
+<div id="fullNavMenu" class="site-menu-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Main Navigation">
+  <div class="site-menu-backdrop" id="menuBackdrop"></div>
+  <div class="site-menu-dialog">
+    <!-- Header inside popup -->
+    <div class="site-menu-header">
+      <a href="/" class="logo lg site-menu-logo" aria-label="XYRO Home"></a>
+      <button class="pill site-menu-close" id="menuCloseBtn" type="button" aria-label="Close menu">
+        <span class="close-x" aria-hidden="true">✕</span>
+        <span>Close</span>
+      </button>
+    </div>
+
+    <!-- Main Navigation Body -->
+    <div class="site-menu-body">
+      <!-- Left: Navigation Links List -->
+      <div class="site-menu-nav-col">
+        <span class="site-menu-heading">NAVIGATION</span>
+        <nav class="site-menu-links">
+          <a href={isHomepage ? "#work" : "/#work"} class="site-menu-item" data-menu-link>
+            <span class="site-menu-num">01</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">THE VAULT</span>
+              <span class="site-menu-desc">Curated & original illustrations</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+
+          <a href={isHomepage ? "#manga" : "/#manga"} class="site-menu-item" data-menu-link>
+            <span class="site-menu-num">02</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">MANGA</span>
+              <span class="site-menu-desc">Original stories & editorial chapters</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+
+          <a href={isHomepage ? "#gacha" : "/#gacha"} class="site-menu-item" data-menu-link>
+            <span class="site-menu-num">03</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">ROLL GACHA</span>
+              <span class="site-menu-desc">Intelligent universe & brief generator</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+
+          <a href={isHomepage ? "#deal" : "/#deal"} class="site-menu-item" data-menu-link>
+            <span class="site-menu-num">04</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">HOW IT WORKS</span>
+              <span class="site-menu-desc">Turnarounds, pricing & 3-step pipeline</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+
+          <a href={isHomepage ? "#reviews" : "/#reviews"} class="site-menu-item" data-menu-link>
+            <span class="site-menu-num">05</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">REVIEWS</span>
+              <span class="site-menu-desc">Direct feedback from commissioners & directors</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+
+          <a href={isHomepage ? "#contact" : "/#contact"} class="site-menu-item site-menu-item-cta" data-menu-link>
+            <span class="site-menu-num">06</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">BOOK A SLOT</span>
+              <span class="site-menu-desc">Commission brief & inquiry →</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+
+          <a href="/legal" class="site-menu-item site-menu-item-sub" data-menu-link>
+            <span class="site-menu-num">07</span>
+            <div class="site-menu-item-text">
+              <span class="site-menu-title">LEGAL CENTER</span>
+              <span class="site-menu-desc">Privacy, terms, commission guide & copyright</span>
+            </div>
+            <span class="site-menu-arrow">→</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Right: Socials & Support -->
+      <div class="site-menu-extra-col">
+        <!-- Support on Ko-fi card -->
+        <div class="site-menu-kofi-card">
+          <div class="site-menu-kofi-badge">CREATOR SUPPORT</div>
+          <h3 class="site-menu-kofi-title">Buy me a Ko-fi</h3>
+          <p class="site-menu-kofi-desc">
+            Support independent manga production, character concept releases, and visual art creation directly.
+          </p>
+          <a href="https://ko-fi.com/xyroart" target="_blank" rel="noopener noreferrer" class="big site-menu-kofi-btn">
+            ☕ Support me on Ko-fi
+          </a>
+        </div>
+
+        <!-- Social Channels -->
+        <div class="site-menu-socials-box">
+          <span class="site-menu-heading">CONNECT & SOCIALS</span>
+          <div class="site-menu-chips">
+            <a href="https://discord.gg/RJ5JPCYS" target="_blank" rel="noopener noreferrer" class="social-chip">
+              <span class="chip-dot"></span> Discord
+            </a>
+            <a href="https://www.instagram.com/xyro_.art/" target="_blank" rel="noopener noreferrer" class="social-chip">
+              Instagram
+            </a>
+            <a href="https://x.com/xyro_art" target="_blank" rel="noopener noreferrer" class="social-chip">
+              X (Twitter)
+            </a>
+            <a href="https://www.artstation.com/xyro_art" target="_blank" rel="noopener noreferrer" class="social-chip">
+              ArtStation
+            </a>
+            <a href="https://www.patreon.com/c/Xyro_art" target="_blank" rel="noopener noreferrer" class="social-chip">
+              Patreon
+            </a>
+            <a href="https://ko-fi.com/xyroart" target="_blank" rel="noopener noreferrer" class="social-chip kofi-highlight">
+              ☕ Ko-fi
+            </a>
+            <a href="https://www.deviantart.com/aman2189" target="_blank" rel="noopener noreferrer" class="social-chip">
+              DeviantArt
+            </a>
+            <a href="https://www.reddit.com/user/Professional-Lake843/" target="_blank" rel="noopener noreferrer" class="social-chip">
+              Reddit
+            </a>
+            <a href="https://pin.it/1EkhjFukQ" target="_blank" rel="noopener noreferrer" class="social-chip">
+              Pinterest
+            </a>
+            <a href="mailto:officialxyroart@gmail.com" class="social-chip">
+              ✉ Email
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KO-FI FLOATING OVERLAY WIDGET (Bottom-Left Area) -->
+<script is:inline src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+<script is:inline>
+  (function () {
+    function initKofi() {
+      if (typeof kofiWidgetOverlay !== "undefined") {
+        try {
+          kofiWidgetOverlay.draw("xyroart", {
+            "type": "floating-chat",
+            "floating-chat.donateButton.text": "Support me",
+            "floating-chat.donateButton.background-color": "#f2be54",
+            "floating-chat.donateButton.text-color": "#0b0b0b"
+          });
+        } catch (e) {}
+      }
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initKofi);
+    } else {
+      initKofi();
+    }
+  })();
+</script>
+
+<script is:inline>
+  (function () {
+    var menuBtn = document.getElementById("navMenuBtn");
+    var closeBtn = document.getElementById("menuCloseBtn");
+    var backdrop = document.getElementById("menuBackdrop");
+    var overlay = document.getElementById("fullNavMenu");
+    var links = document.querySelectorAll("[data-menu-link]");
+
+    function openMenu() {
+      if (!overlay) return;
+      overlay.classList.add("is-open");
+      overlay.setAttribute("aria-hidden", "false");
+      if (menuBtn) menuBtn.setAttribute("aria-expanded", "true");
+      document.documentElement.classList.add("site-menu-locked");
+      document.body.classList.add("site-menu-locked");
+    }
+
+    function closeMenu() {
+      if (!overlay) return;
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      if (menuBtn) menuBtn.setAttribute("aria-expanded", "false");
+      document.documentElement.classList.remove("site-menu-locked");
+      document.body.classList.remove("site-menu-locked");
+    }
+
+    if (menuBtn) menuBtn.addEventListener("click", openMenu);
+    if (closeBtn) closeBtn.addEventListener("click", closeMenu);
+    if (backdrop) backdrop.addEventListener("click", closeMenu);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && overlay && overlay.classList.contains("is-open")) {
+        closeMenu();
+      }
+    });
+
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        var href = link.getAttribute("href") || "";
+        var isHashOnCurrentPage = false;
+        var hashTarget = "";
+
+        if (href.startsWith("#")) {
+          isHashOnCurrentPage = true;
+          hashTarget = href;
+        } else if (href.startsWith("/#") && (window.location.pathname === "/" || window.location.pathname === "")) {
+          isHashOnCurrentPage = true;
+          hashTarget = href.replace("/", "");
+        }
+
+        if (isHashOnCurrentPage && hashTarget) {
+          e.preventDefault();
+          closeMenu();
+          var targetEl = document.querySelector(hashTarget);
+          if (targetEl) {
+            setTimeout(function () {
+              targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+              if (history.replaceState) history.replaceState(null, "", hashTarget);
+            }, 120);
+          }
+        } else {
+          closeMenu();
+        }
+      });
+    });
+
+    // Theme changer handler for nav button
+    var tgBtn = document.getElementById("tg");
+    if (tgBtn && !tgBtn.onclick) {
+      tgBtn.onclick = function () {
+        var r = document.documentElement;
+        var cur = r.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light");
+        var next = cur === "dark" ? "light" : "dark";
+        r.setAttribute("data-theme", next);
+        try {
+          localStorage.setItem("xyro_theme", next);
+          localStorage.setItem("xt2", next);
+        } catch (e) {}
+      };
+    }
+
+    // Ko-fi nav button click handler
+    var kofiNavBtn = document.getElementById("kofiNavBtn");
+    if (kofiNavBtn) {
+      kofiNavBtn.addEventListener("click", function (e) {
+        try {
+          var kofiFrame = document.querySelector(".floatingchat-container") || document.querySelector(".floatingchat-container-mobi");
+          if (kofiFrame && kofiFrame.contentDocument) {
+            var btn = kofiFrame.contentDocument.getElementById("kofi-donate-button") || kofiFrame.contentDocument.querySelector(".floating-chat-donate-button");
+            if (btn) {
+              e.preventDefault();
+              btn.click();
+              return;
+            }
+          }
+        } catch (err) {}
+      });
+    }
+  })();
+</script>

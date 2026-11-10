@@ -5,7 +5,7 @@ import "../styles/global.css";
 import "../styles/legal.css";
 import LegalNavigation from "../components/LegalNavigation.astro";
 import LegalSection from "../components/LegalSection.astro";
-import Navbar from "../components/Navbar.astro";
+import SiteNav from "../components/SiteNav.astro";
 import Footer from "../components/Footer.astro";
 ---
 
@@ -136,18 +136,7 @@ import Footer from "../components/Footer.astro";
             <div class="intro-flash-logo"></div>
         </div>
 
-        <div class="top legal-top-nav">
-            <div style="display:flex;align-items:center;gap:12px;">
-                <a class="logo lg" href="/" aria-label="XYRO home" style="opacity:1;"></a>
-                <a class="pill legal-back-home" href="/" style="text-decoration:none;font-weight:700;">← Back to Home</a>
-            </div>
-            <div style="display:flex;gap:10px;align-items:center;">
-                <a class="pill legal-desk-pill" href="/vault">Vault</a>
-                <a class="pill legal-desk-pill" href="/#gacha">Gacha</a>
-                <button class="pill" id="tg" aria-label="Toggle theme">◐</button>
-                <a class="pill" id="bk" href="/#contact">Book a slot</a>
-            </div>
-        </div>
+        <SiteNav isHomepage={false} hideLogoOnTop={false} />
 
         <!-- LEGAL PAGE -->
         <main class="legal-page">
@@ -158,20 +147,6 @@ import Footer from "../components/Footer.astro";
                     Everything you need to know before working with Xyro.
                 </p>
             </header>
-
-            <!-- MOBILE STICKY NAV -->
-            <div
-                class="legal-mobile-nav"
-                role="navigation"
-                aria-label="Legal page sections"
-            >
-                <div class="legal-mobile-nav-inner">
-                    <a href="#privacy">Privacy</a>
-                    <a href="#terms">Terms</a>
-                    <a href="#commissions">Commission Guide</a>
-                    <a href="#copyright">Copyright</a>
-                </div>
-            </div>
 
             <!-- CONTENT LAYOUT -->
             <div class="legal-layout">
