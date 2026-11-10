@@ -79,56 +79,94 @@ const validWipImages =
     ) || [];
 
 /* Build JSON-LD Structured Data Schema */
+// Build multi-image array: mainImage + all valid final images
+const schemaImages = [
+    ...(ogImageUrl ? [ogImageUrl] : []),
+    ...validFinalImages.map((img: any) => {
+        try { return urlFor(img).width(1200).auto("format").url(); } catch { return null; }
+    }).filter(Boolean),
+];
+
+const visualArtworkNode: any = {
+    "@type": "VisualArtwork",
+    "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#artwork`,
+    name: project.title,
+    headline: project.title,
+    description: project.description
+        ? project.description.substring(0, 200)
+        : "A creative project by Xyro.",
+    image: schemaImages.length > 1 ? schemaImages : (schemaImages[0] || "https://xyroart.pages.dev/assets/about-pic.jpg"),
+    thumbnailUrl: ogImageUrl || "https://xyroart.pages.dev/assets/about-pic.jpg",
+    creator: {
+        "@type": "Person",
+        "@id": "https://xyroart.pages.dev/#person",
+        name: "Xyro",
+        url: "https://xyroart.pages.dev/",
+    },
+    publisher: {
+        "@type": "Person",
+        "@id": "https://xyroart.pages.dev/#person",
+    },
+    artMedium: "Digital",
+    artForm: project.tag || "Digital Art",
+    genre: project.tag || "3D & 2D Art",
+    dateCreated: (project as any).publishDate || null,
+    url: `https://xyroart.pages.dev/project/${project.slug.current}/`,
+};
+// Only add keywords if they exist
+const projectKeywords = (project as any).keywords;
+if (Array.isArray(projectKeywords) && projectKeywords.length > 0) {
+    visualArtworkNode.keywords = projectKeywords.join(", ");
+}
+
+const schemaGraphNodes: any[] = [
+    visualArtworkNode,
+    {
+        "@type": "BreadcrumbList",
+        "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#breadcrumb`,
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://xyroart.pages.dev/",
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Projects",
+                item: "https://xyroart.pages.dev/#work",
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: project.title,
+                item: `https://xyroart.pages.dev/project/${project.slug.current}/`,
+            },
+        ],
+    },
+];
+
+// Add VideoObject node if this project has a YouTube video
+if (ytId) {
+    schemaGraphNodes.push({
+        "@type": "VideoObject",
+        "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#video`,
+        name: `${project.title} — by Xyro`,
+        description: project.description
+            ? project.description.substring(0, 200)
+            : `Video for ${project.title} by Xyro.`,
+        thumbnailUrl: ogImageUrl || `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`,
+        uploadDate: (project as any).publishDate || "2026-01-01",
+        embedUrl: `https://www.youtube.com/embed/${ytId}`,
+        url: (project as any).videoUrl,
+        publisher: { "@id": "https://xyroart.pages.dev/#person" },
+    });
+}
+
 const schemaData = {
     "@context": "https://schema.org",
-    "@graph": [
-        {
-            "@type": "VisualArtwork",
-            "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#artwork`,
-            name: project.title,
-            headline: project.title,
-            description: project.description
-                ? project.description.substring(0, 200) + "..."
-                : "A creative project by Xyro.",
-            image: ogImageUrl || "https://xyroart.pages.dev/assets/about-pic.jpg",
-            creator: {
-                "@type": "Person",
-                "@id": "https://xyroart.pages.dev/#person",
-                name: "Xyro",
-                url: "https://xyroart.pages.dev/",
-            },
-            publisher: {
-                "@type": "Person",
-                "@id": "https://xyroart.pages.dev/#person",
-            },
-            artMedium: "Digital",
-            genre: project.tag || "3D & 2D Art",
-        },
-        {
-            "@type": "BreadcrumbList",
-            "@id": `https://xyroart.pages.dev/project/${project.slug.current}/#breadcrumb`,
-            itemListElement: [
-                {
-                    "@type": "ListItem",
-                    position: 1,
-                    name: "Home",
-                    item: "https://xyroart.pages.dev/",
-                },
-                {
-                    "@type": "ListItem",
-                    position: 2,
-                    name: "Projects",
-                    item: "https://xyroart.pages.dev/#work",
-                },
-                {
-                    "@type": "ListItem",
-                    position: 3,
-                    name: project.title,
-                    item: `https://xyroart.pages.dev/project/${project.slug.current}/`,
-                },
-            ],
-        },
-    ],
+    "@graph": schemaGraphNodes,
 };
 
 const wordCount = project.title ? project.title.split(/\s+/).filter(Boolean).length : 0;
@@ -389,10 +427,63 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
                 border: 1px solid rgba(255, 255, 255, 0.08);
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             }
-            .cinematic-embed-wrapper iframe {
+            .cinematic-embed-wrapper iframe,
+            .cinematic-embed-wrapper .yt-facade {
                 width: 100%;
                 height: 100%;
                 border: 0;
+                display: block;
+            }
+            /* YouTube lazy facade */
+            .yt-facade {
+                position: relative;
+                cursor: pointer;
+                background: #000;
+                width: 100%;
+                height: 100%;
+                outline: none;
+            }
+            .yt-thumbnail {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: filter 0.2s ease;
+            }
+            .yt-facade:hover .yt-thumbnail,
+            .yt-facade:focus .yt-thumbnail {
+                filter: brightness(0.75);
+            }
+            .yt-play-btn {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                pointer-events: none;
+            }
+            .yt-play-btn svg {
+                filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6));
+                transition: transform 0.15s ease;
+            }
+            .yt-facade:hover .yt-play-btn svg,
+            .yt-facade:focus .yt-play-btn svg {
+                transform: scale(1.12);
+            }
+            /* Short video (Sanity-hosted mp4 loop) */
+            .short-video-wrap {
+                margin-top: 36px;
+                width: 100%;
+                border-radius: 12px;
+                overflow: hidden;
+                background: #090909;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            }
+            .short-video {
+                display: block;
+                width: 100%;
+                height: auto;
             }
 
             /* --- FINAL & WIP LAYOUTS --- */
@@ -595,14 +686,45 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
                     )
                 }
 
+                {/* SHORT VIDEO — Sanity-hosted mp4/webm loop (turntables, process clips) */}
+                {
+                    project.shortVideoUrl && (
+                        <div class="short-video-wrap reveal reveal-d2">
+                            <video
+                                src={project.shortVideoUrl}
+                                autoplay
+                                loop
+                                muted
+                                playsinline
+                                class="short-video"
+                                aria-label={`${project.title} — process preview`}
+                            />
+                        </div>
+                    )
+                }
+
+                {/* YOUTUBE VIDEO — lazy facade: shows thumbnail, loads iframe on click */}
                 {
                     ytId && (
                         <div class="cinematic-embed-wrapper reveal reveal-d3">
-                            <iframe
-                                src={`https://www.youtube.com/embed/${ytId}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0`}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen
-                            />
+                            <div
+                                class="yt-facade"
+                                data-ytid={ytId}
+                                role="button"
+                                tabindex="0"
+                                aria-label={`Play ${project.title} on YouTube`}
+                            >
+                                <img
+                                    src={`https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`}
+                                    alt={`${project.title} — video thumbnail`}
+                                    loading="lazy"
+                                    class="yt-thumbnail"
+                                    onerror="this.src='https://i.ytimg.com/vi/' + this.dataset.ytid + '/hqdefault.jpg'"
+                                />
+                                <span class="yt-play-btn" aria-hidden="true">
+                                    <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C56.1 0 34 0 34 0S11.9 0 7.5 1.7a8.5 8.5 0 0 0-6 6C0 12.1 0 24 0 24s0 11.9 1.5 16.3a8.5 8.5 0 0 0 6 6C11.9 48 34 48 34 48s22.1 0 26.5-1.7a8.5 8.5 0 0 0 6-6C68 35.9 68 24 68 24s0-11.9-1.5-16.3z" fill="#ff0000"/><path d="M27 34l18-10-18-10v20z" fill="#fff"/></svg>
+                                </span>
+                            </div>
                         </div>
                     )
                 }
@@ -758,6 +880,27 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
                     link.addEventListener("click", () => {
                         hamburger?.classList.remove("active");
                         mobileMenu?.classList.remove("active");
+                    });
+                });
+
+                // YOUTUBE LAZY FACADE — swap thumbnail for real iframe on click / keypress
+                document.querySelectorAll(".yt-facade").forEach((facade) => {
+                    const loadYT = () => {
+                        const ytId = facade.getAttribute("data-ytid");
+                        if (!ytId) return;
+                        const iframe = document.createElement("iframe");
+                        iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+                        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                        iframe.allowFullscreen = true;
+                        iframe.style.cssText = "width:100%;height:100%;border:0;display:block;";
+                        facade.replaceWith(iframe);
+                    };
+                    facade.addEventListener("click", loadYT);
+                    facade.addEventListener("keydown", (e: any) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            loadYT();
+                        }
                     });
                 });
             });

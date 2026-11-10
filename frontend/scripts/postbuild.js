@@ -109,6 +109,7 @@ function run() {
           imageXml += `<image:image><image:loc>${xmlEscape(img.src)}</image:loc>`;
           if (img.alt) {
             imageXml += `<image:title>${xmlEscape(img.alt)}</image:title>`;
+            imageXml += `<image:caption>${xmlEscape(img.alt)}</image:caption>`;
           }
           imageXml += `</image:image>`;
         }

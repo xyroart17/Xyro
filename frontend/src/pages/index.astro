@@ -68,7 +68,65 @@ clientGroups.forEach((group: any) => {
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <title>Xyro</title>
+    <title>Xyro — Manga, Characters &amp; 3D Art Commissions</title>
+    <meta name="description" content="Xyro is a freelance manga artist, character designer and 3D illustrator. Commission manga pages, character sheets, 3D scenes and more. Open for commissions." />
+    <link rel="canonical" href="https://xyroart.pages.dev/" />
+
+    {/* --- OPEN GRAPH --- */}
+    <meta property="og:title" content="Xyro — Manga, Characters & 3D Art" />
+    <meta property="og:description" content="Commission manga, character design, 3D renders & more. Open for commissions." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://xyroart.pages.dev/" />
+    <meta property="og:image" content="https://xyroart.pages.dev/assets/about-pic.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Xyro" />
+    <meta property="og:locale" content="en_US" />
+
+    {/* --- TWITTER CARDS --- */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Xyro — Manga, Characters & 3D Art" />
+    <meta name="twitter:description" content="Commission manga, character design, 3D renders & more. Open for commissions." />
+    <meta name="twitter:image" content="https://xyroart.pages.dev/assets/about-pic.jpg" />
+
+    {/* --- BRANDING --- */}
+    <meta name="theme-color" content="#0d0d0d" />
+    <meta name="apple-mobile-web-app-title" content="Xyro" />
+    <meta name="application-name" content="Xyro" />
+
+    {/* --- JSON-LD: Person + WebSite sitewide schema --- */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://xyroart.pages.dev/#person",
+          "name": "Xyro",
+          "url": "https://xyroart.pages.dev/",
+          "image": "https://xyroart.pages.dev/assets/about-pic.jpg",
+          "description": "Freelance manga artist, character designer and 3D illustrator.",
+          "jobTitle": "Freelance Artist",
+          "knowsAbout": ["Manga", "Character Design", "3D Art", "Illustration", "Commission Art"],
+          "sameAs": [
+            "https://ko-fi.com/xyroart",
+            "https://www.instagram.com/xyro_.art/",
+            "https://x.com/xyro_art",
+            "https://www.artstation.com/xyro_art",
+            "https://www.patreon.com/c/Xyro_art",
+            "https://discord.gg/RJ5JPCYS"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://xyroart.pages.dev/#website",
+          "url": "https://xyroart.pages.dev/",
+          "name": "Xyro",
+          "description": "Portfolio and commission site for Xyro — manga, characters, 3D art.",
+          "publisher": { "@id": "https://xyroart.pages.dev/#person" }
+        }
+      ]
+    })} />
+
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=4" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=4" />
@@ -131,6 +189,9 @@ clientGroups.forEach((group: any) => {
             <button class="vi" type="button" aria-label={`Preview ${d.t}`}>
               <div class="vc">
                 <span class="vy">{d.y}</span>
+                {d.videoUrl && (
+                  <span class="vault-play-badge" aria-label="Has video">▶</span>
+                )}
                 <div class="vt" style={`--h:${d.h};--r:${d.r};`}>
                   {d.img ? (
                     <img src={d.img} alt={d.t} loading="lazy" />

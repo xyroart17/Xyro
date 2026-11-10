@@ -16,10 +16,58 @@ const vaultData = await fetchVaultData();
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <title>Xyro — The Vault</title>
+    <title>The Vault — Xyro's Full Art Portfolio</title>
+    <meta name="description" content="Browse all artworks by Xyro: manga, character sheets, 3D renders, fan art and original commissions. Updated with every new project." />
+    <link rel="canonical" href="https://xyroart.pages.dev/vault/" />
+
+    {/* --- OPEN GRAPH --- */}
+    <meta property="og:title" content="The Vault — Xyro Art Portfolio" />
+    <meta property="og:description" content="Browse all artworks by Xyro: manga, character sheets, 3D renders, fan art and original commissions." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://xyroart.pages.dev/vault/" />
+    <meta property="og:image" content="https://xyroart.pages.dev/assets/about-pic.jpg" />
+    <meta property="og:site_name" content="Xyro" />
+
+    {/* --- TWITTER CARDS --- */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Vault — Xyro Art Portfolio" />
+    <meta name="twitter:description" content="Browse all artworks by Xyro: manga, character sheets, 3D renders, fan art and original commissions." />
+    <meta name="twitter:image" content="https://xyroart.pages.dev/assets/about-pic.jpg" />
+
+    {/* --- BRANDING --- */}
+    <meta name="theme-color" content="#0d0d0d" />
+    <meta name="apple-mobile-web-app-title" content="Xyro" />
+
+    {/* --- JSON-LD: CollectionPage + Person --- */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "@id": "https://xyroart.pages.dev/vault/#collection",
+          "name": "The Vault — Xyro Art Portfolio",
+          "url": "https://xyroart.pages.dev/vault/",
+          "description": "Complete portfolio of Xyro — manga, character design, 3D and commissions.",
+          "creator": { "@id": "https://xyroart.pages.dev/#person" },
+          "isPartOf": { "@id": "https://xyroart.pages.dev/#website" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://xyroart.pages.dev/#person",
+          "name": "Xyro",
+          "url": "https://xyroart.pages.dev/"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://xyroart.pages.dev/#website",
+          "url": "https://xyroart.pages.dev/",
+          "name": "Xyro"
+        }
+      ]
+    })} />
+
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=4" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=4" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" />
     <link rel="icon" href="/favicon.ico?v=4" />
     <link
@@ -55,6 +103,9 @@ const vaultData = await fetchVaultData();
             <button class="vi" type="button" aria-label={`Preview ${d.t}`}>
               <div class="vc">
                 <span class="vy">{d.y}</span>
+                {d.videoUrl && (
+                  <span class="vault-play-badge" aria-label="Has video">▶</span>
+                )}
                 <div class="vt" style={`--h:${d.h};--r:${d.r};`}>
                   {d.img ? (
                     <img src={d.img} alt={d.t} loading="lazy" />

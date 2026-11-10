@@ -187,6 +187,7 @@ export function formatVaultItem(item) {
     img,
     url,
     featured: Boolean(item.featured || slug === "eva"),
+    videoUrl: item.videoUrl || null,
   };
 }
 
@@ -206,6 +207,7 @@ export async function fetchVaultData() {
         year,
         hue,
         featured,
+        videoUrl,
         mainImage,
         coverImage,
         gridImage,
@@ -249,6 +251,7 @@ export async function fetchHomeVault() {
           year,
           hue,
           featured,
+          videoUrl,
           mainImage,
           coverImage,
           gridImage,

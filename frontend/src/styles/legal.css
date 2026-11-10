@@ -396,7 +396,7 @@
     .legal-mobile-nav {
         display: block !important;
         position: sticky !important;
-        top: 60px !important;
+        top: calc(58px + env(safe-area-inset-top, 0px)) !important;
         z-index: 35 !important;
         background: var(--bg) !important;
         border-bottom: 3px solid var(--ink) !important;
