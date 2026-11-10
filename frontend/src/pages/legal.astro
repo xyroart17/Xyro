@@ -12,6 +12,9 @@ import Footer from "../components/Footer.astro";
 <!doctype html>
 <html lang="en">
     <head>
+        <script is:inline>
+            (function(){try{var s=localStorage.getItem("xt2")||localStorage.getItem("xyro_theme");if(s==="dark"||s==="light"){document.documentElement.setAttribute("data-theme",s);}}catch(e){}})();
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Legal Center — Xyro</title>
@@ -1080,6 +1083,7 @@ import Footer from "../components/Footer.astro";
               rDoc.setAttribute("data-theme", nextTheme);
               try {
                 localStorage.setItem("xt2", nextTheme);
+                localStorage.setItem("xyro_theme", nextTheme);
               } catch (x) {}
             };
           }

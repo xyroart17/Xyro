@@ -281,19 +281,23 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
     });
 
     // Theme changer handler for nav button
-    var tgBtn = document.getElementById("tg");
-    if (tgBtn && !tgBtn.onclick) {
-      tgBtn.onclick = function () {
-        var r = document.documentElement;
-        var cur = r.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light");
-        var next = cur === "dark" ? "light" : "dark";
-        r.setAttribute("data-theme", next);
-        try {
-          localStorage.setItem("xyro_theme", next);
-          localStorage.setItem("xt2", next);
-        } catch (e) {}
-      };
+    function bindThemeToggle() {
+      var tgBtn = document.getElementById("tg");
+      if (tgBtn) {
+        tgBtn.onclick = function () {
+          var r = document.documentElement;
+          var cur = r.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light");
+          var next = cur === "dark" ? "light" : "dark";
+          r.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("xyro_theme", next);
+            localStorage.setItem("xt2", next);
+          } catch (e) {}
+        };
+      }
     }
+    bindThemeToggle();
+    document.addEventListener("astro:page-load", bindThemeToggle);
 
     // Discord menu chip click handler
     var discordChip = document.getElementById("siteMenuDiscordChip");

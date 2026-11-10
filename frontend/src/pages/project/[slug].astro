@@ -176,6 +176,9 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
 <!doctype html>
 <html lang="en">
     <head>
+        <script is:inline>
+            (function(){try{var s=localStorage.getItem("xt2")||localStorage.getItem("xyro_theme");if(s==="dark"||s==="light"){document.documentElement.setAttribute("data-theme",s);}}catch(e){}})();
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{project.title} — Xyro</title>
@@ -343,7 +346,7 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
                 line-height: 1.1;
                 letter-spacing: -0.02em;
                 color: #fff;
-                text-shadow: 4px 4px 0 var(--ink);
+                text-shadow: 3px 3px 0 #000;
                 margin: 0;
             }
 
@@ -864,6 +867,13 @@ const titleFontSize = wordCount >= 6 ? "clamp(2rem, 4.5vw, 3.8rem)" : "clamp(2.8
         <Footer isHomepage={false} />
 
         <script>
+            document.addEventListener("astro:after-swap", () => {
+                try {
+                    const s = localStorage.getItem("xt2") || localStorage.getItem("xyro_theme");
+                    if (s) document.documentElement.setAttribute("data-theme", s);
+                } catch (e) {}
+            });
+
             document.addEventListener("astro:page-load", () => {
                 // YOUTUBE LAZY FACADE — swap thumbnail for real iframe on click / keypress
                 document.querySelectorAll(".yt-facade").forEach((facade) => {
