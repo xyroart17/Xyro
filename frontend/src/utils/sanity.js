@@ -338,4 +338,25 @@ export async function fetchTestimonials() {
   }
 }
 
+// Fetch Homepage Hero media settings (looping video or static image)
+export async function fetchHeroSettings() {
+  try {
+    const heroDoc = await client.fetch(`
+      *[_type == "heroSettings"][0] {
+        _id,
+        title,
+        mediaType,
+        "videoUrl": coalesce(videoFile.asset->url, videoUrl),
+        "imageUrl": imageFile.asset->url,
+        "aspectRatio": imageFile.asset->metadata.dimensions.aspectRatio
+      }
+    `);
+    return heroDoc || null;
+  } catch (err) {
+    console.error("fetchHeroSettings error:", err);
+    return null;
+  }
+}
+
+
 

@@ -7,6 +7,7 @@ import {
   fetchHomeVault,
   fetchTestimonials,
   fetchFeaturedManga,
+  fetchHeroSettings,
 } from "../utils/sanity.js";
 import Footer from "../components/Footer.astro";
 import SiteNav from "../components/SiteNav.astro";
@@ -15,6 +16,12 @@ const vaultData = await fetchVaultData();
 const homeVaultItems = await fetchHomeVault();
 const reviews = await fetchTestimonials();
 const mangaList = await fetchFeaturedManga();
+const heroSettings = await fetchHeroSettings();
+
+const isImage = heroSettings?.mediaType === "image";
+const heroVideoSrc = (!isImage && heroSettings?.videoUrl) ? heroSettings.videoUrl : "";
+const heroImageSrc = heroSettings?.imageUrl || "";
+const initialVideoSrc = heroVideoSrc || "/assets/xyro-intro.mp4";
 
 // Group testimonials by client (show client profile once with their project reviews below)
 const clientGroupsMap = new Map();
@@ -162,14 +169,52 @@ clientGroups.forEach((group: any) => {
     <div id="bar"></div>
     <div id="cur"></div>
 
-    <SiteNav isHomepage={true} hideLogoOnTop={true} />
+    <SiteNav isHomepage={true} hideLogoOnTop={false} />
 
-    <div class="hero" id="t">
-      <div class="hero-center">
-        <span class="lg hero-lg"></span>
-        <p>manga · characters · 3D</p>
+    <!-- CINEMATIC HERO ENTRANCE (LOCKED DARK THEME) -->
+    <div class="hero hero-cinematic" id="t">
+      <div class="hero-media-wrapper">
+        <video
+          id="heroBgVideo"
+          class="hero-bg-media hero-bg-video"
+          autoplay
+          loop
+          muted
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          poster={heroImageSrc || undefined}
+          aria-label="XYRO cinematic background animation"
+          style={isImage ? "display: none;" : "display: block;"}
+        >
+          <source src={initialVideoSrc} type="video/mp4" />
+        </video>
+        <img
+          id="heroBgImage"
+          class="hero-bg-media hero-bg-image"
+          src={heroImageSrc}
+          alt="XYRO Hero Artwork"
+          style={isImage ? "display: block;" : "display: none;"}
+        />
       </div>
-      <span class="sfx" style="left:6%;top:22%;--r:-8deg">ドン!</span>
+
+      <!-- Hero Video Sound Control (Muted by default for autoplay compliance) -->
+      <button
+        id="heroVolumeBtn"
+        class="hero-volume-pill"
+        type="button"
+        aria-label="Unmute hero video"
+        title="Toggle audio"
+        style={isImage ? "display: none;" : ""}
+      >
+        <svg class="hero-vol-icon hero-vol-muted" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27l4.73 4.73H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+        <svg class="hero-vol-icon hero-vol-unmuted" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" style="display: none;">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <span class="hero-vol-text">SOUND OFF</span>
+      </button>
     </div>
 
     <!-- DUAL MOVING RIBBONS: YELLOW HERO RIBBON + RED 15% OFF COMMISSION RIBBON -->
@@ -1843,26 +1888,19 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
         });
       });
 
-      /* dynamic top-left logo on scroll */
+      /* top-left logo always visible (central hero logo removed) */
       var mainNavLogo = $("mainNavLogo");
-      var workSec = $("work");
+      if (mainNavLogo) {
+        mainNavLogo.style.opacity = "1";
+        mainNavLogo.style.pointerEvents = "auto";
+        mainNavLogo.style.transform = "translateY(0)";
+      }
 
       function updateNavScroll() {
-        if (!workSec) return;
-        var workRect = workSec.getBoundingClientRect();
-        var isScrolled = workRect.top <= 140 || window.scrollY > 150;
-
-        // Top-left XYRO logo appears when user scrolls to/past Vault, disappears at top
         if (mainNavLogo) {
-          if (isScrolled) {
-            mainNavLogo.style.opacity = "1";
-            mainNavLogo.style.pointerEvents = "auto";
-            mainNavLogo.style.transform = "translateY(0)";
-          } else {
-            mainNavLogo.style.opacity = "0";
-            mainNavLogo.style.pointerEvents = "none";
-            mainNavLogo.style.transform = "translateY(-8px)";
-          }
+          mainNavLogo.style.opacity = "1";
+          mainNavLogo.style.pointerEvents = "auto";
+          mainNavLogo.style.transform = "translateY(0)";
         }
       }
 
@@ -1950,6 +1988,15 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
               overlay.remove();
             }, 550);
           }
+
+          // Ensure background hero video continues playing smoothly on entrance
+          var heroVid = document.getElementById("heroBgVideo");
+          if (heroVid && heroVid.paused) {
+            var hp = heroVid.play();
+            if (hp !== undefined) {
+              hp.catch(function () {});
+            }
+          }
         }
 
         if (video) {
@@ -1980,6 +2027,81 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
             finishIntro();
           }
         });
+      })();
+
+      /* ===== HERO BACKGROUND VIDEO & REAL-TIME SANITY CONTROLLER ===== */
+      (function initHeroMedia() {
+        var heroVid = document.getElementById("heroBgVideo");
+        var heroImg = document.getElementById("heroBgImage");
+        var volBtn = document.getElementById("heroVolumeBtn");
+
+        // Autoplay background video muted immediately
+        if (heroVid) {
+          heroVid.muted = true;
+          var p = heroVid.play();
+          if (p !== undefined) {
+            p.catch(function () {});
+          }
+        }
+
+        // Sound on/off button toggle
+        if (volBtn && heroVid) {
+          var mutedIcon = volBtn.querySelector(".hero-vol-muted");
+          var unmutedIcon = volBtn.querySelector(".hero-vol-unmuted");
+          var volText = volBtn.querySelector(".hero-vol-text");
+
+          function syncVolumeUI() {
+            var isMuted = heroVid.muted;
+            if (mutedIcon) mutedIcon.style.display = isMuted ? "block" : "none";
+            if (unmutedIcon) unmutedIcon.style.display = isMuted ? "none" : "block";
+            if (volText) volText.textContent = isMuted ? "SOUND OFF" : "SOUND ON";
+            volBtn.setAttribute("aria-label", isMuted ? "Unmute hero video" : "Mute hero video");
+            volBtn.classList.toggle("is-active", !isMuted);
+          }
+
+          volBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            heroVid.muted = !heroVid.muted;
+            if (heroVid.paused) {
+              heroVid.play().catch(function () {});
+            }
+            syncVolumeUI();
+          });
+
+          syncVolumeUI();
+        }
+
+        // Fetch latest hero settings in background from Sanity CDN
+        // When the user uploads their video or image in Sanity Studio, it updates automatically!
+        var query = encodeURIComponent('*[_type == "heroSettings"][0]{mediaType, "videoUrl": coalesce(videoFile.asset->url, videoUrl), "imageUrl": imageFile.asset->url}');
+        fetch("https://pfnvy1zn.api.sanity.io/v2026-05-18/data/query/production?query=" + query)
+          .then(function (res) { return res.json(); })
+          .then(function (json) {
+            if (!json || !json.result) return;
+            var data = json.result;
+            if (data.mediaType === "image" && data.imageUrl) {
+              if (heroVid) heroVid.style.display = "none";
+              if (volBtn) volBtn.style.display = "none";
+              if (heroImg) {
+                heroImg.src = data.imageUrl;
+                heroImg.style.display = "block";
+              }
+            } else if (data.videoUrl) {
+              if (heroImg) heroImg.style.display = "none";
+              if (volBtn) volBtn.style.display = "inline-flex";
+              if (heroVid) {
+                heroVid.style.display = "block";
+                var currentSrc = heroVid.currentSrc || heroVid.src;
+                if (!currentSrc || currentSrc.indexOf(data.videoUrl) === -1) {
+                  heroVid.src = data.videoUrl;
+                  heroVid.load();
+                  var playPromise = heroVid.play();
+                  if (playPromise !== undefined) playPromise.catch(function () {});
+                }
+              }
+            }
+          })
+          .catch(function () {});
       })();
 
       vd();
