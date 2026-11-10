@@ -37,9 +37,65 @@ a{color:inherit}
 .hero-center p{color:var(--ink);font:700 clamp(16px,2.5vw,26px) 'Space Grotesk';margin:0}
 .sfx{position:absolute;font-family:'Dela Gothic One';z-index:2;pointer-events:none;color:var(--pk);-webkit-text-stroke:2px var(--ink);transform:rotate(var(--r));font-size:clamp(28px,5vw,64px)}
 /* marquee */
-.mq{background:var(--ink);color:var(--bg);overflow:hidden;white-space:nowrap;padding:16px 0;transform:rotate(-1.5deg);margin:-12px -20px 40px;position:relative;z-index:5}
-.mq div{display:inline-block;animation:mq 22s linear infinite;font:400 34px 'Dela Gothic One'}
-@keyframes mq{to{transform:translateX(-50%)}}
+.mq-wrap {
+  position: relative;
+  overflow: hidden;
+  margin: -12px -20px 40px;
+  padding: 8px 0 24px;
+}
+.mq {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  user-select: none;
+}
+.mq-yellow {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 14px 0;
+  transform: rotate(-1.5deg);
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+.mq-yellow .mq-track {
+  display: inline-block;
+  animation: mq 24s linear infinite;
+  font: 400 clamp(24px, 3.2vw, 34px) 'Dela Gothic One', sans-serif;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+.mq-red {
+  background: var(--rd);
+  color: #fff;
+  padding: 8px 0;
+  transform: rotate(1.2deg);
+  margin-top: -10px;
+  position: relative;
+  z-index: 6;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.mq-red .mq-track-rev {
+  display: inline-block;
+  animation: mqRev 20s linear infinite;
+  font: 400 clamp(16px, 2.2vw, 22px) 'Dela Gothic One', sans-serif;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+.mq-white {
+  color: #ffffff;
+}
+.mq-gold {
+  color: #ffe94a;
+}
+@keyframes mq {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes mqRev {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
 section{padding:70px 20px;max-width:1300px;margin:0 auto}
 h2{font-size:clamp(46px,9vw,130px);margin-bottom:26px}
 h2 em{font-style:normal;background:var(--pk);color:#fff;padding:0 14px;display:inline-block;transform:rotate(-2deg)}
@@ -159,12 +215,181 @@ dialog::backdrop{background:#000d}
 
 .big{background:var(--pk);color:#fff;border:0;border-radius:99px;padding:18px 36px;font:400 24px 'Dela Gothic One';cursor:pointer;box-shadow:0 6px 0 #7a001f}
 .big:active{transform:translateY(5px);box-shadow:0 1px 0 #7a001f}
-/* panels */
+/* panels / tier picker */
 .pn{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
 .pnl{border:5px solid var(--ink);padding:22px;background:var(--bg);box-shadow:8px 8px 0 var(--ink)}
 .pnl:nth-child(2){transform:rotate(1.5deg)}.pnl:nth-child(3){transform:rotate(-1.2deg)}
 .pnl .dg{font-size:60px;color:var(--pk)}.pnl h3{font-size:26px;margin:6px 0}
 .price{font:400 40px 'Dela Gothic One'}
+
+/* Neo-Brutalist Interactive Tier Picker */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+@media (max-width: 900px) {
+  .tier-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+.tier-card {
+  position: relative;
+  background: var(--bg);
+  border: 3px solid var(--ink);
+  padding: 26px 24px 22px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 8px 8px 0 var(--ink);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  user-select: none;
+  border-radius: 2px;
+  outline: none;
+}
+.tier-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 10px 10px 0 var(--ink);
+}
+.tier-card:focus-visible {
+  outline: 3px solid var(--rd);
+}
+/* Card 3 has red offset box-shadow as seen in user reference screenshot */
+.tier-card.tier-card-3 {
+  box-shadow: 8px 8px 0 var(--rd);
+}
+.tier-card.tier-card-3:hover {
+  box-shadow: 10px 10px 0 var(--rd);
+}
+
+/* Selected state */
+.tier-card.selected {
+  border-color: var(--rd);
+  box-shadow: 8px 8px 0 var(--rd) !important;
+  background: color-mix(in srgb, var(--rd) 7%, var(--bg));
+  transform: translateY(-3px);
+}
+
+.tier-num {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 38px;
+  color: var(--rd);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.tier-title {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 400;
+  margin: 0 0 10px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.tier-price {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: clamp(38px, 4vw, 54px);
+  color: var(--ink);
+  line-height: 1;
+  margin: 4px 0 6px;
+}
+.tier-vary {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+.tier-vary strong {
+  font-weight: 700;
+}
+.tier-desc {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  min-height: 44px;
+  margin: 0 0 20px;
+  color: var(--ink);
+  opacity: 0.9;
+}
+.tier-choose-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--rd);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.15s ease;
+  margin-top: auto;
+}
+.tier-card:hover .tier-choose-btn {
+  transform: translateX(4px);
+}
+.tier-card.selected .tier-choose-btn {
+  text-decoration: underline;
+}
+
+.tier-footer-note {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 24px;
+  text-align: left;
+  color: var(--ink);
+  opacity: 0.9;
+}
+
+/* Selected Tier Banner above form inputs */
+.selected-tier-banner {
+  background: var(--rd);
+  border: 3px solid var(--ink);
+  color: #ffffff;
+  padding: 10px 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 2px;
+  margin-bottom: 12px;
+  box-shadow: 4px 4px 0 var(--ink);
+  animation: pp .25s ease-out;
+}
+.selected-tier-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.clear-tier-btn {
+  background: transparent;
+  border: 0;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  opacity: 0.85;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.clear-tier-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
 /* unbound */
 .els{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 18px}
 .els button{border:4px solid var(--ink);border-radius:50%;width:74px;height:74px;font:700 13px 'Space Grotesk';color:#fff;background:hsl(var(--h) 85% 50%);cursor:pointer}

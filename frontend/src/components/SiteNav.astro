@@ -23,20 +23,20 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
     <!-- Theme Toggle Pill -->
     <button class="pill nav-btn nav-theme-btn" id="tg" type="button" aria-label="Toggle theme">◐</button>
 
-    <!-- Support me on Ko-fi Pill -->
+    <!-- Ko-fi Pill -->
     <a
       class="pill nav-btn nav-kofi-pill"
       id="kofiNavBtn"
       href="https://ko-fi.com/xyroart"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Support me on Ko-fi"
-      title="Support me on Ko-fi"
+      aria-label="Ko-fi"
+      title="Ko-fi"
     >
       <svg class="kofi-cup-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
         <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.047 3.974-4.047 3.974s-2.7-2.486-3.96-3.951c-.966-1.122-1.39-2.325-1.39-3.238 0-1.802 1.442-3.244 3.244-3.244 1.144 0 2.148.59 2.731 1.488.583-.898 1.587-1.488 2.731-1.488 1.802 0 3.244 1.442 3.244 3.244 0 .93-.44 2.152-1.553 3.215zm6.053-.941c-.482.464-1.141.71-1.895.733.023-.979.033-2.02.033-3.093h1.862c.677 0 1.258.455 1.341 1.127.135 1.092-.859 1.697-1.341 1.233z"/>
       </svg>
-      <span class="kofi-nav-label">Support me on Ko-fi</span>
+      <span class="kofi-nav-label">Ko-fi</span>
     </a>
 
     <!-- Hamburger 3-Horizontal-Bars Menu Button -->
@@ -187,7 +187,7 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
             <a href="https://pin.it/1EkhjFukQ" target="_blank" rel="noopener noreferrer" class="social-chip">
               Pinterest
             </a>
-            <a href="mailto:officialxyroart@gmail.com" class="social-chip">
+            <a href={isHomepage ? "#contact" : "/#contact"} class="social-chip email-to-form-chip" data-menu-link>
               ✉ Email
             </a>
           </div>

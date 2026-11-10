@@ -98,10 +98,24 @@ clientGroups.forEach((group: any) => {
       <span class="sfx" style="left:6%;top:22%;--r:-8deg">ドン!</span>
     </div>
 
-    <div class="mq" aria-hidden="true">
-      <div>
-        MANGA ✦ 3D ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦ MANGA ✦ 3D
-        ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦
+    <!-- DUAL MOVING RIBBONS: YELLOW HERO RIBBON + RED 15% OFF COMMISSION RIBBON -->
+    <div class="mq-wrap" aria-hidden="true">
+      <div class="mq mq-yellow">
+        <div class="mq-track">
+          MANGA ✦ 3D ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦ MANGA ✦ 3D ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦ MANGA ✦ 3D ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦ MANGA ✦ 3D ✦ CHARACTERS ✦ ANIMATION ✦ OPEN FOR COMMISSIONS ✦
+        </div>
+      </div>
+      <div class="mq mq-red">
+        <div class="mq-track-rev">
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+          <span><span class="mq-white">15% OFF</span> <span class="mq-gold">ALL COMMISSIONS ✦</span> </span>
+        </div>
       </div>
     </div>
 
@@ -258,30 +272,64 @@ clientGroups.forEach((group: any) => {
 
     <section id="deal">
       <h2>Pick a <em>tier</em></h2>
-      <div class="pn">
-        <div class="pnl">
-          <span class="dg">1</span><h3>Headshot</h3><div class="price">
-            $80+
-          </div><p>2–4 days. Fully rendered portrait, 2 revisions.</p>
+      <div class="tier-grid">
+        <div
+          class="tier-card tier-card-1"
+          data-tier-id="headshot"
+          data-tier-name="Headshot"
+          data-tier-price="$80"
+          data-tier-label="Headshot (from $80)"
+          tabindex="0"
+          role="button"
+          aria-label="Select Headshot tier from $80"
+        >
+          <div class="tier-num">1</div>
+          <h3 class="tier-title">Headshot</h3>
+          <div class="tier-price">$80+</div>
+          <div class="tier-vary">Price may <strong>vary</strong></div>
+          <p class="tier-desc">A detailed portrait of your character.</p>
+          <button type="button" class="tier-choose-btn">Choose this →</button>
         </div>
-        <div class="pnl">
-          <span class="dg">2</span><h3>Full body</h3><div class="price">
-            $320+
-          </div><p>6–9 days. Full character, background, 3 revisions.</p>
+
+        <div
+          class="tier-card tier-card-2"
+          data-tier-id="character-sheet"
+          data-tier-name="Character sheet"
+          data-tier-price="$500"
+          data-tier-label="Character sheet (from $500)"
+          tabindex="0"
+          role="button"
+          aria-label="Select Character sheet tier from $500"
+        >
+          <div class="tier-num">2</div>
+          <h3 class="tier-title">Character sheet</h3>
+          <div class="tier-price">$500+</div>
+          <div class="tier-vary">Price may <strong>vary</strong></div>
+          <p class="tier-desc">Full character design, with every detail laid out.</p>
+          <button type="button" class="tier-choose-btn">Choose this →</button>
         </div>
-        <div class="pnl">
-          <span class="dg">3</span><h3>Original character sheet</h3><div
-            class="price"
-          >
-            $500+
-          </div><p>Multi-view turnaround, expressions & details.</p>
+
+        <div
+          class="tier-card tier-card-3"
+          data-tier-id="custom-quote"
+          data-tier-name="Custom quote"
+          data-tier-price="Quote"
+          data-tier-label="Custom quote"
+          tabindex="0"
+          role="button"
+          aria-label="Select Custom quote tier"
+        >
+          <div class="tier-num">3</div>
+          <h3 class="tier-title">Custom quote</h3>
+          <div class="tier-price">Quote</div>
+          <div class="tier-vary">Price may <strong>vary</strong></div>
+          <p class="tier-desc">Something else in mind? Tell me about it.</p>
+          <button type="button" class="tier-choose-btn">Choose this →</button>
         </div>
       </div>
-      <p style="margin-top:22px;font-weight:700">
-        Pay 50% to start, 50% before the final file.
-      </p>
-      <p style="margin-top:6px;font-weight:700;font-size:16px;">
-        Price may vary or change.
+
+      <p class="tier-footer-note">
+        Pay 50% to start, 50% before the final file. Sketch changes are free.
       </p>
     </section>
 
@@ -424,6 +472,14 @@ clientGroups.forEach((group: any) => {
     <section id="contact">
       <h2>Send it <em>in</em></h2>
       <form id="contactForm" class="mail" novalidate>
+        <!-- Selected Tier Banner (shown when user chooses a tier) -->
+        <div id="selectedTierBanner" class="selected-tier-banner" style="display:none;" role="region" aria-live="polite">
+          <div class="selected-tier-inner">
+            <span id="selectedTierText">Selected: Character sheet (from $500)</span>
+          </div>
+          <button type="button" id="btnClearTier" class="clear-tier-btn" title="Remove selected tier" aria-label="Remove selected tier">✕</button>
+        </div>
+
         <input
           id="mn"
           name="name"
@@ -514,13 +570,20 @@ clientGroups.forEach((group: any) => {
             (scrollY / (d.scrollHeight - innerHeight)) * 100 + "%";
       });
 
+      /* ===== INTERACTIVE TIER STATE ===== */
+      var currentSelectedTier = null;
+
       /* ===== GACHA V2 ===== */
       var XYRO_GACHA = {
         email: "officialxyroart@gmail.com",
         onSend: function (text) {
           var m = document.getElementById("mm");
           if (m) {
-            m.value = text;
+            var prefix = "";
+            if (currentSelectedTier && currentSelectedTier.label) {
+              prefix = "Tier: " + currentSelectedTier.label + "\n\n";
+            }
+            m.value = prefix + text;
             m.dispatchEvent(new Event("input", { bubbles: true }));
             var c = document.getElementById("contact");
             if (c) c.scrollIntoView({ behavior: "smooth" });
@@ -1191,6 +1254,7 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
               if (submitBtnText) submitBtnText.textContent = "Brief Sent ✓";
               if (submitBtnIcon) submitBtnIcon.textContent = "";
               if (msgInput) msgInput.value = "";
+              if (typeof clearSelectedTier === "function") clearSelectedTier();
             } else {
               var errMsg = data.error || "Unable to deliver email.";
               showStatus("error", "Submission Error", errMsg + " You can also email officialxyroart@gmail.com directly.");
@@ -1242,6 +1306,109 @@ Peaky Blinders|Tommy Shelby,Arthur Shelby,Polly Gray,Alfie Solomons,Grace Burges
           } else {
             fallbackCopy(addr);
           }
+        });
+      }
+
+      /* ===== INTERACTIVE TIER PICKER & CONTACT FORM SYNC ===== */
+      var tierCards = document.querySelectorAll(".tier-card");
+      var selectedTierBanner = $("selectedTierBanner");
+      var selectedTierText = $("selectedTierText");
+      var btnClearTier = $("btnClearTier");
+      var nameInput = $("mn");
+      var msgInput = $("mm");
+
+      function updateMessageTextareaWithTier(tierLabel) {
+        if (!msgInput) return;
+        var val = msgInput.value;
+        var tierRegex = /^Tier:\s*[^\n]+(\n\n)?/i;
+
+        if (tierLabel) {
+          var newPrefix = "Tier: " + tierLabel + "\n\n";
+          if (tierRegex.test(val)) {
+            msgInput.value = val.replace(tierRegex, newPrefix);
+          } else if (val.trim()) {
+            msgInput.value = newPrefix + val.trim();
+          } else {
+            msgInput.value = newPrefix;
+          }
+        } else {
+          // Remove tier line if cleared
+          msgInput.value = val.replace(tierRegex, "").trim();
+        }
+        msgInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+
+      function selectTier(card) {
+        if (!card) return;
+        var tierId = card.getAttribute("data-tier-id");
+        var tierName = card.getAttribute("data-tier-name");
+        var tierPrice = card.getAttribute("data-tier-price");
+        var tierLabel = card.getAttribute("data-tier-label") || (tierPrice === "Quote" ? tierName : tierName + " (from " + tierPrice + ")");
+
+        currentSelectedTier = { id: tierId, name: tierName, price: tierPrice, label: tierLabel };
+
+        // Mark active card visually
+        tierCards.forEach(function (c) {
+          var isCurrent = (c === card);
+          c.classList.toggle("selected", isCurrent);
+          var btn = c.querySelector(".tier-choose-btn");
+          if (btn) {
+            btn.textContent = isCurrent ? "Selected ✓" : "Choose this →";
+          }
+        });
+
+        // Show banner above form inputs
+        if (selectedTierBanner && selectedTierText) {
+          selectedTierText.textContent = "Selected: " + tierLabel;
+          selectedTierBanner.style.display = "flex";
+        }
+
+        // Prepend / update in textarea
+        updateMessageTextareaWithTier(tierLabel);
+
+        // Smooth scroll to #contact section
+        var contactSec = $("contact");
+        if (contactSec) {
+          contactSec.scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Focus name input after scroll
+        setTimeout(function () {
+          if (nameInput) {
+            nameInput.focus();
+          }
+        }, 350);
+      }
+
+      function clearSelectedTier() {
+        currentSelectedTier = null;
+        tierCards.forEach(function (c) {
+          c.classList.remove("selected");
+          var btn = c.querySelector(".tier-choose-btn");
+          if (btn) btn.textContent = "Choose this →";
+        });
+        if (selectedTierBanner) {
+          selectedTierBanner.style.display = "none";
+        }
+        updateMessageTextareaWithTier(null);
+      }
+
+      tierCards.forEach(function (card) {
+        card.addEventListener("click", function (e) {
+          selectTier(card);
+        });
+        card.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            selectTier(card);
+          }
+        });
+      });
+
+      if (btnClearTier) {
+        btnClearTier.addEventListener("click", function (e) {
+          e.stopPropagation();
+          clearSelectedTier();
         });
       }
 
