@@ -160,7 +160,7 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
         <div class="site-menu-socials-box">
           <span class="site-menu-heading">CONNECT & SOCIALS</span>
           <div class="site-menu-chips">
-            <a href="https://discord.gg/RJ5JPCYS" target="_blank" rel="noopener noreferrer" class="social-chip">
+            <a href="https://discord.com/users/751825575982661664" target="_blank" rel="noopener noreferrer" class="social-chip" id="siteMenuDiscordChip">
               <span class="chip-dot"></span> Discord
             </a>
             <a href="https://www.instagram.com/xyro_.art/" target="_blank" rel="noopener noreferrer" class="social-chip">
@@ -315,6 +315,17 @@ const { isHomepage = false, hideLogoOnTop = isHomepage } = Astro.props;
               btn.click();
               return;
             }
+          }
+        } catch (err) {}
+      });
+    }
+    // Discord menu chip click handler
+    var discordChip = document.getElementById("siteMenuDiscordChip");
+    if (discordChip) {
+      discordChip.addEventListener("click", function () {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText("xyro.art").catch(function () {});
           }
         } catch (err) {}
       });

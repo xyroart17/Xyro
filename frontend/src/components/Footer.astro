@@ -25,7 +25,7 @@ const { isHomepage = false } = Astro.props;
         <span>·</span>
         <a href="https://www.artstation.com/xyro_art" target="_blank" rel="noopener noreferrer">ArtStation</a>
         <span>·</span>
-        <a href="https://discord.gg/RJ5JPCYS" target="_blank" rel="noopener noreferrer">Discord</a>
+        <a href="https://discord.com/users/751825575982661664" target="_blank" rel="noopener noreferrer" id="footerDiscordLink">Discord</a>
         <span>·</span>
         <a href="https://www.patreon.com/c/Xyro_art" target="_blank" rel="noopener noreferrer">Patreon</a>
         <span>·</span>
@@ -128,6 +128,13 @@ const { isHomepage = false } = Astro.props;
             setTimeout(() => {
                 if (copyBtn) copyBtn.innerText = original;
             }, 2000);
+        });
+
+        const discordLink = document.getElementById("footerDiscordLink");
+        discordLink?.addEventListener("click", () => {
+            try {
+                navigator.clipboard.writeText("xyro.art").catch(() => {});
+            } catch (e) {}
         });
     }
 
